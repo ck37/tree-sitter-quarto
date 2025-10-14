@@ -30,6 +30,8 @@ Existing parsers serve different purposes:
 
 tree-sitter-quarto fills the gap by providing semantic parsing optimized for editor tooling as you author Quarto documents.
 
+**Editor Support:** This parser enables first-class Quarto support in editors like [Zed](https://github.com/zed-industries/zed/issues/12406), Neovim, Helix, and VSCode.
+
 See [detailed comparison](./docs/comparison.md) for more information.
 
 ## Features

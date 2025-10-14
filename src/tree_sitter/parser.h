@@ -37,9 +37,6 @@ typedef struct {
   uint16_t length;
 } TSMapSlice;
 
-// Backwards compatibility: CLI generates TSFieldMapSlice
-typedef TSMapSlice TSFieldMapSlice;
-
 typedef struct {
   bool visible;
   bool named;

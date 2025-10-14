@@ -152,13 +152,13 @@ tree-sitter AST (semantic nodes for editor)
 ```
 
 **Input example:**
-```markdown
+````markdown
 ```{python}
 #| label: fig-plot
 import matplotlib.pyplot as plt
 plt.plot([1, 2, 3])
 ```
-```
+````
 
 **Output:** AST with `executable_code_cell`, `chunk_options` nodes
 

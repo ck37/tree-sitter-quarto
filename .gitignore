@@ -13,6 +13,7 @@ src/tree_sitter/
 *.dylib
 *.dll
 *.a
+*.wasm
 
 # Editor files
 .vscode/

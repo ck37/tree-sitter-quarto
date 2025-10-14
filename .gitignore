@@ -5,7 +5,6 @@ build/
 *.node
 
 # Parser artifacts
-src/parser.c
 src/tree_sitter/
 
 # Compiled binaries

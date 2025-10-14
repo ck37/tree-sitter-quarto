@@ -165,25 +165,25 @@ jobs:
           test -f src/tree_sitter/array.h || (echo "❌ Missing array.h" && exit 1)
           echo "✅ All headers present"
 
-      - name: Check for TSFieldMapSlice in parser.h
+      - name: Check for TSMapSlice in parser.h
         run: |
-          echo "Validating TSFieldMapSlice struct..."
-          if grep -q "TSFieldMapSlice" src/tree_sitter/parser.h; then
-            echo "✅ TSFieldMapSlice found in parser.h"
+          echo "Validating TSMapSlice struct..."
+          if grep -q "TSMapSlice" src/tree_sitter/parser.h; then
+            echo "✅ TSMapSlice found in parser.h"
           else
-            echo "❌ Missing TSFieldMapSlice in parser.h (required for Zed)"
+            echo "❌ Missing TSMapSlice in parser.h (required for Zed)"
             exit 1
           fi
 
-      - name: Check for parser generation bugs
+      - name: Check for abi_version in parser.h
         run: |
-          echo "Checking for known parser generation bugs..."
-          if grep -q "TSMapSlice[^F]" src/parser.c; then
-            echo "❌ Found TSMapSlice typo in parser.c"
-            echo "   Should be TSFieldMapSlice (tree-sitter 0.25.10 generation bug)"
+          echo "Checking for abi_version field in TSLanguage struct..."
+          if grep -q "abi_version" src/tree_sitter/parser.h; then
+            echo "✅ abi_version field found (tree-sitter 0.25.10)"
+          else
+            echo "❌ Missing abi_version field in parser.h"
             exit 1
           fi
-          echo "✅ No parser generation bugs found"
 
       - name: Build WASM
         run: |

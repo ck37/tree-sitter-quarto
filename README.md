@@ -59,9 +59,9 @@ See [docs/plan.md](./docs/plan.md) for detailed comparison and architecture.
 - [ ] Editor integration tested (Neovim, Zed, Helix)
 - [ ] Performance validated on large documents
 
-**Latest:** Enhanced divs fully implemented with 15 new tests. All 58 tests passing. 62/63 requirements (98%) implemented across 8 OpenSpec specifications. Callouts, tabsets, and conditional content now fully supported.
+**Latest:** Enhanced divs fully implemented with 15 new tests. All 58 tests passing. 62/63 requirements (98%) implemented across 8 OpenSpec specifications. Callouts, tabsets, and conditional content now fully supported. Generic fenced div limitation investigated and documented as architecture constraint.
 
-**Next Steps:** Editor plugin integration, generic fenced div fix, performance optimization
+**Next Steps:** Editor plugin integration, performance optimization, external scanner exploration
 
 ## Features
 
@@ -87,7 +87,7 @@ See [docs/plan.md](./docs/plan.md) for detailed comparison and architecture.
 **Total Specifications:** 8 (all implemented)
 
 ### 🚧 Future Enhancements (Phase 2+)
-- ⬜ **Generic fenced div fix** - Resolve base grammar issue with `::: {.custom-class}` syntax
+- ⬜ **Generic fenced div support** - Would require external scanner for context-sensitive lexing (see [technical analysis](./docs/generic-fenced-div-limitation.md))
 - ⬜ **Inline conditional spans** - `[text]{.content-visible}` syntax (requires inline grammar)
 - ⬜ **Figure/table cross-reference metadata** - Linking (may be better suited for language server)
 
@@ -246,17 +246,24 @@ tree-sitter-markdown
 
 - **[docs/plan.md](./docs/plan.md)** - Comprehensive implementation plan
 - **[docs/relationship-to-quarto-markdown.md](./docs/relationship-to-quarto-markdown.md)** - Relationship to official Quarto parser project
+- **[docs/generic-fenced-div-limitation.md](./docs/generic-fenced-div-limitation.md)** - Technical analysis of generic div parsing constraint
 - **[Architecture Comparison](../tree-sitter-pandoc-markdown/docs/quarto-parser-comparison.md)** - Detailed comparison with Quarto Parser
 
 ## Contributing
 
-This project is in early planning stages. Contributions are welcome once the foundation is implemented.
+Contributions are welcome! The parser is functional with all core features implemented.
 
-See [docs/plan.md](./docs/plan.md) for:
+**Areas for contribution:**
+- Editor plugin development (Neovim, Zed, Helix)
+- Performance optimization for large documents
+- Additional test cases and edge cases
+- Documentation improvements
+
+See [docs/plan.md](./docs/plan.md) and [CONTRIBUTING.md](./CONTRIBUTING.md) for:
 - Implementation strategy
 - Testing approach
-- Success criteria
-- Open questions
+- Development workflow
+- OpenSpec methodology
 
 ## License
 

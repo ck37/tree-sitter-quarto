@@ -36,6 +36,7 @@ module.exports = grammar({
     [$.pipe_table_header, $.inline],
     [$.executable_code_cell, $.fenced_code_block],  // Quarto: {python} vs python
     [$.shortcode_block, $.shortcode_inline],        // Shortcode can be block or inline
+    [$.inline_code_cell, $.code_span],              // `r expr` vs `code`
   ],
 
   rules: {
@@ -361,6 +362,7 @@ module.exports = grammar({
 
     _inline_element: $ => choice(
       $.text,
+      $.inline_code_cell,       // Quarto: `{python} expr` - check before code_span
       $.code_span,
       $.inline_math,
       $.emphasis,
@@ -369,7 +371,6 @@ module.exports = grammar({
       $.image,
       $.citation,
       $.cross_reference,        // Quarto: @fig-plot
-      $.inline_code_cell,       // Quarto: `{python} expr`
       $.shortcode_inline
     ),
 
@@ -449,7 +450,7 @@ module.exports = grammar({
      *
      * Spec: openspec/specs/inline-code-cells/spec.md
      */
-    inline_code_cell: $ => choice(
+    inline_code_cell: $ => prec.dynamic(1, choice(
       // Curly brace syntax: `{python} expr`
       seq(
         alias(token('`{'), $.inline_cell_delimiter),
@@ -461,13 +462,11 @@ module.exports = grammar({
       ),
       // Shorthand syntax: `r expr`
       seq(
-        alias(token('`'), $.inline_cell_delimiter),
-        field('language', alias(/r/, $.language_name)),
-        /[ \t]+/,
+        alias(token(seq('`r', /[ \t]+/)), $.inline_cell_delimiter),
         field('content', alias(/[^`]+/, $.cell_content)),
         alias(token('`'), $.inline_cell_delimiter)
       )
-    ),
+    )),
 
     /**
      * Inline Shortcode

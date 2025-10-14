@@ -813,7 +813,7 @@
       },
       "language": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "language_name",

@@ -12,19 +12,35 @@ tree-sitter-pandoc-markdown
 tree-sitter-markdown
 ```
 
+## Overview
+
+The Quarto ecosystem has **two tree-sitter grammar implementations**:
+
+1. **tree-sitter-quarto** (this project) - Production-ready for editor integration (2024)
+2. **quarto-markdown tree-sitter grammars** - Official but experimental, planned for production in early 2026
+
+**Why two parsers?** tree-sitter-quarto was created to provide **immediate, production-ready** editor support for Quarto Markdown, filling the gap until the official quarto-markdown tree-sitter grammars are production-ready. The official grammars are intentionally tightly coupled with quarto-markdown-pandoc and are not yet recommended for external use.
+
+**Which should you use?**
+- **Now (2024-2025):** Use tree-sitter-quarto for editor integration
+- **Future (2026+):** Consider migrating to official quarto-markdown grammars when they reach production status
+
+Both approaches are valid, and the Quarto team (@cscheid) is supportive of community efforts while they work toward official support.
+
 ## Quick Comparison Table
 
-| Feature | tree-sitter-quarto | Quarto Parser | tree-sitter-pandoc-markdown |
-|---------|-------------------|---------------|----------------------------|
-| **Parses chunk options** | ✅ As structured data | ❌ Handled by knitr | ❌ Not Quarto-aware |
-| **Distinguishes xrefs from citations** | ✅ Semantic nodes | ❌ Both as citations | ✅ Via Pandoc features |
-| **Recognizes executable cells** | ✅ First-class nodes | ⚠️ As code blocks | ❌ Not supported |
-| **Callout semantic parsing** | ✅ Specific node types | ⚠️ Generic divs | ⚠️ Generic divs |
-| **Primary use case** | **Editor features** | **Document rendering** | **Pandoc editing** |
-| **Target phase** | Pre-execution | Post-execution | N/A |
-| **Output format** | tree-sitter AST | Pandoc AST | tree-sitter AST |
-| **Language** | JavaScript + C | Rust | JavaScript + C |
-| **Status** | Alpha (functional) | Experimental | Production |
+| Feature | tree-sitter-quarto | quarto-markdown (tree-sitter) | quarto-markdown (pandoc) | tree-sitter-pandoc-markdown |
+|---------|-------------------|-------------------------------|--------------------------|----------------------------|
+| **Parses chunk options** | ✅ As structured data | ✅ As structured data | ❌ Handled by knitr | ❌ Not Quarto-aware |
+| **Distinguishes xrefs from citations** | ✅ Semantic nodes | ✅ Semantic nodes | ❌ Both as citations | ✅ Via Pandoc features |
+| **Recognizes executable cells** | ✅ First-class nodes | ✅ First-class nodes | ⚠️ As code blocks | ❌ Not supported |
+| **Callout semantic parsing** | ✅ Specific node types | ✅ Specific node types | ⚠️ Generic divs | ⚠️ Generic divs |
+| **Primary use case** | **Editor integration** | **Editor integration** | **Document rendering** | **Pandoc editing** |
+| **Grammar type** | Unified | Dual (block + inline) | Pulldown-cmark | Dual (block + inline) |
+| **Output format** | tree-sitter AST | tree-sitter AST | Pandoc AST | tree-sitter AST |
+| **Language** | JavaScript + C | Rust + C | Rust | JavaScript + C |
+| **Status** | Alpha (functional) | Experimental (pre-production) | Experimental | Production |
+| **Production-ready** | ✅ Yes (2024) | ⏳ Planned (early 2026) | ⏳ In development | ✅ Yes |
 
 ## Detailed Comparison
 
@@ -52,36 +68,69 @@ tree-sitter-markdown
 - Jump-to-definition and navigation
 - Autocomplete and code intelligence
 
-### Quarto Markdown Parser (Official)
+### quarto-markdown (Official Tree-sitter Grammars)
 
 **Repository:** https://github.com/quarto-dev/quarto-markdown
+
+**Grammars:**
+- Block: https://github.com/quarto-dev/quarto-markdown/tree/main/crates/tree-sitter-qmd/tree-sitter-markdown
+- Inline: https://github.com/quarto-dev/quarto-markdown/tree/main/crates/tree-sitter-qmd/tree-sitter-markdown-inline
+
+**Purpose:** Official tree-sitter grammars for Quarto Markdown, separate from the Pandoc AST conversion
+
+**Strengths:**
+- ✅ Official grammars from Quarto team (maintained by @cscheid)
+- ✅ Pure tree-sitter implementation (can be used independently)
+- ✅ Dual grammar architecture (block + inline) like tree-sitter-pandoc-markdown
+- ✅ Rust + C implementation (fast, safe)
+- ✅ Designed to work with quarto-cli (planned for early 2026)
+- ✅ Will be "blessed" frontend parser for Markdown in Posit products
+- ✅ Authors willing to help navigate the grammars
+
+**Limitations:**
+- ⚠️ **Not production-ready yet** (planned for early 2026)
+- ⚠️ Experimental status (opt-in in quarto-cli initially)
+- ⚠️ **No PRs accepted for grammar changes** (must be controlled by Quarto project)
+- ⚠️ Deep dependency with quarto-markdown-pandoc (intentional design)
+- ⚠️ Dual grammar complexity (block/inline interplay)
+- ⚠️ No tree-sitter query files yet
+- ⚠️ Documentation minimal (pre-production)
+
+**Best for:**
+- Future editor integration (when production-ready in 2026)
+- Projects that can wait for official support
+- Integrating with future Quarto tooling
+- Alignment with Quarto project roadmap
+
+**Current status:**
+- Available in repository but **not recommended for production use**
+- Team will take bug reports seriously
+- Intended for use in quarto-cli starting early 2026
+- Migration expected to take a long time
+
+**Contact:** @cscheid (author) is happy to help navigate the grammars
+
+### quarto-markdown (Pandoc Parser)
+
+**Repository:** https://github.com/quarto-dev/quarto-markdown (quarto-markdown-pandoc crate)
 
 **Purpose:** Document rendering and compilation to Pandoc AST
 
 **Strengths:**
-- ✅ Official parser from Quarto team
 - ✅ Produces Pandoc AST for filter pipeline
 - ✅ Integrated with Quarto rendering engine
-- ✅ Rust implementation (fast, safe)
 - ✅ Handles post-execution markdown (after knitr/jupyter runs)
 
 **Limitations:**
-- ⚠️ Experimental status (not production-ready)
+- ⚠️ Experimental status
 - ⚠️ Parses **after** code execution (post-knitr output)
-- ⚠️ Not optimized for editor integration
+- ⚠️ Not designed for editor integration
 - ⚠️ Chunk options handled by knitr (not parsed as first-class constructs)
-- ⚠️ No tree-sitter queries (not designed for syntax highlighting)
 
 **Best for:**
 - Document rendering pipeline
 - Pandoc filter development
 - Post-execution markdown processing
-- Integration with Quarto CLI
-
-**Not ideal for:**
-- Editor integration (tree-sitter better suited)
-- Pre-execution tooling
-- Syntax highlighting as you type
 
 ### tree-sitter-pandoc-markdown (Base Grammar)
 
@@ -115,14 +164,27 @@ tree-sitter-markdown
 
 ### Choose tree-sitter-quarto when:
 
-- ✅ Building editor plugins/extensions
-- ✅ Need syntax highlighting for `.qmd` files
+- ✅ Building editor plugins/extensions **today** (production-ready)
+- ✅ Need syntax highlighting for `.qmd` files now
 - ✅ Want to parse **before** code execution
 - ✅ Need semantic understanding of Quarto constructs
 - ✅ Building autocomplete/navigation features
 - ✅ Creating linters or formatters
+- ✅ Can't wait until 2026 for official tree-sitter support
+- ✅ Prefer unified grammar architecture (simpler)
+- ✅ Want comprehensive query files included
 
-### Choose Quarto Parser when:
+### Choose quarto-markdown tree-sitter grammars when:
+
+- ✅ Can wait until early 2026 for production-ready support
+- ✅ Want official Quarto project grammars
+- ✅ Building for long-term alignment with Quarto ecosystem
+- ✅ Need dual grammar architecture (block + inline)
+- ✅ Comfortable with experimental/pre-production tools
+- ✅ Want to contribute bug reports to official project
+- ✅ Don't need query files immediately (can write your own)
+
+### Choose quarto-markdown Pandoc parser when:
 
 - ✅ Building rendering pipeline tools
 - ✅ Processing **after** code execution
@@ -230,38 +292,39 @@ Pandoc AST (for rendering)
 
 ### Executable Code Cells
 
-| Feature | tree-sitter-quarto | Quarto Parser |
-|---------|-------------------|---------------|
-| Recognize `{python}` syntax | ✅ | ⚠️ (as code block) |
-| Parse chunk options | ✅ | ❌ (knitr does this) |
-| Semantic `chunk_option` nodes | ✅ | ❌ |
-| Language injection | ✅ | N/A |
+| Feature | tree-sitter-quarto | quarto-markdown (tree-sitter) | quarto-markdown (pandoc) |
+|---------|-------------------|-------------------------------|--------------------------|
+| Recognize `{python}` syntax | ✅ | ✅ | ⚠️ (as code block) |
+| Parse chunk options | ✅ | ✅ | ❌ (knitr does this) |
+| Semantic `chunk_option` nodes | ✅ | ✅ | ❌ |
+| Language injection | ✅ | ✅ (with queries) | N/A |
+| Query files included | ✅ | ⚠️ (not yet) | N/A |
 
 ### Cross-References
 
-| Feature | tree-sitter-quarto | Quarto Parser |
-|---------|-------------------|---------------|
-| Parse `@fig-plot` | ✅ | ✅ |
-| Distinguish from `@author2020` | ✅ | ❌ |
-| Semantic `cross_reference` node | ✅ | ❌ (both as citations) |
-| Extract type prefix | ✅ | ❌ |
+| Feature | tree-sitter-quarto | quarto-markdown (tree-sitter) | quarto-markdown (pandoc) |
+|---------|-------------------|-------------------------------|--------------------------|
+| Parse `@fig-plot` | ✅ | ✅ | ✅ |
+| Distinguish from `@author2020` | ✅ | ✅ | ❌ |
+| Semantic `cross_reference` node | ✅ | ✅ | ❌ (both as citations) |
+| Extract type prefix | ✅ | ✅ | ❌ |
 
 ### Enhanced Divs
 
-| Feature | tree-sitter-quarto | Quarto Parser |
-|---------|-------------------|---------------|
-| Parse callout blocks | ✅ Semantic nodes | ⚠️ Generic divs |
-| Parse tabsets | ✅ Semantic nodes | ⚠️ Generic divs |
-| Parse conditional content | ✅ Semantic nodes | ⚠️ Generic divs |
-| Attribute parsing | ✅ Captured in tokens | ✅ Full parsing |
+| Feature | tree-sitter-quarto | quarto-markdown (tree-sitter) | quarto-markdown (pandoc) |
+|---------|-------------------|-------------------------------|--------------------------|
+| Parse callout blocks | ✅ Semantic nodes | ✅ Semantic nodes | ⚠️ Generic divs |
+| Parse tabsets | ✅ Semantic nodes | ✅ Semantic nodes | ⚠️ Generic divs |
+| Parse conditional content | ✅ Semantic nodes | ✅ Semantic nodes | ⚠️ Generic divs |
+| Attribute parsing | ✅ Captured in tokens | ✅ Full parsing | ✅ Full parsing |
 
 ### Shortcodes
 
-| Feature | tree-sitter-quarto | Quarto Parser |
-|---------|-------------------|---------------|
-| Parse `{{< video >}}` | ✅ | ✅ |
-| Block vs inline distinction | ✅ | ✅ |
-| Semantic nodes | ✅ | ✅ |
+| Feature | tree-sitter-quarto | quarto-markdown (tree-sitter) | quarto-markdown (pandoc) |
+|---------|-------------------|-------------------------------|--------------------------|
+| Parse `{{< video >}}` | ✅ | ✅ | ✅ |
+| Block vs inline distinction | ✅ | ✅ | ✅ |
+| Semantic nodes | ✅ | ✅ | ✅ |
 
 ## Performance Characteristics
 
@@ -273,13 +336,47 @@ Pandoc AST (for rendering)
 - **Memory usage:** Low (streaming parser)
 - **Best for:** Interactive editing with live updates
 
-### Quarto Parser
+### quarto-markdown tree-sitter grammars
+
+- **Parsing speed:** Fast (Rust + C implementation)
+- **Incremental parsing:** ✅ Yes (tree-sitter)
+- **Target latency:** <100ms for typical documents
+- **Memory usage:** Low (streaming parser)
+- **Best for:** Interactive editing with live updates (when production-ready)
+
+### quarto-markdown Pandoc parser
 
 - **Parsing speed:** Fast (Rust implementation)
 - **Incremental parsing:** ❌ No (batch processing)
 - **Target latency:** Not critical (offline rendering)
 - **Memory usage:** Moderate (full AST in memory)
 - **Best for:** Batch rendering of documents
+
+## Relationship to Official Quarto Project
+
+**Acknowledgment:** Thanks to @cscheid (Carlos Scheidegger, author of quarto-markdown) for clarifying the architecture of quarto-markdown and the existence of the official tree-sitter grammars (see [Zed issue #12406](https://github.com/zed-industries/zed/issues/12406#issuecomment-3402303659)).
+
+**Key points:**
+- The official quarto-markdown repository **does contain pure tree-sitter grammars** (block + inline)
+- These are separate from the tree-sitter-to-pandoc-AST conversion (quarto-markdown-pandoc crate)
+- The grammars can be consumed independently of the Pandoc conversion
+- They are intentionally tightly coupled with quarto-markdown-pandoc for the Quarto project's needs
+- The official grammars are **not yet production-ready** but are on the roadmap for early 2026
+
+**tree-sitter-quarto's role:**
+- Provides **immediate production-ready support** (2024) while official grammars mature
+- Uses unified grammar architecture (simpler for some use cases)
+- Includes comprehensive query files for syntax highlighting
+- Designed specifically for editor integration
+- Community-maintained with different architectural choices
+
+**Both projects are complementary:**
+- tree-sitter-quarto serves current needs (2024-2025)
+- quarto-markdown grammars will be the blessed official solution (2026+)
+- Migration path exists when official grammars reach production status
+- Quarto team is supportive of community efforts
+
+**Contact:** The quarto-markdown maintainers welcome bug reports and are happy to help navigate their grammars for those interested in using them.
 
 ## Related Documentation
 

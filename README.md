@@ -1,4 +1,4 @@
-# tree-sitter-qmd
+# tree-sitter-quarto
 
 Tree-sitter parser for Quarto Markdown (`.qmd` files), optimized for editor integration.
 
@@ -22,11 +22,11 @@ There are currently two Pandoc Markdown parsers with different goals:
 1. **[tree-sitter-pandoc-markdown](https://github.com/ck37/tree-sitter-pandoc-markdown)** - Editor-focused parser for Pandoc Markdown, but not Quarto-aware
 2. **[Quarto Markdown Parser](https://github.com/quarto-dev/quarto-markdown)** - Rendering-focused parser that produces Pandoc AST for document compilation
 
-**tree-sitter-qmd bridges the gap** by providing a rich AST for Quarto documents as they're being authored in editors, before execution.
+**tree-sitter-quarto bridges the gap** by providing a rich AST for Quarto documents as they're being authored in editors, before execution.
 
 ### Key Differences
 
-| Feature | tree-sitter-qmd | Quarto Parser | tree-sitter-pandoc-markdown |
+| Feature | tree-sitter-quarto | Quarto Parser | tree-sitter-pandoc-markdown |
 |---------|----------------|---------------|----------------------------|
 | Parses chunk options (`#\| label:`) | ✅ | ❌ (handled by knitr) | ❌ |
 | Distinguishes xrefs from citations | ✅ | ❌ (both as citations) | ✅ |
@@ -141,14 +141,14 @@ The mean is `{python} mean([1, 2, 3])`.
 ## Relationship to Other Projects
 
 ```
-tree-sitter-qmd
+tree-sitter-quarto
     ↓ extends
 tree-sitter-pandoc-markdown
     ↓ fork of
 tree-sitter-markdown
 ```
 
-**tree-sitter-qmd** extends [tree-sitter-pandoc-markdown](https://github.com/ck37/tree-sitter-pandoc-markdown) with Quarto-specific features:
+**tree-sitter-quarto** extends [tree-sitter-pandoc-markdown](https://github.com/ck37/tree-sitter-pandoc-markdown) with Quarto-specific features:
 - Executable code cells with chunk options
 - Cross-reference semantic distinction
 - Quarto div types (callouts, tabsets)

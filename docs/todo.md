@@ -1,4 +1,4 @@
-# tree-sitter-qmd Implementation Checklist
+# tree-sitter-quarto Implementation Checklist
 
 **Status:** Planning Phase
 **Last Updated:** 2025-10-13
@@ -29,7 +29,7 @@
 
 ## Stage 2: Core Grammar Implementation
 
-### Block Grammar (tree-sitter-qmd-block)
+### Block Grammar (tree-sitter-quarto-block)
 
 #### Executable Code Cells
 - [ ] Define `executable_code_cell` rule
@@ -64,7 +64,7 @@
 - [ ] Test: Tabsets
 - [ ] Test: Conditional divs
 
-### Inline Grammar (tree-sitter-qmd-inline)
+### Inline Grammar (tree-sitter-quarto-inline)
 
 #### Cross-References
 - [ ] Define `cross_reference` token (distinct from citations)

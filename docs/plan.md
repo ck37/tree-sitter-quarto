@@ -1,4 +1,4 @@
-# tree-sitter-qmd Implementation Plan
+# tree-sitter-quarto Implementation Plan
 
 **Created:** 2025-10-13
 **Status:** Planning Phase
@@ -31,28 +31,28 @@ Build a tree-sitter parser for Quarto Markdown (`.qmd` files) that combines the 
 - No semantic distinction between cross-references and citations
 - Cell boundaries not explicit in AST
 
-**Solution:** tree-sitter-qmd fills this gap by providing rich AST for Quarto documents as they're being authored, before execution.
+**Solution:** tree-sitter-quarto fills this gap by providing rich AST for Quarto documents as they're being authored, before execution.
 
 ## Architecture
 
 ### Relationship to tree-sitter-pandoc-markdown
 
 ```
-tree-sitter-qmd/
-├── tree-sitter-qmd-block/        # Extends pandoc-markdown block grammar
+tree-sitter-quarto/
+├── tree-sitter-quarto-block/     # Extends pandoc-markdown block grammar
 │   ├── grammar.js                # Adds: executable cells, chunk options
 │   ├── src/scanner.c             # Extends: cell boundary detection
 │   └── queries/
 │       ├── highlights.scm        # Quarto-specific highlighting
 │       └── injections.scm        # Language injection for cells
 │
-├── tree-sitter-qmd-inline/       # Extends pandoc-markdown inline grammar
+├── tree-sitter-quarto-inline/    # Extends pandoc-markdown inline grammar
 │   ├── grammar.js                # Adds: cross-reference distinction
 │   ├── queries/
 │       └── highlights.scm        # Enhanced citation/xref highlighting
 │
 └── common/
-    ├── qmd-extensions.js         # Quarto-specific rules
+    ├── quarto-extensions.js      # Quarto-specific rules
     └── cell-languages.json       # Supported cell languages
 ```
 
@@ -79,7 +79,7 @@ tree-sitter-qmd/
 
 **1.1 Executable Code Cells**
 
-```qmd
+```markdown
 ```{python}
 #| label: fig-plot
 #| echo: false
@@ -138,7 +138,7 @@ chunk_option_value: $ => /[^\r\n]+/,
 
 Distinguish cross-references from citations at parse time:
 
-```qmd
+```markdown
 See @fig-plot for details.           → (cross_reference type:fig id:plot)
 According to @smith2020, we find...  → (citation id:smith2020)
 ```
@@ -157,7 +157,7 @@ citation: $ => token(/@[A-Za-z0-9_-]+/),
 
 **1.3 Inline Code Cells**
 
-```qmd
+```markdown
 The result is `r mean(x)`.
 The value is `{python} compute_value()`.
 ```
@@ -277,7 +277,7 @@ Link table captions to cross-reference IDs.
 
 1. **Project Structure**
    ```bash
-   git init tree-sitter-qmd
+   git init tree-sitter-quarto
    git submodule add ../tree-sitter-pandoc-markdown
    ```
 
@@ -287,7 +287,7 @@ Link table captions to cross-reference IDs.
    const pandoc = require('../tree-sitter-pandoc-markdown/tree-sitter-pandoc-markdown/grammar.js');
 
    module.exports = grammar(pandoc, {
-     name: 'qmd',
+     name: 'quarto',
      externals: $ => [
        ...pandoc.externals,
        $.cell_boundary,
@@ -449,9 +449,9 @@ Monitor Quarto releases for new syntax:
    - Feature requests
    - Quarto syntax changes
 
-## Comparison: tree-sitter-qmd vs Alternatives
+## Comparison: tree-sitter-quarto vs Alternatives
 
-| Feature | tree-sitter-qmd | Quarto Parser | tree-sitter-pandoc-markdown |
+| Feature | tree-sitter-quarto | Quarto Parser | tree-sitter-pandoc-markdown |
 |---------|----------------|---------------|----------------------------|
 | **Goal** | Editor integration | Rendering pipeline | Base Pandoc features |
 | **Parses** | Raw `.qmd` | Post-execution `.md` | `.md` files |
@@ -468,9 +468,9 @@ Monitor Quarto releases for new syntax:
 
 **Option A: Git Submodule**
 ```
-tree-sitter-qmd/
+tree-sitter-quarto/
 ├── tree-sitter-pandoc-markdown/  (submodule)
-└── tree-sitter-qmd/
+└── tree-sitter-quarto/
     └── grammar.js                (extends submodule)
 ```
 
@@ -486,7 +486,7 @@ tree-sitter-qmd/
 
 **Option B: Copy & Extend**
 ```
-tree-sitter-qmd/
+tree-sitter-quarto/
 └── grammar.js                    (copies + extends rules)
 ```
 

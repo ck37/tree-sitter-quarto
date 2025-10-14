@@ -12,7 +12,7 @@ execute:
 
 ## Introduction
 
-This document demonstrates Quarto Markdown features that tree-sitter-qmd aims to parse.
+This document demonstrates Quarto Markdown features that tree-sitter-quarto aims to parse.
 
 See @fig-scatter for the relationship between variables, and @tbl-summary for descriptive statistics.
 
@@ -221,7 +221,7 @@ print("Complex chunk options test")
 
 ## Conclusion
 
-This document exercises most Quarto Markdown features that tree-sitter-qmd aims to parse, including:
+This document exercises most Quarto Markdown features that tree-sitter-quarto aims to parse, including:
 
 1. ✅ Executable code cells with various languages
 2. ✅ Chunk options (`#| key: value`)

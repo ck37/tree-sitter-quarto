@@ -38,24 +38,36 @@ Build a tree-sitter parser for Quarto Markdown (`.qmd` files) that combines the 
 
 ### Relationship to tree-sitter-pandoc-markdown
 
+**Note:** While tree-sitter-pandoc-markdown uses a dual-grammar architecture (separate block and inline grammars), tree-sitter-quarto uses a **unified grammar** that merges both approaches into a single grammar file for simpler deployment.
+
 ```
 tree-sitter-quarto/
-├── tree-sitter-quarto-block/     # Extends pandoc-markdown block grammar
-│   ├── grammar.js                # Adds: executable cells, chunk options
-│   ├── src/scanner.c             # Extends: cell boundary detection
-│   └── queries/
-│       ├── highlights.scm        # Quarto-specific highlighting
-│       └── injections.scm        # Language injection for cells
-│
-├── tree-sitter-quarto-inline/    # Extends pandoc-markdown inline grammar
-│   ├── grammar.js                # Adds: cross-reference distinction
-│   ├── queries/
-│       └── highlights.scm        # Enhanced citation/xref highlighting
-│
+├── grammar.js                    # Unified grammar (593 lines)
+│                                 # Combines block + inline rules
+│                                 # Adds: executable cells, chunk options,
+│                                 #       cross-references, inline cells,
+│                                 #       shortcodes, enhanced divs
+├── src/
+│   ├── parser.c                  # Generated parser (committed for editors)
+│   └── scanner.c                 # External scanner for context-sensitive parsing
+├── queries/
+│   ├── highlights.scm            # Syntax highlighting for all features
+│   ├── injections.scm            # Language injection for code cells
+│   ├── folds.scm                 # Folding for cells and divs
+│   └── indents.scm               # Indentation rules
 └── common/
-    ├── quarto-extensions.js      # Quarto-specific rules
-    └── cell-languages.json       # Supported cell languages
+    └── (empty - reserved for future shared utilities)
 ```
+
+**Unified vs Dual Grammar:**
+- **tree-sitter-pandoc-markdown**: 2 grammars (437 + 280 lines = 717 total)
+  - `pandoc_markdown` (block) + `pandoc_markdown_inline` (inline)
+  - Two-phase parsing strategy
+  - Requires two .so files / WASM modules
+- **tree-sitter-quarto**: 1 grammar (593 lines)
+  - Merges both block and inline rules
+  - Single-phase parsing
+  - Simpler editor integration (one .so / WASM)
 
 ### Design Philosophy
 
@@ -316,44 +328,37 @@ Link table captions to cross-reference IDs.
 
 ## Implementation Strategy
 
-### Stage 1: Setup & Foundation (Week 1)
+### Stage 1: Setup & Foundation ✅ COMPLETE
 
-1. **Project Structure**
+1. **Project Structure** ✅
    ```bash
    git init tree-sitter-quarto
-   mkdir -p src common
-   # Copy base grammar from tree-sitter-pandoc-markdown
-   cp ../tree-sitter-pandoc-markdown/grammar.js ./pandoc-markdown-base.js
+   mkdir -p src common queries test/corpus
    ```
 
-2. **Import Base Grammar**
-   ```javascript
-   // grammar.js
-   // Copy grammar from tree-sitter-pandoc-markdown or use as npm dependency
-   const pandoc = require('./pandoc-markdown-base');  // Copied grammar
-   // OR: const pandoc = require('tree-sitter-pandoc-markdown');  // If published to npm
+2. **Copy & Extend Base Grammar** ✅
+   Manually copied rules from both tree-sitter-pandoc-markdown grammars:
+   - Copied block rules from `tree-sitter-pandoc-markdown/grammar.js`
+   - Copied inline rules from `tree-sitter-pandoc-markdown-inline/grammar.js`
+   - Merged into single unified `grammar.js` (593 lines)
+   - Added Quarto-specific nodes:
+     - `executable_code_cell` - Code cells with language
+     - `chunk_options` / `chunk_option` - #| syntax
+     - `cross_reference` - @fig-plot vs @citation
+     - `inline_code_cell` - Inline execution
+     - `shortcode_block` / `shortcode_inline` - {{< ... >}}
+     - `callout_block` / `tabset_block` / `conditional_block` - Enhanced divs
 
-   module.exports = grammar(pandoc, {
-     name: 'quarto',
-     externals: $ => [
-       ...pandoc.externals,
-       $.cell_boundary,
-     ],
-     rules: {
-       // Extend pandoc rules
-       _block: $ => choice(
-         ...pandoc._block.members,
-         $.executable_code_cell
-       ),
-       // ... additional rules
-     }
-   });
-   ```
+   **Source tracking:**
+   - Base: tree-sitter-pandoc-markdown
+   - Commit: 95f296eb8a9f28760f3b6ae34084282a1b9dc52a
+   - Date: 2025-10-14
 
-3. **Test Infrastructure**
-   - Copy test framework from tree-sitter-pandoc-markdown
-   - Create `test/corpus/executable-cells.txt`
-   - Add CI/CD pipeline
+3. **Test Infrastructure** ✅
+   - Created test/corpus/ directory structure
+   - 58 test cases across 8 corpus files
+   - All tests passing (100%)
+   - CI/CD pipeline with GitHub Actions
 
 ### Stage 2: Core Features (Week 2-3)
 

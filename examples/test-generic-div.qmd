@@ -1,3 +1,0 @@
-::: {.my-custom-class}
-This should be a generic fenced_div.
-:::

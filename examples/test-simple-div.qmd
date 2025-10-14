@@ -1,3 +1,0 @@
-:::
-This should be a simple fenced_div without attributes.
-:::

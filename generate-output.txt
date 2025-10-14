@@ -1,2 +1,0 @@
-npm error could not determine executable to run
-npm error A complete log of this run can be found in: /Users/ck432/.npm/_logs/2025-10-14T12_33_53_790Z-debug-0.log

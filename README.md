@@ -77,13 +77,17 @@ See [docs/plan.md](./docs/plan.md) for detailed comparison and architecture.
 - ✅ **Full Pandoc Markdown** - Headings, emphasis, links, images, tables, etc.
 
 **Test Coverage:** 42/42 tests passing (100%)
-**Spec Coverage:** 53/54 requirements (98%) across 7 OpenSpec specifications
+**Spec Coverage:** 53/54 requirements (98%) across 7 implemented specifications
 
-### 🚧 In Progress (Phase 2)
-- ⬜ Callout blocks (`::: {.callout-note}`) - Generic divs work, semantic parsing planned
-- ⬜ Tabsets (`::: {.panel-tabset}`) - Generic divs work, semantic parsing planned
-- ⬜ Conditional content - Generic divs work, attribute parsing planned
-- ⬜ Figure/table cross-reference metadata - Needs linking implementation
+**Total Specifications:** 8 (7 implemented + 1 spec'd)
+
+### 🚧 Spec'd but Not Yet Implemented (Phase 2)
+- 📋 **Enhanced divs** - Spec complete (11 requirements, 18 scenarios)
+  - Callout blocks (`::: {.callout-note}`) - 5 types: note, warning, important, tip, caution
+  - Tabsets (`::: {.panel-tabset}`) - Tab structure with groups and styling
+  - Conditional content (`::: {.content-visible when-format="html"}`) - Format and metadata conditions
+  - Generic divs already parse correctly; enhancement adds semantic nodes
+- ⬜ Figure/table cross-reference metadata - Linking (may be better suited for language server)
 
 ### 📋 Planned (Phase 3)
 - ⬜ Cross-reference validation - Requires language server

@@ -488,20 +488,33 @@ Based on comprehensive spec verification (see `openspec/specs/*/verification.md`
   **Status:** Acceptable limitation for v1.0
 
 ### Implementation Status
+
+**Implemented:**
 - **54 total requirements** across 7 OpenSpec specifications
 - **53 requirements (98%)** fully implemented
 - **1 requirement** with acceptable limitation (multi-line chunk options)
 - **All core features** working correctly
 - **42 tests passing** in CI on Ubuntu and macOS (27 original + 15 shortcodes)
 
-For detailed verification reports, see:
+**Spec'd but Not Yet Implemented:**
+- **Enhanced divs** specification: 11 requirements across 18 scenarios
+  - Callout blocks (5 types with appearance attributes)
+  - Tabsets (tab structure, groups, styling)
+  - Conditional content (format and metadata conditions)
+
+**Total:** 8 specifications (7 implemented + 1 draft)
+
+For detailed verification reports of implemented specs, see:
 - `openspec/specs/chunk-options/verification.md`
 - `openspec/specs/inline-code-cells/verification.md`
 - `openspec/specs/executable-cells/verification.md`
 - `openspec/specs/cross-references/verification.md`
 - `openspec/specs/grammar-foundation/verification.md`
 - `openspec/specs/language-injection/verification.md`
-- `openspec/specs/shortcodes/verification.md` ✅ **NEW**
+- `openspec/specs/shortcodes/verification.md`
+
+For draft specifications:
+- `openspec/specs/enhanced-divs/spec.md` 📋 **NEW** (not yet implemented)
 
 ## Maintenance & Evolution
 

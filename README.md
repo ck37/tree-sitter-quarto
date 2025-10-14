@@ -19,7 +19,7 @@ A [tree-sitter](https://tree-sitter.github.io/) parser that provides rich syntax
 
 There are currently two Pandoc Markdown parsers with different goals:
 
-1. **[tree-sitter-pandoc-markdown](https://github.com/ck432/tree-sitter-pandoc-markdown)** - Editor-focused parser for Pandoc Markdown, but not Quarto-aware
+1. **[tree-sitter-pandoc-markdown](https://github.com/ck37/tree-sitter-pandoc-markdown)** - Editor-focused parser for Pandoc Markdown, but not Quarto-aware
 2. **[Quarto Markdown Parser](https://github.com/quarto-dev/quarto-markdown)** - Rendering-focused parser that produces Pandoc AST for document compilation
 
 **tree-sitter-qmd bridges the gap** by providing a rich AST for Quarto documents as they're being authored in editors, before execution.
@@ -148,7 +148,7 @@ tree-sitter-pandoc-markdown
 tree-sitter-markdown
 ```
 
-**tree-sitter-qmd** extends [tree-sitter-pandoc-markdown](https://github.com/ck432/tree-sitter-pandoc-markdown) with Quarto-specific features:
+**tree-sitter-qmd** extends [tree-sitter-pandoc-markdown](https://github.com/ck37/tree-sitter-pandoc-markdown) with Quarto-specific features:
 - Executable code cells with chunk options
 - Cross-reference semantic distinction
 - Quarto div types (callouts, tabsets)
@@ -178,7 +178,7 @@ MIT License (to be confirmed)
 
 ## Related Projects
 
-- **[tree-sitter-pandoc-markdown](https://github.com/ck432/tree-sitter-pandoc-markdown)** - Base grammar we extend
+- **[tree-sitter-pandoc-markdown](https://github.com/ck37/tree-sitter-pandoc-markdown)** - Base grammar we extend
 - **[Quarto Markdown Parser](https://github.com/quarto-dev/quarto-markdown)** - Rendering-focused alternative
 - **[tree-sitter-markdown](https://github.com/tree-sitter-grammars/tree-sitter-markdown)** - Original upstream grammar
 - **[Quarto](https://quarto.org/)** - Scientific publishing system this parser supports

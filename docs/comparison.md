@@ -14,18 +14,22 @@ tree-sitter-markdown
 
 ## Overview
 
-The Quarto ecosystem has **two tree-sitter grammar implementations**:
+The Quarto ecosystem benefits from **two complementary tree-sitter grammar implementations**:
 
-1. **tree-sitter-quarto** (this project) - Production-ready for editor integration (2025)
-2. **quarto-markdown tree-sitter grammars** - Official but experimental, planned for production in early 2026
+1. **tree-sitter-quarto** (this project) - Community grammar, production-ready for immediate editor integration (2025)
+2. **quarto-markdown tree-sitter grammars** - Official grammars under active development, planned for production in early 2026
 
-**Why two parsers?** tree-sitter-quarto was created to provide **immediate, production-ready** editor support for Quarto Markdown, filling the gap until the official quarto-markdown tree-sitter grammars are production-ready. The official grammars are intentionally tightly coupled with quarto-markdown-pandoc and are not yet recommended for external use.
+**Why two implementations?** tree-sitter-quarto was created to meet the immediate need for editor support while the official Quarto team develops their comprehensive solution. This reflects a healthy open-source ecosystem where community projects can fill gaps while official solutions mature.
 
 **Which should you use?**
-- **Now (2025):** Use tree-sitter-quarto for editor integration
-- **Future (2026+):** Consider migrating to official quarto-markdown grammars when they reach production status
+- **Now (2025):** Use tree-sitter-quarto for immediate editor integration needs
+- **Future (2026+):** Plan to migrate to official quarto-markdown grammars when they reach production status
 
-Both approaches are valid, and the Quarto team (@cscheid) is supportive of community efforts while they work toward official support.
+**Both efforts serve the community:**
+- tree-sitter-quarto provides production-ready support today (unified grammar, comprehensive queries)
+- Official grammars offer long-term official support (dual grammar architecture, deep Quarto integration)
+- The Quarto team (@cscheid) is supportive of community efforts and welcomes collaboration
+- Both implementations share the same goal: excellent Quarto Markdown editing experiences
 
 ## Quick Comparison Table
 
@@ -87,28 +91,31 @@ Both approaches are valid, and the Quarto team (@cscheid) is supportive of commu
 - ✅ Will be "blessed" frontend parser for Markdown in Posit products
 - ✅ Authors willing to help navigate the grammars
 
-**Limitations:**
-- ⚠️ **Not production-ready yet** (planned for early 2026)
-- ⚠️ Experimental status (opt-in in quarto-cli initially)
-- ⚠️ **No PRs accepted for grammar changes** (must be controlled by Quarto project)
-- ⚠️ Deep dependency with quarto-markdown-pandoc (intentional design)
-- ⚠️ Dual grammar complexity (block/inline interplay)
-- ⚠️ No tree-sitter query files yet
-- ⚠️ Documentation minimal (pre-production)
+**Current Development Status (as of October 2025):**
+- ⏳ Pre-production development phase (target: early 2026)
+- 🚧 Marked as internal packages (`"private": true` in package.json)
+- 🔧 Very active development (daily commits with improvements and bug fixes)
+- ✅ Comprehensive test coverage already in place
+- ✅ Basic query files (highlights.scm, injections.scm) present
+- 📋 Bug reports welcome and taken seriously by the team
+
+**Architecture Considerations:**
+- Dual grammar architecture (block + inline) provides clear separation
+- Intentionally coupled with quarto-markdown-pandoc for coordinated releases
+- Grammar modifications controlled by Quarto project (no external PRs)
+- Documentation focused on internal use during development phase
 
 **Best for:**
 - Future editor integration (when production-ready in 2026)
 - Projects that can wait for official support
 - Integrating with future Quarto tooling
 - Alignment with Quarto project roadmap
+- Long-term stability with official Posit backing
 
-**Current status:**
-- Available in repository but **not recommended for production use**
-- Team will take bug reports seriously
-- Intended for use in quarto-cli starting early 2026
-- Migration expected to take a long time
+**Why not production-ready yet:**
+The Quarto team is thoughtfully developing these grammars as part of a larger ecosystem. They're taking time to ensure quality, stability, and proper integration with Quarto CLI before recommending external use. This careful approach will result in a robust, well-supported solution when ready.
 
-**Contact:** @cscheid (author) is happy to help navigate the grammars
+**Contact:** @cscheid (author) is happy to help navigate the grammars and welcomes bug reports
 
 ### quarto-markdown (Pandoc Parser)
 
@@ -257,15 +264,22 @@ Pandoc AST (for rendering)
 | Quarto Parser | Pulldown-cmark | Rust | N/A |
 | tree-sitter-pandoc-markdown | LR(1) | JavaScript + C | tree-sitter |
 
-## Complementary, Not Competitive
+## Complementary Efforts Serving the Community
 
-**Important:** These parsers serve **different purposes** in the Quarto ecosystem:
+**Important:** The Quarto ecosystem has multiple parsing solutions working together:
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│ Authoring Phase (in editor)                        │
+│ Authoring Phase (in editor) - 2025                 │
 │                                                     │
 │  .qmd file → [tree-sitter-quarto] → Editor features│
+│                                                     │
+└─────────────────────────────────────────────────────┘
+                        ↓
+┌─────────────────────────────────────────────────────┐
+│ Authoring Phase (in editor) - 2026+                │
+│                                                     │
+│  .qmd file → [Official tree-sitter] → Editor tools │
 │                                                     │
 └─────────────────────────────────────────────────────┘
                         ↓
@@ -284,9 +298,13 @@ Pandoc AST (for rendering)
 └─────────────────────────────────────────────────────┘
 ```
 
-**You can use both:**
-- **tree-sitter-quarto** in your editor for authoring
-- **Quarto Parser** in Quarto CLI for rendering
+**Timeline and Migration Path:**
+- **2025:** tree-sitter-quarto provides production-ready editor integration
+- **Early 2026:** Official grammars reach production readiness
+- **2026+:** Community can migrate to official grammars for long-term support
+- **All phases:** Users benefit from improving Quarto editing and rendering tools
+
+Both tree-sitter implementations serve the same purpose (editor integration) at different maturity stages. The existence of both reflects healthy open-source collaboration where the community can meet immediate needs while official solutions are being thoughtfully developed.
 
 ## Feature Coverage Comparison
 
@@ -365,18 +383,18 @@ Pandoc AST (for rendering)
 - The official grammars are **not yet production-ready** but are on the roadmap for early 2026
 
 **tree-sitter-quarto's role:**
-- **Necessary bridge solution** that fills the 1-year gap while official grammars mature
-- Provides **immediate production-ready support** (2025) while official grammars stabilize
-- Uses unified grammar architecture (simpler for some use cases)
-- Includes comprehensive query files for syntax highlighting
-- Designed specifically for editor integration
-- Community-maintained with different architectural choices
+- **Community bridge solution** meeting immediate editor integration needs (2025)
+- Provides production-ready support today while official grammars undergo careful development
+- Uses unified grammar architecture (different architectural approach)
+- Includes comprehensive query files for immediate editor use
+- Community-maintained with complementary design choices
 
-**Both projects serve the same goal (editor integration):**
-- tree-sitter-quarto serves immediate needs (2025)
-- quarto-markdown grammars will be the blessed official solution (2026+)
-- **Migration path recommended** when official grammars reach production status
-- Quarto team is supportive of community efforts filling the gap
+**Both projects serve the same goal (excellent Quarto editing):**
+- tree-sitter-quarto: Immediate production support (2025) for the community
+- Official grammars: Long-term, officially-supported solution (2026+) with deep Quarto integration
+- **Migration path available** when official grammars reach production status
+- Quarto team (@cscheid) is supportive and collaborative with community efforts
+- Active development on official grammars (daily commits as of October 2025)
 
 **Why migrate to official grammars in 2026+:**
 - Battle-tested in Posit's production editors (RStudio, Positron)

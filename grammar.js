@@ -140,6 +140,8 @@ module.exports = grammar({
     // YAML Front Matter
     // NOTE: Standalone `---` at document start is ambiguous with thematic break.
     // This grammar treats it as (invalid) YAML front matter.
+    // LIMITATION: Lines starting with whitespace (indented YAML) may not parse correctly.
+    // This is acceptable since YAML content should be language-injected to a proper YAML parser.
     yaml_front_matter: $ => prec(-1, seq(
       field('start', alias(token(seq('---', /\r?\n/)), $.yaml_front_matter_start)),
       repeat(seq(alias(token(prec(-1, /[^\r\n]+/)), $.yaml_front_matter_content), /\r?\n/)),

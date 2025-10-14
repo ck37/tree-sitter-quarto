@@ -10,9 +10,23 @@
  * - Cross-reference distinction (@fig-plot vs @citation)
  * - Inline code cells (`{python} expr`)
  *
- * Base: Adapted from tree-sitter-pandoc-markdown
- * Source: /Users/ck432/Partners HealthCare Dropbox/Chris Kennedy/Code/tree-sitter-pandoc-markdown
- * Strategy: Copy & Extend (see docs/plan.md)
+ * SOURCE TRACKING (per openspec/specs/grammar-foundation requirement):
+ * - Base: tree-sitter-pandoc-markdown
+ * - Source path: /Users/ck432/Partners HealthCare Dropbox/Chris Kennedy/Code/tree-sitter-pandoc-markdown
+ * - Commit: 95f296eb8a9f28760f3b6ae34084282a1b9dc52a
+ * - Date copied: 2025-10-14
+ * - Strategy: Copy & Extend (see docs/plan.md)
+ *
+ * MODIFICATIONS FROM BASE:
+ * - Added executable_code_cell node for {language} syntax
+ * - Added chunk_options and chunk_option nodes for #| syntax
+ * - Added cross_reference node to distinguish from citations
+ * - Added inline_code_cell node for inline execution
+ * - Extended _block choice to include executable_code_cell
+ * - Extended _inline_element choice to include inline_code_cell and cross_reference
+ * - Modified conflicts array for new node types
+ * - Token-based chunk option parsing with token(prec(2, '#|'))
+ * - R shorthand syntax using token(seq('`r', /[ \t]+/))
  */
 
 function thematicLine(char) {

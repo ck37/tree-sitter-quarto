@@ -11,14 +11,15 @@ Text with ^[inline note] here.
   (paragraph
     content: (inline
       (text)
-      (inline_footnote)
+      (inline_footnote
+        (footnote_text))
       (text))))
 
 ==================
 Nested inline footnotes
 ==================
 
-^[outer note] ^[inner note]
+^[outer^[inner]]
 
 ---
 
@@ -26,9 +27,10 @@ Nested inline footnotes
   (blank_line)
   (paragraph
     content: (inline
-      (inline_footnote)
-      (text)
-      (inline_footnote))))
+      (inline_footnote
+        (footnote_text)
+        (inline_footnote
+          (footnote_text))))))
 
 ==================
 Basic footnote reference
@@ -123,14 +125,55 @@ Text with first[^1] and inline^[note] and second[^2].
       (footnote_reference
         (footnote_reference_marker))
       (text)
-      (inline_footnote)
+      (inline_footnote
+        (footnote_text))
       (text)
       (footnote_reference
         (footnote_reference_marker))
       (text))))
 
 ==================
-Footnote with inline code
+Inline footnote with formatting
+==================
+
+^[text **bold**]
+
+---
+
+(document
+  (blank_line)
+  (paragraph
+    content: (inline
+      (inline_footnote
+        (footnote_text)
+        (strong_emphasis
+          (strong_emphasis_delimiter)
+          (text)
+          (strong_emphasis_delimiter))))))
+
+==================
+Inline footnote with code span
+==================
+
+Text with ^[note with `code span`].
+
+---
+
+(document
+  (blank_line)
+  (paragraph
+    content: (inline
+      (text)
+      (inline_footnote
+        (footnote_text)
+        (code_span
+          (code_span_delimiter)
+          (code_span_content)
+          (code_span_delimiter)))
+      (text))))
+
+==================
+Footnote definition with inline code
 ==================
 
 [^code]: This footnote has `inline code` in it.

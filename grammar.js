@@ -491,6 +491,9 @@ module.exports = grammar({
     // Text inside link brackets - excludes ] to allow proper link parsing
     link_text: $ => /[^\r\n`*_\[@<${\]]+/,
 
+    // Text inside inline footnotes - excludes ] and ^ and [ to allow proper footnote parsing
+    footnote_text: $ => /[^\r\n`*_\[@<${\[\]^]+/,
+
     code_span: $ => seq(
       alias(token('`'), $.code_span_delimiter),
       alias(/[^`]+/, $.code_span_content),
@@ -525,6 +528,14 @@ module.exports = grammar({
       $.strong_emphasis
     ),
 
+    _inline_footnote_element: $ => choice(
+      $.footnote_text,
+      $.code_span,
+      $.emphasis,
+      $.strong_emphasis,
+      $.inline_footnote  // Allow nested inline footnotes
+    ),
+
     image: $ => seq(
       token('!'),
       field('alt', seq('[', alias(/[^\]]*/, $.image_alt), ']')),
@@ -536,10 +547,14 @@ module.exports = grammar({
      *
      * ^[inline note content]
      *
-     * Pandoc-style inline footnote. Content can include other inline elements.
-     * Note: Currently parses content as plain text due to parsing complexity with nested brackets.
+     * Pandoc-style inline footnote. Content can include other inline elements including
+     * emphasis, strong emphasis, code spans, and nested inline footnotes.
      */
-    inline_footnote: $ => token(/\^\[[^\]]+\]/),
+    inline_footnote: $ => prec(2, seq(
+      token('^['),
+      repeat1($._inline_footnote_element),
+      ']'
+    )),
 
     /**
      * Footnote Reference

@@ -2075,6 +2075,10 @@
       "type": "PATTERN",
       "value": "[^\\r\\n`*_\\[@<${\\]]+"
     },
+    "footnote_text": {
+      "type": "PATTERN",
+      "value": "[^\\r\\n`*_\\[@<${\\[\\]^]+"
+    },
     "code_span": {
       "type": "SEQ",
       "members": [
@@ -2389,6 +2393,31 @@
         }
       ]
     },
+    "_inline_footnote_element": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "footnote_text"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "code_span"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "emphasis"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "strong_emphasis"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "inline_footnote"
+        }
+      ]
+    },
     "image": {
       "type": "SEQ",
       "members": [
@@ -2454,10 +2483,30 @@
       ]
     },
     "inline_footnote": {
-      "type": "TOKEN",
+      "type": "PREC",
+      "value": 2,
       "content": {
-        "type": "PATTERN",
-        "value": "\\^\\[[^\\]]+\\]"
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "TOKEN",
+            "content": {
+              "type": "STRING",
+              "value": "^["
+            }
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_inline_footnote_element"
+            }
+          },
+          {
+            "type": "STRING",
+            "value": "]"
+          }
+        ]
       }
     },
     "footnote_reference": {

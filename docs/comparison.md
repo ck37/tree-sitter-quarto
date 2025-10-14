@@ -16,13 +16,13 @@ tree-sitter-markdown
 
 The Quarto ecosystem has **two tree-sitter grammar implementations**:
 
-1. **tree-sitter-quarto** (this project) - Production-ready for editor integration (2024)
+1. **tree-sitter-quarto** (this project) - Production-ready for editor integration (2025)
 2. **quarto-markdown tree-sitter grammars** - Official but experimental, planned for production in early 2026
 
 **Why two parsers?** tree-sitter-quarto was created to provide **immediate, production-ready** editor support for Quarto Markdown, filling the gap until the official quarto-markdown tree-sitter grammars are production-ready. The official grammars are intentionally tightly coupled with quarto-markdown-pandoc and are not yet recommended for external use.
 
 **Which should you use?**
-- **Now (2024-2025):** Use tree-sitter-quarto for editor integration
+- **Now (2025):** Use tree-sitter-quarto for editor integration
 - **Future (2026+):** Consider migrating to official quarto-markdown grammars when they reach production status
 
 Both approaches are valid, and the Quarto team (@cscheid) is supportive of community efforts while they work toward official support.
@@ -40,7 +40,7 @@ Both approaches are valid, and the Quarto team (@cscheid) is supportive of commu
 | **Output format** | tree-sitter AST | tree-sitter AST | Pandoc AST | tree-sitter AST |
 | **Language** | JavaScript + C | Rust + C | Rust | JavaScript + C |
 | **Status** | Alpha (functional) | Experimental (pre-production) | Experimental | Production |
-| **Production-ready** | ✅ Yes (2024) | ⏳ Planned (early 2026) | ⏳ In development | ✅ Yes |
+| **Production-ready** | ✅ Yes (2025) | ⏳ Planned (early 2026) | ⏳ In development | ✅ Yes |
 
 ## Detailed Comparison
 
@@ -364,14 +364,14 @@ Pandoc AST (for rendering)
 - The official grammars are **not yet production-ready** but are on the roadmap for early 2026
 
 **tree-sitter-quarto's role:**
-- Provides **immediate production-ready support** (2024) while official grammars mature
+- Provides **immediate production-ready support** (2025) while official grammars mature
 - Uses unified grammar architecture (simpler for some use cases)
 - Includes comprehensive query files for syntax highlighting
 - Designed specifically for editor integration
 - Community-maintained with different architectural choices
 
 **Both projects are complementary:**
-- tree-sitter-quarto serves current needs (2024-2025)
+- tree-sitter-quarto serves current needs (2025)
 - quarto-markdown grammars will be the blessed official solution (2026+)
 - Migration path exists when official grammars reach production status
 - Quarto team is supportive of community efforts

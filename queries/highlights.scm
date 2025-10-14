@@ -1,3 +1,20 @@
+; Quarto Syntax Highlighting (tree-sitter-quarto)
+;
+; NOTE: This file uses Zed-compatible scope names (@text.*, @emphasis.strong) converted
+; from tree-sitter-quarto's standard @markup.* scopes. This conversion is done at build time
+; to ensure compatibility with Zed's theming system.
+;
+; Original source: https://github.com/ck37/tree-sitter-quarto/queries/highlights.scm
+; Scope mapping:
+;   @markup.heading -> @text.title
+;   @markup.italic -> @text.emphasis  
+;   @markup.bold -> @emphasis.strong
+;   @markup.raw.* -> @text.literal
+;   @markup.link.text -> @text.reference
+;   @markup.link.url -> @text.uri
+;   @markup.quote -> @comment
+;   @markup.math.* -> @string
+
 ; Syntax highlighting queries for tree-sitter-quarto
 ; Based on openspec/specs/language-injection/spec.md
 
@@ -49,26 +66,28 @@
 ; --------
 
 (atx_heading
-  (atx_heading_marker) @punctuation.special) @markup.heading
+  (atx_heading_marker) @punctuation.special
+  content: (inline) @text.title)
 
 (setext_heading
-  (setext_heading_marker) @punctuation.special) @markup.heading
+  content: (inline) @text.title
+  (setext_heading_marker) @punctuation.special)
 
-; Emphasis
-; --------
+; Emphasis/Strong
+; ---------------
 
-(emphasis) @markup.italic
+(emphasis) @text.emphasis
 
-(strong_emphasis) @markup.bold
+(strong_emphasis) @emphasis.strong
 
 ; Code
 ; ----
 
-(code_span) @markup.raw.inline
+(code_span) @text.literal
 
 (code_span_delimiter) @punctuation.delimiter
 
-(fenced_code_block) @markup.raw.block
+(fenced_code_block) @text.literal
 
 (code_fence_delimiter) @punctuation.delimiter
 
@@ -78,12 +97,12 @@
 ; --------------
 
 (link
-  text: (_) @markup.link.text
-  destination: (link_destination) @markup.link.url)
+  text: (_) @text.reference
+  destination: (link_destination) @text.uri)
 
 (image
-  alt: (_) @markup.link.text
-  source: (image_source) @markup.link.url)
+  alt: (_) @text.reference
+  source: (image_source) @text.uri)
 
 "[" @punctuation.bracket
 "]" @punctuation.bracket
@@ -101,7 +120,7 @@
 ; Block Quotes
 ; ------------
 
-(block_quote) @markup.quote
+(block_quote) @comment
 (block_quote_marker) @punctuation.special
 
 ; Lists
@@ -157,11 +176,11 @@
 
 (inline_math
   (math_delimiter) @punctuation.delimiter
-  (math_content) @markup.math.inline)
+  (math_content) @string)
 
 (display_math
   (math_delimiter) @punctuation.delimiter
-  (math_content) @markup.math.block)
+  (math_content) @string)
 
 ; YAML Front Matter
 ; -----------------
@@ -199,8 +218,8 @@
 ; ---------------
 
 (link_reference_definition
-  label: (_) @markup.link.text
-  destination: (link_destination) @markup.link.url)
+  label: (_) @text.reference
+  destination: (link_destination) @text.uri)
 
 (link_title) @string
 

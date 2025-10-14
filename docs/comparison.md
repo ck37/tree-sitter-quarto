@@ -360,21 +360,36 @@ Pandoc AST (for rendering)
 - The official quarto-markdown repository **does contain pure tree-sitter grammars** (block + inline)
 - These are separate from the tree-sitter-to-pandoc-AST conversion (quarto-markdown-pandoc crate)
 - The grammars can be consumed independently of the Pandoc conversion
-- They are intentionally tightly coupled with quarto-markdown-pandoc for the Quarto project's needs
+- **The official grammars ARE intended for editor integration** - they will be the "blessed front-end parser for Markdown in other Posit products" including RStudio, Positron, and future Posit IDEs
+- They are intentionally tightly coupled with quarto-markdown-pandoc for release coordination
 - The official grammars are **not yet production-ready** but are on the roadmap for early 2026
 
 **tree-sitter-quarto's role:**
-- Provides **immediate production-ready support** (2025) while official grammars mature
+- **Necessary bridge solution** that fills the 1-year gap while official grammars mature
+- Provides **immediate production-ready support** (2025) while official grammars stabilize
 - Uses unified grammar architecture (simpler for some use cases)
 - Includes comprehensive query files for syntax highlighting
 - Designed specifically for editor integration
 - Community-maintained with different architectural choices
 
-**Both projects are complementary:**
-- tree-sitter-quarto serves current needs (2025)
+**Both projects serve the same goal (editor integration):**
+- tree-sitter-quarto serves immediate needs (2025)
 - quarto-markdown grammars will be the blessed official solution (2026+)
-- Migration path exists when official grammars reach production status
-- Quarto team is supportive of community efforts
+- **Migration path recommended** when official grammars reach production status
+- Quarto team is supportive of community efforts filling the gap
+
+**Why migrate to official grammars in 2026+:**
+- Battle-tested in Posit's production editors (RStudio, Positron)
+- Official support and long-term maintenance guaranteed
+- The "blessed" standard across Quarto/Posit ecosystem
+- Better ecosystem alignment as adoption grows
+- Will have comprehensive query files (needed for their editors)
+
+**Contribution policy:**
+- ❌ PRs to grammars not accepted (must be controlled by Quarto project for release coordination)
+- ✅ Bug reports welcome and taken seriously
+- ✅ Authors happy to help navigate the grammars
+- ✅ External use explicitly encouraged
 
 **Contact:** The quarto-markdown maintainers welcome bug reports and are happy to help navigate their grammars for those interested in using them.
 

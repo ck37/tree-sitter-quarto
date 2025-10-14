@@ -27,11 +27,14 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install tree-sitter CLI only
+        run: npm install tree-sitter-cli
 
       - name: Generate parser
         run: npx tree-sitter generate
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Run tests
         run: npx tree-sitter test
@@ -54,11 +57,14 @@ jobs:
           node-version: '20.x'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install tree-sitter CLI only
+        run: npm install tree-sitter-cli
 
       - name: Validate grammar structure
         run: npx tree-sitter generate
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Check for warnings
         run: |
@@ -106,11 +112,14 @@ jobs:
           node-version: '20.x'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install tree-sitter CLI only
+        run: npm install tree-sitter-cli
 
       - name: Generate parser
         run: npx tree-sitter generate
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Check query files exist
         run: |

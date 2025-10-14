@@ -2,104 +2,57 @@
 
 [![CI](https://github.com/ck37/tree-sitter-quarto/workflows/CI/badge.svg)](https://github.com/ck37/tree-sitter-quarto/actions)
 
-Tree-sitter parser for Quarto Markdown (`.qmd` files), optimized for editor integration.
+Tree-sitter parser for [Quarto Markdown](https://quarto.org/) (`.qmd` files), optimized for editor integration.
 
-> **Status:** 🚀 Alpha - Parser functional, editor integration ready for testing
+> **Status:** 🚀 Alpha Complete - All core features implemented, ready for editor integration
 
 ## What is this?
 
-A [tree-sitter](https://tree-sitter.github.io/) parser that provides rich syntax trees for [Quarto Markdown](https://quarto.org/) documents, enabling advanced editor features like:
+A [tree-sitter](https://tree-sitter.github.io/) parser that understands Quarto's extended Markdown syntax, enabling rich editor features:
 
 - 🎨 **Semantic syntax highlighting** - Distinct colors for chunk options, cross-references, executable cells
 - 📍 **Jump-to-definition** - Navigate from `@fig-plot` to figure definition
-- ✅ **Validation** - Catch typos in chunk options, undefined cross-references
 - 💡 **Autocomplete** - Suggest valid chunk option names and values
 - 📦 **Code folding** - Collapse executable cells and divs
-- 🔍 **Outline view** - Navigate document structure including cells
+- 🔍 **Document outline** - Navigate structure including cells and callouts
 
-## Why does this exist?
+## Why?
 
-There are currently parsers for Pandoc Markdown and Quarto with different goals:
+Existing parsers serve different purposes:
+- **[tree-sitter-pandoc-markdown](https://github.com/ck37/tree-sitter-pandoc-markdown)** - Great for Pandoc, but not Quarto-aware
+- **[Quarto Markdown Parser](https://github.com/quarto-dev/quarto-markdown)** - Designed for rendering, not editor integration
 
-1. **[tree-sitter-pandoc-markdown](https://github.com/ck37/tree-sitter-pandoc-markdown)** - Editor-focused parser for Pandoc Markdown, but not Quarto-aware
-2. **[Quarto Markdown Parser](https://github.com/quarto-dev/quarto-markdown)** - Rendering-focused Rust parser that produces Pandoc AST for document compilation (not production-ready)
+**tree-sitter-quarto** fills the gap by providing semantic parsing optimized for **editor tooling** as you author Quarto documents.
 
-**tree-sitter-quarto fills a specific gap:** providing a tree-sitter grammar optimized for **editor integration** (syntax highlighting, navigation, autocomplete) as documents are authored, complementing the rendering-focused quarto-markdown project.
-
-### Key Differences
-
-| Feature | tree-sitter-quarto | Quarto Parser | tree-sitter-pandoc-markdown |
-|---------|----------------|---------------|----------------------------|
-| Parses chunk options | ✅ | ❌ (handled by knitr) | ❌ |
-| Distinguishes xrefs from citations | ✅ | ❌ (both as citations) | ✅ |
-| Recognizes executable cells | ✅ | ⚠️ (as code blocks) | ❌ |
-| Callout semantic parsing | ✅ | ⚠️ (generic divs) | ⚠️ |
-| Primary use case | Editor features | Document rendering | Pandoc editing |
-
-See [docs/plan.md](./docs/plan.md) for detailed comparison and architecture.
-
-## Project Status
-
-**Current Phase:** Alpha Implementation - Core Features Complete
-
-- [x] Architecture designed
-- [x] Implementation plan created
-- [x] OpenSpec specifications created (7 specs, 54 requirements)
-- [x] Project conventions documented
-- [x] Repository initialized (grammar.js, package.json, bindings)
-- [x] Base grammar ported from tree-sitter-pandoc-markdown
-- [x] Executable cells implemented with `{language}` syntax
-- [x] Chunk options implemented with `#| key: value` parsing
-- [x] Cross-references distinguished from citations (`@fig-` vs `@author`)
-- [x] Inline code cells with language injection
-- [x] Shortcodes implemented (`{{< name args >}}`)
-- [x] Query files created (highlights, injections, folds, indents, locals)
-- [x] GitHub CI setup (tests on Ubuntu/macOS, multiple Node versions)
-- [x] Test suite comprehensive (58 tests passing)
-- [ ] Editor integration tested (Neovim, Zed, Helix)
-- [ ] Performance validated on large documents
-
-**Latest:** Enhanced divs fully implemented with 15 new tests. All 58 tests passing. 62/63 requirements (98%) implemented across 8 OpenSpec specifications. Callouts, tabsets, and conditional content now fully supported. Generic fenced div limitation investigated and documented as architecture constraint.
-
-**Next Steps:** Editor plugin integration, performance optimization, external scanner exploration
+See [detailed comparison](./docs/comparison.md) for more information.
 
 ## Features
 
 ### ✅ Fully Implemented
-- ✅ **Executable code cells** - Parse `{python}`, `{r}`, `{julia}` with language specifiers (7 requirements)
-- ✅ **Chunk options** - Parse `#| key: value` syntax as structured data (5/6 requirements, 98%)
-- ✅ **Cross-references** - Distinguish `@fig-plot` from `@smith2020` citations (6 requirements)
-- ✅ **Inline code cells** - Parse `` `{python} expr` `` with language support (5/6 requirements, 98%)
-- ✅ **Shortcodes** - Parse `{{< video url >}}` in block and inline contexts (13 requirements)
-- ✅ **Enhanced divs** - Callouts, tabsets, conditional content (9/11 requirements, 82%)
-  - Callout blocks (`::: {.callout-note}`) - All 5 types: note, warning, important, tip, caution
-  - Tabsets (`::: {.panel-tabset}`) - Tab structure with groups and styling
-  - Conditional content (`::: {.content-visible when-format="html"}`) - Format and metadata conditions
-  - ⚠️ Known limitation: Generic fenced divs (`::: {.custom-class}`) not parsing (base grammar issue)
-- ✅ **Language injection** - 15+ languages supported (Python, R, Julia, SQL, Bash, JS, TS, Mermaid, etc.) (9 requirements)
-- ✅ **Syntax highlighting** - Comprehensive queries for all constructs (7 requirements)
-- ✅ **Code folding** - Cells, divs, lists, blocks
+
+- ✅ **Executable code cells** - Parse `{python}`, `{r}`, `{julia}` with semantic nodes
+- ✅ **Chunk options** - Parse `#| key: value` as structured data
+- ✅ **Cross-references** - Distinguish `@fig-plot` from `@smith2020` citations
+- ✅ **Inline code cells** - `` `{python} expr` `` with language injection
+- ✅ **Shortcodes** - `{{< video url >}}` in block and inline contexts
+- ✅ **Enhanced divs** - Callouts, tabsets, conditional content
+  - `::: {.callout-note}` - 5 types: note, warning, important, tip, caution
+  - `::: {.panel-tabset}` - Tab structure with groups
+  - `::: {.content-visible when-format="html"}` - Conditional content
+- ✅ **Language injection** - 15+ languages (Python, R, Julia, SQL, Bash, JS, Mermaid, etc.)
 - ✅ **Full Pandoc Markdown** - Headings, emphasis, links, images, tables, etc.
 
-**Test Coverage:** 58/58 tests passing (100%)
-**Spec Coverage:** 62/63 requirements (98%) across 8 implemented specifications
+**Coverage:** 58/58 tests passing (100%) | 62/63 requirements (98%) across 8 specifications
 
-**Total Specifications:** 8 (all implemented)
+### 📋 Known Limitations
 
-### 🚧 Future Enhancements (Phase 2+)
-- ⬜ **Generic fenced div support** - Would require external scanner for context-sensitive lexing (see [technical analysis](./docs/generic-fenced-div-limitation.md))
-- ⬜ **Inline conditional spans** - `[text]{.content-visible}` syntax (requires inline grammar)
-- ⬜ **Figure/table cross-reference metadata** - Linking (may be better suited for language server)
+- Generic fenced divs (`::: {.custom-class}`) don't parse - [technical details](./docs/generic-fenced-div-limitation.md)
+- Multi-line chunk option values not supported
+- See [plan.md](./docs/plan.md) for complete list
 
-### 📋 Planned (Phase 3)
-- ⬜ Cross-reference validation - Requires language server
-- ⬜ Chunk option validation - Requires language server
-- ⬜ Editor plugins - Neovim, Zed, Helix integration
-- ⬜ Performance optimization - Large document handling
+## Quick Example
 
-## Example
-
-**Input (`.qmd` file):**
+**Input `.qmd` file:**
 
 ```qmd
 ---
@@ -107,163 +60,97 @@ title: "My Analysis"
 format: html
 ---
 
-## Introduction
+## Results
 
-See @fig-plot for the results.
+See @fig-plot for details.
 
 ```{python}
 #| label: fig-plot
 #| echo: false
-#| fig-cap: "Sample plot"
 import matplotlib.pyplot as plt
 plt.plot([1, 2, 3])
 ```
 
+::: {.callout-note}
 The mean is `{python} mean([1, 2, 3])`.
+:::
 
 {{< video https://example.com/demo.mp4 >}}
 ```
 
-**Output (AST with semantic nodes):**
+**Output AST** (simplified):
 
 ```
 (document
   (yaml_front_matter ...)
-  (atx_heading
-    marker: (atx_heading_marker)
-    content: (inline (text)))
+  (atx_heading ...)
   (paragraph
-    content: (inline
-      (text)
-      (cross_reference type: "fig" id: "plot")
-      (text)))
+    (cross_reference type:"fig" id:"plot"))
   (executable_code_cell
-    language: (language_name "python")
+    language: "python"
     (chunk_options
-      (chunk_option key: "label" value: "fig-plot")
-      (chunk_option key: "echo" value: "false")
-      (chunk_option key: "fig-cap" value: "Sample plot"))
-    content: (cell_content (code_line)))
-  (paragraph
-    content: (inline
-      (text)
-      (inline_code_cell
-        language: (language_name "python")
-        content: (cell_content))
-      (text)))
-  (shortcode_block
-    (shortcode_open)
-    name: (shortcode_name "video")
-    arguments: (shortcode_arguments)
-    (shortcode_close)))
+      (chunk_option key:"label" value:"fig-plot")
+      (chunk_option key:"echo" value:"false"))
+    content: ...)
+  (callout_block
+    (callout_open)
+    (inline_code_cell language:"python" ...))
+  (shortcode_block name:"video" ...))
 ```
 
-## Installation (When Ready)
-
-### For Neovim (nvim-treesitter)
-
-```lua
--- Not yet available
-```
-
-### For Zed Editor
-
-```json
-// Not yet available
-```
-
-### For Helix
-
-```toml
-# Not yet available
-```
-
-## Editor Integration
-
-### Scope Naming Philosophy
-
-tree-sitter-quarto uses **standard tree-sitter scope conventions** to remain editor-agnostic:
-
-```scheme
-(atx_heading) @markup.heading          # Standard across editors
-(emphasis) @markup.italic              # Not Zed-specific @text.emphasis
-(code_span) @markup.raw.inline         # Works in Neovim, Helix, VSCode
-(shortcode_name) @function             # Semantic, not presentation
-(chunk_option_key) @property           # Universal scope
-```
-
-**Why standard scopes?**
-- ✅ **Editor agnostic**: Same grammar works everywhere
-- ✅ **Single source of truth**: One `queries/highlights.scm` to maintain
-- ✅ **Separation of concerns**: Grammar = parsing, extension = presentation
-- ✅ **Standard practice**: Follows tree-sitter ecosystem conventions
+## Installation
 
 ### For Editor Extension Developers
 
-If your editor requires different scope names (e.g., Zed uses `@text.*` instead of `@markup.*`):
+**Add to your extension:**
 
-**Recommended approach**: Handle scope remapping in your editor extension
-- Load our `queries/highlights.scm`
-- Remap scopes to your editor's conventions
-- Example: `@markup.heading` → `@text.title` (Zed)
-
-**Not recommended**: Maintaining editor-specific query files in this repo
-- Creates maintenance burden (N files for N editors)
-- Violates separation of concerns
-- Most editors can handle scope remapping
-
-**Common remappings** (e.g., for Zed):
-```
-@markup.heading     → @text.title
-@markup.italic      → @text.emphasis
-@markup.bold        → @text.strong
-@markup.raw.inline  → @text.literal
-@markup.link.text   → @text.link
+```toml
+# Cargo.toml
+[dependencies]
+tree-sitter-quarto = { git = "https://github.com/ck37/tree-sitter-quarto" }
 ```
 
-**Reference**: See [zed-quarto-extension#4](https://github.com/ck37/zed-quarto-extension/issues/4) for detailed scope mapping discussion.
+See [editor integration guide](./docs/editor-integration.md) for detailed instructions including scope naming conventions and query file usage.
 
-## Relationship to Other Projects
+### For End Users
 
-```
-tree-sitter-quarto
-    ↓ extends
-tree-sitter-pandoc-markdown
-    ↓ fork of
-tree-sitter-markdown
-```
-
-**tree-sitter-quarto** extends [tree-sitter-pandoc-markdown](https://github.com/ck37/tree-sitter-pandoc-markdown) with Quarto-specific features:
-- Executable code cells with chunk options
-- Cross-reference semantic distinction
-- Quarto div types (callouts, tabsets)
-
-**Not a replacement for:**
-- **Quarto Markdown Parser** - Use that for document rendering/compilation
-- **tree-sitter-pandoc-markdown** - Use that for non-Quarto Pandoc Markdown
+Editor plugins coming soon:
+- **Zed** - [zed-quarto-extension](https://github.com/ck37/zed-quarto-extension) (in development)
+- **Neovim** - Integration via nvim-treesitter (planned)
+- **Helix** - Community integration (planned)
 
 ## Documentation
 
-- **[docs/plan.md](./docs/plan.md)** - Comprehensive implementation plan
-- **[docs/relationship-to-quarto-markdown.md](./docs/relationship-to-quarto-markdown.md)** - Relationship to official Quarto parser project
-- **[docs/generic-fenced-div-limitation.md](./docs/generic-fenced-div-limitation.md)** - Technical analysis of generic div parsing constraint
-- **[Architecture Comparison](../tree-sitter-pandoc-markdown/docs/quarto-parser-comparison.md)** - Detailed comparison with Quarto Parser
+- **[docs/plan.md](./docs/plan.md)** - Implementation plan and status
+- **[docs/comparison.md](./docs/comparison.md)** - Comparison with other parsers
+- **[docs/editor-integration.md](./docs/editor-integration.md)** - Guide for editor extension developers
+- **[docs/generic-fenced-div-limitation.md](./docs/generic-fenced-div-limitation.md)** - Technical analysis of limitation
+- **[docs/relationship-to-quarto-markdown.md](./docs/relationship-to-quarto-markdown.md)** - Relationship to official parser
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - How to contribute
 
 ## Contributing
 
-Contributions are welcome! The parser is functional with all core features implemented.
+Contributions welcome! The parser is functional with all core features implemented.
 
-**Areas for contribution:**
-- Editor plugin development (Neovim, Zed, Helix)
-- Performance optimization for large documents
-- Additional test cases and edge cases
+**Priority areas:**
+- Editor plugin development
+- Performance optimization
+- Additional test cases
 - Documentation improvements
 
-See [docs/plan.md](./docs/plan.md) and [CONTRIBUTING.md](./CONTRIBUTING.md) for:
-- Implementation strategy
-- Testing approach
-- Development workflow
-- OpenSpec methodology
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for development workflow.
+
+## Status
+
+**Current Phase:** Alpha Complete
+
+- ✅ All 8 OpenSpec specifications implemented
+- ✅ 58/58 tests passing (100%)
+- ✅ CI/CD pipeline green (Ubuntu + macOS)
+- ⏳ Editor integration in progress (Zed)
+- ⏳ Performance benchmarking pending
+
+**Next Steps:** Editor plugin releases, real-world testing, performance optimization
 
 ## License
 
@@ -272,26 +159,10 @@ MIT License - see [LICENSE](./LICENSE) file for details
 ## Related Projects
 
 - **[tree-sitter-pandoc-markdown](https://github.com/ck37/tree-sitter-pandoc-markdown)** - Base grammar we extend
-- **[Quarto Markdown Parser](https://github.com/quarto-dev/quarto-markdown)** - Official Quarto rendering-focused parser (experimental)
+- **[Quarto](https://quarto.org/)** - Scientific publishing system
+- **[Quarto Markdown Parser](https://github.com/quarto-dev/quarto-markdown)** - Official rendering-focused parser (complementary)
 - **[tree-sitter-markdown](https://github.com/tree-sitter-grammars/tree-sitter-markdown)** - Original upstream grammar
-- **[Quarto](https://quarto.org/)** - Scientific publishing system this parser supports
-
-> **Note:** tree-sitter-quarto focuses on editor integration, complementing (not competing with) the official quarto-markdown project which targets the rendering pipeline.
-
-## Acknowledgments
-
-This project builds on insights from:
-- tree-sitter-pandoc-markdown implementation experience
-- Analysis of Quarto Markdown Parser architecture
-- Understanding of tree-sitter LR(1) limitations
-
-See [quarto-parser-comparison.md](../tree-sitter-pandoc-markdown/docs/quarto-parser-comparison.md) for detailed architectural analysis.
 
 ---
 
-**Status:** Alpha - All Core Features Implemented
-**Version:** 0.1.0 (functional, editor integration pending)
-**Test Coverage:** 58/58 tests passing (100%)
-**Spec Coverage:** 62/63 requirements (98%) across 8 specifications
-**Created:** 2025-10-13
-**Updated:** 2025-10-14
+**Created:** 2025-10-13 | **Updated:** 2025-10-14 | **Version:** 0.1.0

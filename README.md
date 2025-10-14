@@ -54,7 +54,7 @@ Known limitations:
 
 Input `.qmd` file:
 
-```markdown
+````markdown
 ---
 title: "My Analysis"
 format: html
@@ -76,7 +76,7 @@ The mean is `{python} mean([1, 2, 3])`.
 :::
 
 {{< video https://example.com/demo.mp4 >}}
-```
+````
 
 Output AST (simplified):
 

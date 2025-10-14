@@ -17,12 +17,12 @@ A [tree-sitter](https://tree-sitter.github.io/) parser that provides rich syntax
 
 ## Why does this exist?
 
-There are currently two Pandoc Markdown parsers with different goals:
+There are currently parsers for Pandoc Markdown and Quarto with different goals:
 
 1. **[tree-sitter-pandoc-markdown](https://github.com/ck37/tree-sitter-pandoc-markdown)** - Editor-focused parser for Pandoc Markdown, but not Quarto-aware
-2. **[Quarto Markdown Parser](https://github.com/quarto-dev/quarto-markdown)** - Rendering-focused parser that produces Pandoc AST for document compilation
+2. **[Quarto Markdown Parser](https://github.com/quarto-dev/quarto-markdown)** - Rendering-focused Rust parser that produces Pandoc AST for document compilation (not production-ready)
 
-**tree-sitter-quarto bridges the gap** by providing a rich AST for Quarto documents as they're being authored in editors, before execution.
+**tree-sitter-quarto fills a specific gap:** providing a tree-sitter grammar optimized for **editor integration** (syntax highlighting, navigation, autocomplete) as documents are authored, complementing the rendering-focused quarto-markdown project.
 
 ### Key Differences
 
@@ -160,6 +160,7 @@ tree-sitter-markdown
 ## Documentation
 
 - **[docs/plan.md](./docs/plan.md)** - Comprehensive implementation plan
+- **[docs/relationship-to-quarto-markdown.md](./docs/relationship-to-quarto-markdown.md)** - Relationship to official Quarto parser project
 - **[Architecture Comparison](../tree-sitter-pandoc-markdown/docs/quarto-parser-comparison.md)** - Detailed comparison with Quarto Parser
 
 ## Contributing
@@ -179,9 +180,11 @@ MIT License (to be confirmed)
 ## Related Projects
 
 - **[tree-sitter-pandoc-markdown](https://github.com/ck37/tree-sitter-pandoc-markdown)** - Base grammar we extend
-- **[Quarto Markdown Parser](https://github.com/quarto-dev/quarto-markdown)** - Rendering-focused alternative
+- **[Quarto Markdown Parser](https://github.com/quarto-dev/quarto-markdown)** - Official Quarto rendering-focused parser (experimental)
 - **[tree-sitter-markdown](https://github.com/tree-sitter-grammars/tree-sitter-markdown)** - Original upstream grammar
 - **[Quarto](https://quarto.org/)** - Scientific publishing system this parser supports
+
+> **Note:** tree-sitter-quarto focuses on editor integration, complementing (not competing with) the official quarto-markdown project which targets the rendering pipeline.
 
 ## Acknowledgments
 

@@ -131,7 +131,7 @@ struct TSLanguage {
   const TSStateId *primary_state_ids;
 };
 
-static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead) {
+static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, int32_t lookahead) {
   uint32_t index = 0;
   uint32_t size = len - index;
   while (size > 1) {

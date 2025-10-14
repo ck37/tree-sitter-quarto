@@ -1,5 +1,7 @@
 # tree-sitter-quarto
 
+[![CI](https://github.com/ck37/tree-sitter-quarto/workflows/CI/badge.svg)](https://github.com/ck37/tree-sitter-quarto/actions)
+
 Tree-sitter parser for Quarto Markdown (`.qmd` files), optimized for editor integration.
 
 > **Status:** 🚀 Alpha - Parser functional, editor integration ready for testing

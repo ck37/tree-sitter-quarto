@@ -12,7 +12,7 @@
  *
  * SOURCE TRACKING (per openspec/specs/grammar-foundation requirement):
  * - Base: tree-sitter-pandoc-markdown
- * - Source path: /Users/ck432/Partners HealthCare Dropbox/Chris Kennedy/Code/tree-sitter-pandoc-markdown
+ * - Repository: https://github.com/ck37/tree-sitter-pandoc-markdown
  * - Commit: 95f296eb8a9f28760f3b6ae34084282a1b9dc52a
  * - Date copied: 2025-10-14
  * - Strategy: Copy & Extend (see docs/plan.md)

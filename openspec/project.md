@@ -198,7 +198,7 @@ plt.plot([1, 2, 3])
 ### Sibling Project
 
 **tree-sitter-pandoc-markdown** is the base grammar this project extends:
-- Location: `/Users/ck432/Partners HealthCare Dropbox/Chris Kennedy/Code/tree-sitter-pandoc-markdown`
+- Repository: https://github.com/ck37/tree-sitter-pandoc-markdown
 - Provides: Pandoc Markdown features (citations, divs, spans, attributes)
 - Missing: Quarto-specific features (chunk options, executable cell semantics)
 

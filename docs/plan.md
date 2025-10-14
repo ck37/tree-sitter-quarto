@@ -603,7 +603,7 @@ Extend the external scanner from tree-sitter-pandoc-markdown with Quarto-specifi
 ## References
 
 ### Related Projects
-- **tree-sitter-pandoc-markdown:** `/Users/ck432/Partners HealthCare Dropbox/Chris Kennedy/Code/tree-sitter-pandoc-markdown`
+- **tree-sitter-pandoc-markdown:** https://github.com/ck37/tree-sitter-pandoc-markdown
 - **Quarto Markdown Parser:** https://github.com/quarto-dev/quarto-markdown
 - **tree-sitter-markdown:** https://github.com/tree-sitter-grammars/tree-sitter-markdown
 

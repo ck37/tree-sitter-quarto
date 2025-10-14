@@ -1,255 +1,69 @@
 ---
 title: "Quarto Sample Document"
 author: "Example Author"
-format:
-  html:
-    code-fold: true
-    theme: cosmo
-execute:
-  echo: true
-  warning: false
 ---
 
 ## Introduction
 
-This document demonstrates Quarto Markdown features that tree-sitter-quarto aims to parse.
+This document demonstrates Quarto Markdown features that tree-sitter-quarto can parse.
 
-See @fig-scatter for the relationship between variables, and @tbl-summary for descriptive statistics.
+See @fig-scatter for the visualization and @tbl-summary for data.
 
-## Data Analysis
+## Code Cells
 
-### Basic Computation
-
-```{python}
-#| label: setup
-#| echo: false
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
-# Generate sample data
-np.random.seed(42)
-x = np.random.randn(100)
-y = 2 * x + np.random.randn(100)
-data = pd.DataFrame({'x': x, 'y': y})
-```
-
-The mean of x is `{python} data['x'].mean()` and the mean of y is `{python} data['y'].mean()`.
-
-### Visualization
+### Python Cell
 
 ```{python}
 #| label: fig-scatter
-#| fig-cap: "Scatter plot showing linear relationship"
-#| fig-width: 8
-#| fig-height: 6
-#| echo: true
-plt.figure(figsize=(8, 6))
-plt.scatter(data['x'], data['y'], alpha=0.6)
-plt.xlabel('X Variable')
-plt.ylabel('Y Variable')
-plt.title('Sample Scatter Plot')
-plt.grid(True, alpha=0.3)
-plt.show()
+#| echo: false
+import matplotlib.pyplot as plt
+plt.plot([1, 2, 3], [1, 4, 9])
 ```
 
-As shown in @fig-scatter, there is a clear positive correlation.
-
-### Summary Statistics
-
-```{python}
-#| label: tbl-summary
-#| tbl-cap: "Descriptive statistics"
-summary = data.describe()
-summary
-```
-
-::: {.callout-note}
-## Important Note
-
-The correlation coefficient is `{python} np.corrcoef(data['x'], data['y'])[0,1]:.3f`, indicating a strong linear relationship.
-:::
-
-## Multiple Languages
-
-Quarto supports multiple computational engines:
+### R Cell
 
 ```{r}
-#| label: r-example
-#| eval: false
-# R code example (not executed)
-library(ggplot2)
-ggplot(mtcars, aes(x = wt, y = mpg)) +
-  geom_point()
+#| label: tbl-summary
+#| echo: true
+summary(mtcars)
 ```
+
+### Julia Cell
 
 ```{julia}
 #| label: julia-example
-#| eval: false
-# Julia code example (not executed)
-using Plots
-plot(rand(10))
+println("Hello from Julia")
 ```
-
-## Advanced Features
-
-### Tabsets
-
-::: {.panel-tabset}
-## Plot
-
-```{python}
-#| echo: false
-plt.figure(figsize=(6, 4))
-plt.plot(data['x'], data['y'], 'o', alpha=0.5)
-plt.show()
-```
-
-## Data
-
-```{python}
-#| echo: false
-data.head(10)
-```
-
-## Code
-
-```python
-# Full code
-import matplotlib.pyplot as plt
-plt.scatter(x, y)
-```
-:::
-
-### Conditional Content
-
-::: {.content-visible when-format="html"}
-This content only appears in HTML output.
-:::
-
-::: {.content-hidden when-format="pdf"}
-This content is hidden in PDF output.
-:::
-
-## Callout Types
-
-::: {.callout-note}
-This is a note callout.
-:::
-
-::: {.callout-warning}
-This is a warning callout.
-:::
-
-::: {.callout-important}
-This is an important callout.
-:::
-
-::: {.callout-tip}
-This is a tip callout.
-:::
-
-::: {.callout-caution}
-This is a caution callout.
-:::
-
-## Cross-References
-
-### Figures
-- See @fig-scatter for the main visualization
-
-### Tables
-- Refer to @tbl-summary for statistics
-
-### Equations
-Consider the equation:
-
-$$
-y = 2x + \epsilon
-$$ {#eq-model}
-
-As shown in @eq-model, the relationship is linear.
 
 ## Inline Code
 
-Simple inline execution: The sum is `{python} sum([1, 2, 3, 4, 5])`.
+The result is `{python} 2 + 2`.
 
-You can also use the shorthand: The mean is `r mean(c(1,2,3))` (R syntax).
+Using R shorthand: `r mean(c(1, 2, 3))`.
 
-## Shortcodes
+## Cross-References
 
-Quarto provides powerful shortcodes for embedding content:
+References to figures: @fig-scatter and @fig-plot2.
 
-{{< video https://www.youtube.com/embed/wo9vZccmqwc >}}
+References to tables: @tbl-summary and @tbl-data.
 
-Include content from other files:
+References to equations: @eq-linear and @eq-quadratic.
 
-{{< include _content.qmd >}}
+References to sections: @sec-intro and @sec-methods.
 
-Embed specific figures from notebooks:
+References to listings: @lst-example and @lst-code.
 
-{{< embed notebook.ipynb#fig-plot >}}
+## Regular Code Block
 
-## Raw Blocks
-
-```{=html}
-<div class="custom">
-  <p>Raw HTML content</p>
-</div>
-```
-
-```{=latex}
-\begin{equation}
-E = mc^2
-\end{equation}
+```python
+# This is a regular code block (not executable)
+print("Not executable")
 ```
 
 ## Citations
 
-According to @knuth1984, literate programming is important.
+According to @smith2020, the method works well.
 
-See [@wickham2014; @wilkinson2005] for more on visualization.
+## Formatting
 
-## Div Attributes
-
-::: {#custom-div .highlight style="background-color: #f0f0f0;"}
-This div has custom attributes that tree-sitter-quarto should parse.
-:::
-
-## Chunk Options Edge Cases
-
-```{python}
-#| label: complex-options
-#| echo: true
-#| warning: false
-#| message: false
-#| fig-width: 10
-#| fig-height: 8
-#| fig-cap: |
-#|   This is a multi-line caption
-#|   that spans multiple lines
-#| classes: [custom-class, another-class]
-#| output: asis
-print("Complex chunk options test")
-```
-
-## Conclusion
-
-This document exercises most Quarto Markdown features that tree-sitter-quarto aims to parse, including:
-
-1. ✅ Executable code cells with various languages
-2. ✅ Chunk options (`#| key: value`)
-3. ✅ Cross-references (@fig-, @tbl-, @eq-)
-4. ✅ Inline code cells (`` `{python} expr` ``)
-5. ✅ Shortcodes ({{< video >}}, {{< include >}}, {{< embed >}})
-6. ✅ Callouts with different types
-7. ✅ Tabsets and conditional content
-8. ✅ Citations (@author)
-9. ✅ Divs with attributes
-10. ✅ Raw blocks for HTML/LaTeX
-11. ✅ Multi-line chunk options
-
-## References
-
-::: {#refs}
-:::
+This is **bold** and *italic* text.

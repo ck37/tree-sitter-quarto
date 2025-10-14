@@ -108,6 +108,118 @@
     }
   },
   {
+    "type": "callout_block",
+    "named": true,
+    "fields": {
+      "close": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "fenced_div_delimiter",
+            "named": true
+          }
+        ]
+      },
+      "content": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "atx_heading",
+            "named": true
+          },
+          {
+            "type": "blank_line",
+            "named": true
+          },
+          {
+            "type": "block_quote",
+            "named": true
+          },
+          {
+            "type": "callout_block",
+            "named": true
+          },
+          {
+            "type": "conditional_block",
+            "named": true
+          },
+          {
+            "type": "display_math",
+            "named": true
+          },
+          {
+            "type": "executable_code_cell",
+            "named": true
+          },
+          {
+            "type": "fenced_code_block",
+            "named": true
+          },
+          {
+            "type": "fenced_div",
+            "named": true
+          },
+          {
+            "type": "footnote_definition",
+            "named": true
+          },
+          {
+            "type": "html_block",
+            "named": true
+          },
+          {
+            "type": "link_reference_definition",
+            "named": true
+          },
+          {
+            "type": "list",
+            "named": true
+          },
+          {
+            "type": "paragraph",
+            "named": true
+          },
+          {
+            "type": "pipe_table",
+            "named": true
+          },
+          {
+            "type": "raw_block",
+            "named": true
+          },
+          {
+            "type": "setext_heading",
+            "named": true
+          },
+          {
+            "type": "shortcode_block",
+            "named": true
+          },
+          {
+            "type": "tabset_block",
+            "named": true
+          },
+          {
+            "type": "thematic_break",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "callout_open",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "cell_content",
     "named": true,
     "fields": {},
@@ -199,6 +311,118 @@
     }
   },
   {
+    "type": "conditional_block",
+    "named": true,
+    "fields": {
+      "close": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "fenced_div_delimiter",
+            "named": true
+          }
+        ]
+      },
+      "content": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "atx_heading",
+            "named": true
+          },
+          {
+            "type": "blank_line",
+            "named": true
+          },
+          {
+            "type": "block_quote",
+            "named": true
+          },
+          {
+            "type": "callout_block",
+            "named": true
+          },
+          {
+            "type": "conditional_block",
+            "named": true
+          },
+          {
+            "type": "display_math",
+            "named": true
+          },
+          {
+            "type": "executable_code_cell",
+            "named": true
+          },
+          {
+            "type": "fenced_code_block",
+            "named": true
+          },
+          {
+            "type": "fenced_div",
+            "named": true
+          },
+          {
+            "type": "footnote_definition",
+            "named": true
+          },
+          {
+            "type": "html_block",
+            "named": true
+          },
+          {
+            "type": "link_reference_definition",
+            "named": true
+          },
+          {
+            "type": "list",
+            "named": true
+          },
+          {
+            "type": "paragraph",
+            "named": true
+          },
+          {
+            "type": "pipe_table",
+            "named": true
+          },
+          {
+            "type": "raw_block",
+            "named": true
+          },
+          {
+            "type": "setext_heading",
+            "named": true
+          },
+          {
+            "type": "shortcode_block",
+            "named": true
+          },
+          {
+            "type": "tabset_block",
+            "named": true
+          },
+          {
+            "type": "thematic_break",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "conditional_open",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "cross_reference",
     "named": true,
     "fields": {
@@ -281,6 +505,14 @@
           "named": true
         },
         {
+          "type": "callout_block",
+          "named": true
+        },
+        {
+          "type": "conditional_block",
+          "named": true
+        },
+        {
           "type": "display_math",
           "named": true
         },
@@ -334,6 +566,10 @@
         },
         {
           "type": "shortcode_block",
+          "named": true
+        },
+        {
+          "type": "tabset_block",
           "named": true
         },
         {
@@ -580,6 +816,14 @@
           "named": true
         },
         {
+          "type": "callout_block",
+          "named": true
+        },
+        {
+          "type": "conditional_block",
+          "named": true
+        },
+        {
           "type": "display_math",
           "named": true
         },
@@ -629,6 +873,10 @@
         },
         {
           "type": "shortcode_block",
+          "named": true
+        },
+        {
+          "type": "tabset_block",
           "named": true
         },
         {
@@ -1343,6 +1591,118 @@
     }
   },
   {
+    "type": "tabset_block",
+    "named": true,
+    "fields": {
+      "close": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "fenced_div_delimiter",
+            "named": true
+          }
+        ]
+      },
+      "content": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "atx_heading",
+            "named": true
+          },
+          {
+            "type": "blank_line",
+            "named": true
+          },
+          {
+            "type": "block_quote",
+            "named": true
+          },
+          {
+            "type": "callout_block",
+            "named": true
+          },
+          {
+            "type": "conditional_block",
+            "named": true
+          },
+          {
+            "type": "display_math",
+            "named": true
+          },
+          {
+            "type": "executable_code_cell",
+            "named": true
+          },
+          {
+            "type": "fenced_code_block",
+            "named": true
+          },
+          {
+            "type": "fenced_div",
+            "named": true
+          },
+          {
+            "type": "footnote_definition",
+            "named": true
+          },
+          {
+            "type": "html_block",
+            "named": true
+          },
+          {
+            "type": "link_reference_definition",
+            "named": true
+          },
+          {
+            "type": "list",
+            "named": true
+          },
+          {
+            "type": "paragraph",
+            "named": true
+          },
+          {
+            "type": "pipe_table",
+            "named": true
+          },
+          {
+            "type": "raw_block",
+            "named": true
+          },
+          {
+            "type": "setext_heading",
+            "named": true
+          },
+          {
+            "type": "shortcode_block",
+            "named": true
+          },
+          {
+            "type": "tabset_block",
+            "named": true
+          },
+          {
+            "type": "thematic_break",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "tabset_open",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "thematic_break",
     "named": true,
     "fields": {}
@@ -1513,6 +1873,10 @@
     "named": true
   },
   {
+    "type": "callout_open",
+    "named": true
+  },
+  {
     "type": "chunk_option_key",
     "named": true
   },
@@ -1538,6 +1902,10 @@
   },
   {
     "type": "code_span_delimiter",
+    "named": true
+  },
+  {
+    "type": "conditional_open",
     "named": true
   },
   {
@@ -1658,6 +2026,10 @@
   },
   {
     "type": "table_delimiter_cell",
+    "named": true
+  },
+  {
+    "type": "tabset_open",
     "named": true
   },
   {

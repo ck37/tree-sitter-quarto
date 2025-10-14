@@ -51,6 +51,9 @@ module.exports = grammar({
     [$.executable_code_cell, $.fenced_code_block],  // Quarto: {python} vs python
     [$.shortcode_block, $.shortcode_inline],        // Shortcode can be block or inline
     [$.inline_code_cell, $.code_span],              // `r expr` vs `code`
+    [$.callout_block, $.fenced_div],                // Enhanced divs vs generic divs
+    [$.tabset_block, $.fenced_div],
+    [$.conditional_block, $.fenced_div],
   ],
 
   rules: {
@@ -63,13 +66,18 @@ module.exports = grammar({
     _block: $ => choice(
       // Quarto-specific blocks
       $.executable_code_cell,
-      // Pandoc Markdown blocks
+      // Pandoc Markdown blocks - fenced_div must come before enhanced divs for fallback
+      $.fenced_div,
+      // Enhanced divs (higher precedence via prec.dynamic)
+      $.callout_block,
+      $.tabset_block,
+      $.conditional_block,
+      // Other Pandoc Markdown blocks
       $.atx_heading,
       $.setext_heading,
       $.block_quote,
       $.footnote_definition,
       $.link_reference_definition,
-      $.fenced_div,
       $.display_math,
       $.pipe_table,
       $.shortcode_block,
@@ -207,14 +215,21 @@ module.exports = grammar({
     )),
 
     // Fenced Div
-    fenced_div: $ => seq(
-      field('open', alias(token(/:::+/), $.fenced_div_delimiter)),
-      optional(field('attributes', $.attribute_list)),
+    fenced_div: $ => prec.left(1, seq(
+      field('open', alias(/:::+/, $.fenced_div_delimiter)),
+      optional(seq(
+        /[ \t]*/,
+        '{',
+        /[ \t]*/,
+        field('attributes', $.attribute_list),
+        /[ \t]*/,
+        '}'
+      )),
       /\r?\n/,
       repeat($._block),
-      field('close', alias(token(prec(10, /:::+/)), $.fenced_div_delimiter)),
+      field('close', alias(/:::+/, $.fenced_div_delimiter)),
       /\r?\n/
-    ),
+    )),
 
     // Fenced Code Block (regular, non-executable)
     fenced_code_block: $ => prec(-1, seq(
@@ -259,6 +274,82 @@ module.exports = grammar({
       field('name', alias(/[a-zA-Z][a-zA-Z0-9_-]*/, $.shortcode_name)),
       optional(field('arguments', alias(/[ \t]+[^ \t\r\n>][^>\r\n]*/, $.shortcode_arguments))),
       alias(token(/[ \t]*>\}\}\r?\n/), $.shortcode_close)
+    )),
+
+    /**
+     * Callout Block
+     *
+     * ::: {.callout-note}
+     * Content here
+     * :::
+     *
+     * Spec: openspec/specs/enhanced-divs/spec.md
+     */
+    callout_block: $ => prec.dynamic(3, seq(
+      alias(token(seq(
+        /:::+/,
+        /[ \t]*/,
+        '{',
+        /[ \t]*/,
+        /\.callout-(note|warning|important|tip|caution)/,
+        /[^}\r\n]*/,
+        '}'
+      )), $.callout_open),
+      /\r?\n/,
+      field('content', repeat($._block)),
+      field('close', alias(token(prec(10, /:::+/)), $.fenced_div_delimiter)),
+      /\r?\n/
+    )),
+
+    /**
+     * Tabset Block
+     *
+     * ::: {.panel-tabset}
+     * ## Tab 1
+     * Content
+     * :::
+     *
+     * Spec: openspec/specs/enhanced-divs/spec.md
+     */
+    tabset_block: $ => prec.dynamic(3, seq(
+      alias(token(seq(
+        /:::+/,
+        /[ \t]*/,
+        '{',
+        /[ \t]*/,
+        /\.panel-tabset/,
+        /[^}\r\n]*/,
+        '}'
+      )), $.tabset_open),
+      /\r?\n/,
+      field('content', repeat($._block)),
+      field('close', alias(token(prec(10, /:::+/)), $.fenced_div_delimiter)),
+      /\r?\n/
+    )),
+
+    /**
+     * Conditional Content Block
+     *
+     * ::: {.content-visible when-format="html"}
+     * HTML-only content
+     * :::
+     *
+     * Spec: openspec/specs/enhanced-divs/spec.md
+     */
+    conditional_block: $ => prec.dynamic(3, seq(
+      alias(token(seq(
+        /:::+/,
+        /[ \t]*/,
+        '{',
+        /[ \t]*/,
+        /\.content-(visible|hidden)/,
+        /[^}\r\n]*/,
+        '}'
+      )), $.conditional_open),
+      /\r?\n/,
+      field('content', repeat($._block)),
+      field('close', alias(token(prec(10, /:::+/)), $.fenced_div_delimiter)),
+      /\r?\n/
     )),
 
     // Lists

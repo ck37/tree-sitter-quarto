@@ -471,7 +471,8 @@ module.exports = grammar({
     inline: $ => repeat1($._inline_element),
 
     _inline_element: $ => choice(
-      $.text,
+      $.inline_footnote,        // Pandoc: ^[note] - must come before text
+      $.footnote_reference,     // Pandoc: [^1] - must come before link
       $.inline_code_cell,       // Quarto: `{python} expr` - check before code_span
       $.code_span,
       $.inline_math,
@@ -479,11 +480,10 @@ module.exports = grammar({
       $.strong_emphasis,
       $.link,
       $.image,
-      $.inline_footnote,        // Pandoc: ^[note]
-      $.footnote_reference,     // Pandoc: [^1]
       $.citation,
       $.cross_reference,        // Quarto: @fig-plot
-      $.shortcode_inline
+      $.shortcode_inline,
+      $.text                    // text last - fallback for anything not matched
     ),
 
     text: $ => /[^\r\n`*_\[@<${^]+/,

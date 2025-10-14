@@ -1,7 +1,8 @@
 # tree-sitter-quarto Implementation Plan
 
 **Created:** 2025-10-13
-**Status:** Planning Phase
+**Updated:** 2025-10-14
+**Status:** Alpha - Core Features Implemented
 **Goal:** Create a Quarto Markdown parser optimized for editor integration and tooling
 
 ## Project Vision
@@ -178,7 +179,7 @@ The value is `{python} compute_value()`.
 
 ### Phase 2: Advanced Quarto Features
 
-**2.1 Shortcodes**
+**2.1 Shortcodes** ✅ **IMPLEMENTED**
 
 ```qmd
 {{< video https://example.com/video.mp4 >}}
@@ -190,10 +191,29 @@ Parse Quarto shortcodes with double braces syntax.
 
 **AST Structure:**
 ```
-(shortcode
+(shortcode_block
+  (shortcode_open)
   (shortcode_name)
-  (shortcode_arguments))
+  (shortcode_arguments)
+  (shortcode_close))
+
+(shortcode_inline
+  (shortcode_open)
+  (shortcode_name)
+  (shortcode_arguments)
+  (shortcode_close))
 ```
+
+**Implementation:** `grammar.js:257-262, 496-500`
+- Supports both block and inline shortcodes
+- Handles optional whitespace: `{{<video>}}` and `{{< video >}}`
+- Parses shortcode names with hyphens: `my-shortcode`
+- Optional arguments with smart empty-argument detection
+- 15 test cases covering all common Quarto shortcodes
+
+**Specification:** `openspec/specs/shortcodes/spec.md` (13 requirements, 100% implemented)
+**Verification:** `openspec/specs/shortcodes/verification.md`
+**Tests:** `test/corpus/shortcodes.txt` (15 passing tests)
 
 **Why This Matters:**
 - Distinguish shortcodes from regular text
@@ -468,11 +488,11 @@ Based on comprehensive spec verification (see `openspec/specs/*/verification.md`
   **Status:** Acceptable limitation for v1.0
 
 ### Implementation Status
-- **41 total requirements** across 6 OpenSpec specifications
-- **40 requirements (98%)** fully implemented
+- **54 total requirements** across 7 OpenSpec specifications
+- **53 requirements (98%)** fully implemented
 - **1 requirement** with acceptable limitation (multi-line chunk options)
 - **All core features** working correctly
-- **27 tests passing** in CI on Ubuntu and macOS
+- **42 tests passing** in CI on Ubuntu and macOS (27 original + 15 shortcodes)
 
 For detailed verification reports, see:
 - `openspec/specs/chunk-options/verification.md`
@@ -481,6 +501,7 @@ For detailed verification reports, see:
 - `openspec/specs/cross-references/verification.md`
 - `openspec/specs/grammar-foundation/verification.md`
 - `openspec/specs/language-injection/verification.md`
+- `openspec/specs/shortcodes/verification.md` ✅ **NEW**
 
 ## Maintenance & Evolution
 

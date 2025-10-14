@@ -486,6 +486,9 @@ module.exports = grammar({
 
     text: $ => /[^\r\n`*_\[@<${]+/,
 
+    // Text inside link brackets - excludes ] to allow proper link parsing
+    link_text: $ => /[^\r\n`*_\[@<${\]]+/,
+
     code_span: $ => seq(
       alias(token('`'), $.code_span_delimiter),
       alias(/[^`]+/, $.code_span_content),
@@ -514,7 +517,7 @@ module.exports = grammar({
     ),
 
     _link_text_element: $ => choice(
-      $.text,
+      $.link_text,
       $.code_span,
       $.emphasis,
       $.strong_emphasis

@@ -34,25 +34,6 @@ tree-sitter-quarto fills the gap by providing **production-ready semantic parsin
 
 See [detailed comparison](./docs/comparison.md) for more information.
 
-## Relationship to Official Quarto Grammars
-
-The [quarto-markdown repository](https://github.com/quarto-dev/quarto-markdown) contains official tree-sitter grammars that are also intended for editor integration (RStudio, Positron, etc.). However, these grammars are **not yet production-ready** and are planned for early 2026.
-
-**tree-sitter-quarto is a bridge solution:**
-- ✅ **Production-ready NOW** (2025) - All features implemented and tested
-- ✅ **Complete package** - Includes comprehensive query files for syntax highlighting
-- ✅ **Ready for editor integration** - Proven in real-world use
-- ⏳ **Migration path** - Plan to migrate to official grammars when they reach production status (2026+)
-
-**Why official grammars will be better long-term:**
-- Battle-tested in Posit's production editors (RStudio, Positron)
-- Official support and long-term maintenance
-- The "blessed" standard across Quarto/Posit ecosystem
-
-**Current recommendation:** Use tree-sitter-quarto for editor integration today, plan migration to official grammars in 2026+ when production-ready.
-
-See [detailed comparison](./docs/comparison.md) for architecture differences and migration considerations.
-
 ## Features
 
 Fully implemented:
@@ -74,6 +55,25 @@ Known limitations:
 - Generic fenced divs (`::: {.custom-class}`) don't parse - [technical details](./docs/generic-fenced-div-limitation.md)
 - Multi-line chunk option values not supported
 - See [plan.md](./docs/plan.md) for complete list
+
+## Relationship to Official Quarto Grammars
+
+The [quarto-markdown repository](https://github.com/quarto-dev/quarto-markdown) contains official tree-sitter grammars that are also intended for editor integration (RStudio, Positron, etc.). However, these grammars are **not yet production-ready** and are planned for early 2026.
+
+**tree-sitter-quarto is a bridge solution:**
+- ✅ **Production-ready NOW** (2025) - All features implemented and tested
+- ✅ **Complete package** - Includes comprehensive query files for syntax highlighting
+- ✅ **Ready for editor integration** - Proven in real-world use
+- ⏳ **Migration path** - Plan to migrate to official grammars when they reach production status (2026+)
+
+**Why official grammars will be better long-term:**
+- Battle-tested in Posit's production editors (RStudio, Positron)
+- Official support and long-term maintenance
+- The "blessed" standard across Quarto/Posit ecosystem
+
+**Current recommendation:** Use tree-sitter-quarto for editor integration today, plan migration to official grammars in 2026+ when production-ready.
+
+See [detailed comparison](./docs/comparison.md) for architecture differences and migration considerations.
 
 ## Quick Example
 

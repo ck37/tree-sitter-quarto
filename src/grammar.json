@@ -1,5 +1,4 @@
 {
-  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
   "name": "quarto",
   "rules": {
     "document": {
@@ -2063,6 +2062,10 @@
       "type": "PATTERN",
       "value": "[^\\r\\n`*_\\[@<${]+"
     },
+    "link_text": {
+      "type": "PATTERN",
+      "value": "[^\\r\\n`*_\\[@<${\\]]+"
+    },
     "code_span": {
       "type": "SEQ",
       "members": [
@@ -2321,7 +2324,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "text"
+          "name": "link_text"
         },
         {
           "type": "SYMBOL",
@@ -2755,6 +2758,5 @@
     }
   ],
   "inline": [],
-  "supertypes": [],
-  "reserved": {}
+  "supertypes": []
 }

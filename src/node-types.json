@@ -487,7 +487,6 @@
   {
     "type": "document",
     "named": true,
-    "root": true,
     "fields": {},
     "children": {
       "multiple": true,
@@ -1174,11 +1173,11 @@
             "named": true
           },
           {
-            "type": "strong_emphasis",
+            "type": "link_text",
             "named": true
           },
           {
-            "type": "text",
+            "type": "strong_emphasis",
             "named": true
           }
         ]
@@ -1955,6 +1954,10 @@
   },
   {
     "type": "link_destination",
+    "named": true
+  },
+  {
+    "type": "link_text",
     "named": true
   },
   {

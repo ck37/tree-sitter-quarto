@@ -34,7 +34,7 @@ There are currently two Pandoc Markdown parsers with different goals:
 | Callout semantic parsing | ✅ | ⚠️ (generic divs) | ⚠️ |
 | Primary use case | Editor features | Document rendering | Pandoc editing |
 
-See [PLAN.md](./PLAN.md) for detailed comparison and architecture.
+See [docs/plan.md](./docs/plan.md) for detailed comparison and architecture.
 
 ## Project Status
 
@@ -49,7 +49,7 @@ See [PLAN.md](./PLAN.md) for detailed comparison and architecture.
 - [ ] Tests created
 - [ ] Editor integration tested
 
-**Timeline:** 6 weeks to production-ready (see [PLAN.md](./PLAN.md))
+**Timeline:** 6 weeks to production-ready (see [docs/plan.md](./docs/plan.md))
 
 ## Features (Planned)
 
@@ -159,14 +159,14 @@ tree-sitter-markdown
 
 ## Documentation
 
-- **[PLAN.md](./PLAN.md)** - Comprehensive implementation plan
+- **[docs/plan.md](./docs/plan.md)** - Comprehensive implementation plan
 - **[Architecture Comparison](../tree-sitter-pandoc-markdown/docs/quarto-parser-comparison.md)** - Detailed comparison with Quarto Parser
 
 ## Contributing
 
 This project is in early planning stages. Contributions are welcome once the foundation is implemented.
 
-See [PLAN.md](./PLAN.md) for:
+See [docs/plan.md](./docs/plan.md) for:
 - Implementation strategy
 - Testing approach
 - Success criteria

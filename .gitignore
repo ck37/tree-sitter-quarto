@@ -34,3 +34,6 @@ coverage/
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+
+# Claude Code configuration
+CLAUDE.md

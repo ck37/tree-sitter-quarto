@@ -160,18 +160,18 @@ jobs:
       - name: Validate tree-sitter headers present
         run: |
           echo "Checking for required tree-sitter headers..."
-          test -f src/tree_sitter/parser.h || (echo "❌ Missing parser.h" && exit 1)
-          test -f src/tree_sitter/alloc.h || (echo "❌ Missing alloc.h" && exit 1)
-          test -f src/tree_sitter/array.h || (echo "❌ Missing array.h" && exit 1)
-          echo "✅ All headers present"
+          test -f src/tree_sitter/parser.h || (echo "ERROR: Missing parser.h" && exit 1)
+          test -f src/tree_sitter/alloc.h || (echo "ERROR: Missing alloc.h" && exit 1)
+          test -f src/tree_sitter/array.h || (echo "ERROR: Missing array.h" && exit 1)
+          echo "OK: All headers present"
 
       - name: Check for TSMapSlice in parser.h
         run: |
           echo "Validating TSMapSlice struct..."
           if grep -q "TSMapSlice" src/tree_sitter/parser.h; then
-            echo "✅ TSMapSlice found in parser.h"
+            echo "OK: TSMapSlice found in parser.h"
           else
-            echo "❌ Missing TSMapSlice in parser.h (required for Zed)"
+            echo "ERROR: Missing TSMapSlice in parser.h (required for Zed)"
             exit 1
           fi
 
@@ -179,9 +179,9 @@ jobs:
         run: |
           echo "Checking for abi_version field in TSLanguage struct..."
           if grep -q "abi_version" src/tree_sitter/parser.h; then
-            echo "✅ abi_version field found (tree-sitter 0.25.10)"
+            echo "OK: abi_version field found (tree-sitter 0.25.10)"
           else
-            echo "❌ Missing abi_version field in parser.h"
+            echo "ERROR: Missing abi_version field in parser.h"
             exit 1
           fi
 
@@ -193,19 +193,19 @@ jobs:
       - name: Validate WASM output
         run: |
           echo "Validating WASM output..."
-          test -f tree-sitter-quarto.wasm || (echo "❌ WASM file not generated" && exit 1)
+          test -f tree-sitter-quarto.wasm || (echo "ERROR: WASM file not generated" && exit 1)
 
           size=$(stat -c%s tree-sitter-quarto.wasm)
           size_kb=$((size / 1024))
-          echo "✅ WASM file generated: ${size_kb}KB (${size} bytes)"
+          echo "OK: WASM file generated: ${size_kb}KB (${size} bytes)"
 
           if [ $size -gt 200000 ]; then
-            echo "⚠️  Warning: WASM size is large (${size_kb}KB > 195KB)"
+            echo "WARNING: WASM size is large (${size_kb}KB > 195KB)"
             echo "   Consider optimizing grammar to reduce bundle size"
           fi
 
           if [ $size -gt 250000 ]; then
-            echo "❌ WASM too large: ${size_kb}KB exceeds 244KB limit"
+            echo "ERROR: WASM too large: ${size_kb}KB exceeds 244KB limit"
             exit 1
           fi
 
@@ -216,20 +216,20 @@ jobs:
           echo "tree-sitter CLI: $version"
 
           if [[ "$version" == "unknown" ]]; then
-            echo "⚠️  Warning: Could not determine CLI version"
+            echo "WARNING: Could not determine CLI version"
           else
             major=$(echo $version | cut -d. -f1)
             minor=$(echo $version | cut -d. -f2)
 
             if [ "$major" -eq 0 ] && [ "$minor" -lt 23 ]; then
-              echo "❌ tree-sitter CLI too old: $version (need 0.23+)"
+              echo "ERROR: tree-sitter CLI too old: $version (need 0.23+)"
               exit 1
             fi
-            echo "✅ CLI version compatible: $version"
+            echo "OK: CLI version compatible: $version"
           fi
 
       - name: Test WASM with simple parse
         run: |
           echo "Testing WASM parser with sample input..."
-          echo '# Hello World' | npx tree-sitter parse --wasm tree-sitter-quarto.wasm --quiet || echo "⚠️  WASM parse test skipped (expected in CI)"
-          echo "✅ WASM compatibility tests complete"
+          echo '# Hello World' | npx tree-sitter parse --wasm tree-sitter-quarto.wasm --quiet || echo "WARNING: WASM parse test skipped (expected in CI)"
+          echo "OK: WASM compatibility tests complete"

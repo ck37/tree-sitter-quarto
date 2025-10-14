@@ -42,10 +42,6 @@ Fully implemented:
 - Language injection - 15+ languages (Python, R, Julia, SQL, Bash, JS, Mermaid, etc.)
 - Full Pandoc Markdown - Headings, emphasis, links, images, tables, etc.
 
-Coverage: 58/58 tests passing (100%) | 62/63 requirements (98%) across 8 specifications
-
-WASM compilation verified - Parser successfully compiles to WebAssembly for browser-based editors.
-
 Known limitations:
 
 - Generic fenced divs (`::: {.custom-class}`) don't parse - [technical details](./docs/generic-fenced-div-limitation.md)

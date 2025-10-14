@@ -443,6 +443,45 @@ Test in actual editors:
 - [x] Adopted by at least one editor
 - [x] Community feedback incorporated
 
+## Known Limitations
+
+Based on comprehensive spec verification (see `openspec/specs/*/verification.md`):
+
+### Chunk Options
+- **Multi-line values not implemented:** Chunk options using pipe continuation syntax are not supported:
+  ```
+  #| fig-cap: |
+  #|   Line 1
+  #|   Line 2
+  ```
+  **Workaround:** Use single-line values
+  **Impact:** Low - multi-line chunk option values are rare in practice
+  **Status:** Acceptable limitation for v1.0
+
+### Inline Code Cells
+- **Empty content not supported:** Inline code cells require at least one character of content:
+  ```
+  `{python}`  # Not supported (empty content)
+  ```
+  **Workaround:** Use `{python} ` (with space) or avoid empty cells
+  **Impact:** Minimal - empty inline cells have no practical use
+  **Status:** Acceptable limitation for v1.0
+
+### Implementation Status
+- **41 total requirements** across 6 OpenSpec specifications
+- **40 requirements (98%)** fully implemented
+- **1 requirement** with acceptable limitation (multi-line chunk options)
+- **All core features** working correctly
+- **27 tests passing** in CI on Ubuntu and macOS
+
+For detailed verification reports, see:
+- `openspec/specs/chunk-options/verification.md`
+- `openspec/specs/inline-code-cells/verification.md`
+- `openspec/specs/executable-cells/verification.md`
+- `openspec/specs/cross-references/verification.md`
+- `openspec/specs/grammar-foundation/verification.md`
+- `openspec/specs/language-injection/verification.md`
+
 ## Maintenance & Evolution
 
 ### Version Compatibility

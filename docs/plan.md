@@ -652,6 +652,46 @@ Extend the external scanner from tree-sitter-pandoc-markdown with Quarto-specifi
 - Keeps grammar simple and fast
 - Enables editor-specific validation
 
+### 5. Editor Integration and Scope Naming
+
+**Question:** Should we use editor-specific scope names (e.g., Zed's `@text.*`) or standard tree-sitter scopes (`@markup.*`)?
+
+**Decision:** Use **standard tree-sitter scopes**, let editor extensions handle remapping.
+
+**Rationale:**
+- **Separation of concerns**: Grammar handles parsing (semantic), extensions handle presentation (visual)
+- **Editor agnostic**: Same grammar works for Neovim, Helix, VSCode, Zed
+- **Single source of truth**: One `highlights.scm` file to maintain
+- **Standard practice**: Most tree-sitter grammars use conventional scopes
+
+**Our Scope Philosophy:**
+```scheme
+; We use standard tree-sitter conventions:
+(atx_heading) @markup.heading          # Not @text.title (Zed-specific)
+(emphasis) @markup.italic              # Not @text.emphasis (Zed-specific)
+(strong_emphasis) @markup.bold         # Not @text.strong (Zed-specific)
+(code_span) @markup.raw.inline         # Standard across editors
+(shortcode_name) @function             # Standard scope
+(chunk_option_key) @property           # Standard scope
+```
+
+**Editor Extension Responsibilities:**
+- **Scope remapping**: Convert `@markup.*` → `@text.*` if needed (Zed)
+- **Theme adaptation**: Map scopes to theme colors
+- **WASM compilation**: Test grammar builds in editor environment
+- **Editor-specific features**: Custom folding, indentation rules
+
+**Example (Zed):**
+```
+Grammar provides: @markup.heading
+Zed extension maps: @markup.heading → @text.title
+Zed theme applies: @text.title → blue, bold, 1.5em
+```
+
+**References:**
+- Zed extension scope remapping: https://github.com/ck37/zed-quarto-extension/issues/4
+- Standard scopes: https://github.com/ck37/tree-sitter-quarto/blob/main/queries/highlights.scm
+
 ## Next Steps
 
 1. **Review this plan** - Get feedback on architecture decisions

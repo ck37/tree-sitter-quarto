@@ -172,6 +172,51 @@ The mean is `{python} mean([1, 2, 3])`.
 # Not yet available
 ```
 
+## Editor Integration
+
+### Scope Naming Philosophy
+
+tree-sitter-quarto uses **standard tree-sitter scope conventions** to remain editor-agnostic:
+
+```scheme
+(atx_heading) @markup.heading          # Standard across editors
+(emphasis) @markup.italic              # Not Zed-specific @text.emphasis
+(code_span) @markup.raw.inline         # Works in Neovim, Helix, VSCode
+(shortcode_name) @function             # Semantic, not presentation
+(chunk_option_key) @property           # Universal scope
+```
+
+**Why standard scopes?**
+- ✅ **Editor agnostic**: Same grammar works everywhere
+- ✅ **Single source of truth**: One `queries/highlights.scm` to maintain
+- ✅ **Separation of concerns**: Grammar = parsing, extension = presentation
+- ✅ **Standard practice**: Follows tree-sitter ecosystem conventions
+
+### For Editor Extension Developers
+
+If your editor requires different scope names (e.g., Zed uses `@text.*` instead of `@markup.*`):
+
+**Recommended approach**: Handle scope remapping in your editor extension
+- Load our `queries/highlights.scm`
+- Remap scopes to your editor's conventions
+- Example: `@markup.heading` → `@text.title` (Zed)
+
+**Not recommended**: Maintaining editor-specific query files in this repo
+- Creates maintenance burden (N files for N editors)
+- Violates separation of concerns
+- Most editors can handle scope remapping
+
+**Common remappings** (e.g., for Zed):
+```
+@markup.heading     → @text.title
+@markup.italic      → @text.emphasis
+@markup.bold        → @text.strong
+@markup.raw.inline  → @text.literal
+@markup.link.text   → @text.link
+```
+
+**Reference**: See [zed-quarto-extension#4](https://github.com/ck37/zed-quarto-extension/issues/4) for detailed scope mapping discussion.
+
 ## Relationship to Other Projects
 
 ```

@@ -609,11 +609,23 @@
           "named": true
         },
         {
+          "type": "emphasis_delimiter",
+          "named": true
+        },
+        {
+          "type": "footnote_reference",
+          "named": true
+        },
+        {
           "type": "image",
           "named": true
         },
         {
           "type": "inline_code_cell",
+          "named": true
+        },
+        {
+          "type": "inline_footnote",
           "named": true
         },
         {
@@ -914,6 +926,21 @@
     }
   },
   {
+    "type": "footnote_reference",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "footnote_reference_marker",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "html_block",
     "named": true,
     "fields": {
@@ -1016,11 +1043,19 @@
           "named": true
         },
         {
+          "type": "footnote_reference",
+          "named": true
+        },
+        {
           "type": "image",
           "named": true
         },
         {
           "type": "inline_code_cell",
+          "named": true
+        },
+        {
+          "type": "inline_footnote",
           "named": true
         },
         {
@@ -1561,11 +1596,19 @@
           "named": true
         },
         {
+          "type": "footnote_reference",
+          "named": true
+        },
+        {
           "type": "image",
           "named": true
         },
         {
           "type": "inline_code_cell",
+          "named": true
+        },
+        {
+          "type": "inline_footnote",
           "named": true
         },
         {
@@ -1582,6 +1625,10 @@
         },
         {
           "type": "strong_emphasis",
+          "named": true
+        },
+        {
+          "type": "strong_emphasis_delimiter",
           "named": true
         },
         {
@@ -1806,14 +1853,6 @@
     "named": false
   },
   {
-    "type": "*",
-    "named": false
-  },
-  {
-    "type": "**",
-    "named": false
-  },
-  {
     "type": "-",
     "named": false
   },
@@ -1839,14 +1878,6 @@
   },
   {
     "type": "]:",
-    "named": false
-  },
-  {
-    "type": "_",
-    "named": false
-  },
-  {
-    "type": "__",
     "named": false
   },
   {
@@ -1910,11 +1941,19 @@
     "named": true
   },
   {
+    "type": "emphasis_delimiter",
+    "named": true
+  },
+  {
     "type": "fenced_div_delimiter",
     "named": true
   },
   {
     "type": "footnote_marker",
+    "named": true
+  },
+  {
+    "type": "footnote_reference_marker",
     "named": true
   },
   {
@@ -1947,6 +1986,10 @@
   },
   {
     "type": "inline_cell_delimiter",
+    "named": true
+  },
+  {
+    "type": "inline_footnote",
     "named": true
   },
   {
@@ -2023,6 +2066,10 @@
   },
   {
     "type": "shortcode_open",
+    "named": true
+  },
+  {
+    "type": "strong_emphasis_delimiter",
     "named": true
   },
   {

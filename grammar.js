@@ -479,12 +479,14 @@ module.exports = grammar({
       $.strong_emphasis,
       $.link,
       $.image,
+      $.inline_footnote,        // Pandoc: ^[note]
+      $.footnote_reference,     // Pandoc: [^1]
       $.citation,
       $.cross_reference,        // Quarto: @fig-plot
       $.shortcode_inline
     ),
 
-    text: $ => /[^\r\n`*_\[@<${]+/,
+    text: $ => /[^\r\n`*_\[@<${^]+/,
 
     // Text inside link brackets - excludes ] to allow proper link parsing
     link_text: $ => /[^\r\n`*_\[@<${\]]+/,
@@ -502,13 +504,13 @@ module.exports = grammar({
     ),
 
     emphasis: $ => prec.left(choice(
-      seq(token('*'), repeat1($._inline_element), token('*')),
-      seq(token('_'), repeat1($._inline_element), token('_'))
+      seq(alias(token('*'), $.emphasis_delimiter), repeat1($._inline_element), alias(token('*'), $.emphasis_delimiter)),
+      seq(alias(token('_'), $.emphasis_delimiter), repeat1($._inline_element), alias(token('_'), $.emphasis_delimiter))
     )),
 
     strong_emphasis: $ => prec.left(choice(
-      seq(token('**'), repeat1($._inline_element), token('**')),
-      seq(token('__'), repeat1($._inline_element), token('__'))
+      seq(alias(token('**'), $.strong_emphasis_delimiter), repeat1($._inline_element), alias(token('**'), $.strong_emphasis_delimiter)),
+      seq(alias(token('__'), $.strong_emphasis_delimiter), repeat1($._inline_element), alias(token('__'), $.strong_emphasis_delimiter))
     )),
 
     link: $ => seq(
@@ -527,6 +529,28 @@ module.exports = grammar({
       token('!'),
       field('alt', seq('[', alias(/[^\]]*/, $.image_alt), ']')),
       field('source', seq('(', alias(/[^)]+/, $.image_source), ')'))
+    ),
+
+    /**
+     * Inline Footnote
+     *
+     * ^[inline note content]
+     *
+     * Pandoc-style inline footnote. Content can include other inline elements.
+     * Note: Currently parses content as plain text due to parsing complexity with nested brackets.
+     */
+    inline_footnote: $ => token(/\^\[[^\]]+\]/),
+
+    /**
+     * Footnote Reference
+     *
+     * [^1], [^note]
+     *
+     * Reference to a footnote definition.
+     */
+    footnote_reference: $ => alias(
+      token(/\[\^[^\]]+\]/),
+      $.footnote_reference_marker
     ),
 
     /**

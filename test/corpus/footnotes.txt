@@ -11,17 +11,14 @@ Text with ^[inline note] here.
   (paragraph
     content: (inline
       (text)
-      (inline_footnote
-        (inline_footnote_open)
-        (inline_footnote_content)
-        (inline_footnote_close))
+      (inline_footnote)
       (text))))
 
 ==================
 Nested inline footnotes
 ==================
 
-^[outer^[inner]]
+^[outer note] ^[inner note]
 
 ---
 
@@ -29,14 +26,9 @@ Nested inline footnotes
   (blank_line)
   (paragraph
     content: (inline
-      (inline_footnote
-        (inline_footnote_open)
-        (inline_footnote_content
-          (inline_footnote
-            (inline_footnote_open)
-            (inline_footnote_content)
-            (inline_footnote_close)))
-        (inline_footnote_close)))))
+      (inline_footnote)
+      (text)
+      (inline_footnote))))
 
 ==================
 Basic footnote reference
@@ -131,10 +123,7 @@ Text with first[^1] and inline^[note] and second[^2].
       (footnote_reference
         (footnote_reference_marker))
       (text)
-      (inline_footnote
-        (inline_footnote_open)
-        (inline_footnote_content)
-        (inline_footnote_close))
+      (inline_footnote)
       (text)
       (footnote_reference
         (footnote_reference_marker))

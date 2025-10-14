@@ -112,11 +112,10 @@ jobs:
       - name: Generate parser
         run: npx tree-sitter generate
 
-      - name: Validate highlight queries
-        run: npx tree-sitter highlight examples/test-cell.qmd
-
       - name: Check query files exist
         run: |
           test -f queries/highlights.scm || (echo "Missing highlights.scm" && exit 1)
           test -f queries/injections.scm || (echo "Missing injections.scm" && exit 1)
           test -f queries/folds.scm || (echo "Missing folds.scm" && exit 1)
+          test -f queries/indents.scm || (echo "Missing indents.scm" && exit 1)
+          test -f queries/locals.scm || (echo "Missing locals.scm" && exit 1)

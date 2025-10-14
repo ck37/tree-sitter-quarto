@@ -44,6 +44,8 @@ Fully implemented:
 
 Coverage: 58/58 tests passing (100%) | 62/63 requirements (98%) across 8 specifications
 
+WASM compilation verified - Parser successfully compiles to WebAssembly for browser-based editors.
+
 Known limitations:
 
 - Generic fenced divs (`::: {.custom-class}`) don't parse - [technical details](./docs/generic-fenced-div-limitation.md)

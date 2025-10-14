@@ -508,6 +508,8 @@ Based on comprehensive spec verification (see `openspec/specs/*/verification.md`
 - **2 requirements** deferred (inline conditional spans, generic fenced divs)
 - **All core features** working correctly
 - **58 tests passing** (100%) in CI on Ubuntu and macOS
+- **WASM compilation verified** - Parser successfully compiles to WebAssembly (116KB)
+- **parser.c committed** to repository for easier editor extension integration
 
 **Specifications Implemented (8/8):**
 1. **Grammar Foundation** - 11 requirements ✅

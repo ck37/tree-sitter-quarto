@@ -176,6 +176,20 @@ Simple inline execution: The sum is `{python} sum([1, 2, 3, 4, 5])`.
 
 You can also use the shorthand: The mean is `r mean(c(1,2,3))` (R syntax).
 
+## Shortcodes
+
+Quarto provides powerful shortcodes for embedding content:
+
+{{< video https://www.youtube.com/embed/wo9vZccmqwc >}}
+
+Include content from other files:
+
+{{< include _content.qmd >}}
+
+Embed specific figures from notebooks:
+
+{{< embed notebook.ipynb#fig-plot >}}
+
 ## Raw Blocks
 
 ```{=html}
@@ -199,7 +213,7 @@ See [@wickham2014; @wilkinson2005] for more on visualization.
 ## Div Attributes
 
 ::: {#custom-div .highlight style="background-color: #f0f0f0;"}
-This div has custom attributes that tree-sitter-qmd should parse.
+This div has custom attributes that tree-sitter-quarto should parse.
 :::
 
 ## Chunk Options Edge Cases
@@ -227,12 +241,13 @@ This document exercises most Quarto Markdown features that tree-sitter-quarto ai
 2. ✅ Chunk options (`#| key: value`)
 3. ✅ Cross-references (@fig-, @tbl-, @eq-)
 4. ✅ Inline code cells (`` `{python} expr` ``)
-5. ✅ Callouts with different types
-6. ✅ Tabsets and conditional content
-7. ✅ Citations (@author)
-8. ✅ Divs with attributes
-9. ✅ Raw blocks for HTML/LaTeX
-10. ✅ Multi-line chunk options
+5. ✅ Shortcodes ({{< video >}}, {{< include >}}, {{< embed >}})
+6. ✅ Callouts with different types
+7. ✅ Tabsets and conditional content
+8. ✅ Citations (@author)
+9. ✅ Divs with attributes
+10. ✅ Raw blocks for HTML/LaTeX
+11. ✅ Multi-line chunk options
 
 ## References
 

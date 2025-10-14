@@ -237,7 +237,8 @@ module.exports = grammar(markdown, {
 
 **Approach:**
 ```javascript
-const pandoc = require('../tree-sitter-pandoc-markdown/grammar.js');
+// Copy base grammar from tree-sitter-pandoc-markdown
+const pandoc = require('./pandoc-markdown-base');
 
 module.exports = grammar(pandoc, {
   name: 'quarto',

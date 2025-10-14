@@ -178,7 +178,30 @@ The value is `{python} compute_value()`.
 
 ### Phase 2: Advanced Quarto Features
 
-**2.1 Cell Options Shorthand**
+**2.1 Shortcodes**
+
+```qmd
+{{< video https://example.com/video.mp4 >}}
+{{< embed notebook.ipynb#fig-plot >}}
+{{< include _content.qmd >}}
+```
+
+Parse Quarto shortcodes with double braces syntax.
+
+**AST Structure:**
+```
+(shortcode
+  (shortcode_name)
+  (shortcode_arguments))
+```
+
+**Why This Matters:**
+- Distinguish shortcodes from regular text
+- Enable syntax highlighting for shortcode names
+- Support autocomplete for known shortcodes
+- Validate shortcode syntax
+
+**2.2 Cell Options Shorthand**
 
 ```qmd
 ```{python}
@@ -195,7 +218,7 @@ vs
 
 Parse both syntaxes with semantic equivalence.
 
-**2.2 Callout Blocks (Enhanced Divs)**
+**2.3 Callout Blocks (Enhanced Divs)**
 
 ```qmd
 ::: {.callout-note}
@@ -214,7 +237,7 @@ Recognize callout types: note, warning, important, tip, caution
   (callout_content))
 ```
 
-**2.3 Tabsets**
+**2.4 Tabsets**
 
 ```qmd
 ::: {.panel-tabset}
@@ -226,7 +249,7 @@ Content 2
 :::
 ```
 
-**2.4 Conditional Content**
+**2.5 Conditional Content**
 
 ```qmd
 ::: {.content-visible when-format="html"}
@@ -236,7 +259,7 @@ HTML-only content
 
 Parse conditional attributes for format-specific content.
 
-**2.5 Figure/Table Cross-Reference Metadata**
+**2.6 Figure/Table Cross-Reference Metadata**
 
 ```qmd
 ![Caption](image.png){#fig-plot}
@@ -278,13 +301,17 @@ Link table captions to cross-reference IDs.
 1. **Project Structure**
    ```bash
    git init tree-sitter-quarto
-   git submodule add ../tree-sitter-pandoc-markdown
+   mkdir -p src common
+   # Copy base grammar from tree-sitter-pandoc-markdown
+   cp ../tree-sitter-pandoc-markdown/grammar.js ./pandoc-markdown-base.js
    ```
 
 2. **Import Base Grammar**
    ```javascript
    // grammar.js
-   const pandoc = require('../tree-sitter-pandoc-markdown/tree-sitter-pandoc-markdown/grammar.js');
+   // Copy grammar from tree-sitter-pandoc-markdown or use as npm dependency
+   const pandoc = require('./pandoc-markdown-base');  // Copied grammar
+   // OR: const pandoc = require('tree-sitter-pandoc-markdown');  // If published to npm
 
    module.exports = grammar(pandoc, {
      name: 'quarto',
@@ -500,16 +527,39 @@ tree-sitter-quarto/
 - Potential drift from upstream
 - Code duplication
 
-**Recommendation:** Start with **Copy & Extend** (Option B) for simplicity, consider submodules later if upstream changes frequently.
+**Decision: Copy & Extend** (Option B) chosen for simplicity.
+
+### Implementation Approach
+
+**During Development:**
+- Copy grammar.js from tree-sitter-pandoc-markdown into this repository
+- Manually sync any important updates from upstream
+- Document the source commit hash for tracking
+
+**In Production:**
+- Consider publishing tree-sitter-pandoc-markdown as npm package
+- Use as dependency: `require('tree-sitter-pandoc-markdown')`
+- For now: direct file copy is simplest approach
+
+**Rationale:**
+- Avoids git submodule complexity
+- Allows customization without upstream constraints
+- Simpler build process for contributors
+- Can migrate to npm dependency later if needed
 
 ### 2. Scanner Complexity
 
-**Question:** Do we need a new external scanner or extend the existing one?
+**Decision: Extend existing scanner**
 
-**Answer:** Extend existing scanner from tree-sitter-pandoc-markdown:
-- Add `CELL_BOUNDARY` token for cell start/end detection
-- Add `CHUNK_OPTION_START` token for `#|` lines inside cells
+Extend the external scanner from tree-sitter-pandoc-markdown with Quarto-specific tokens:
+- Add `CHUNK_OPTION_MARKER` token for `#|` lines at cell start
+- Add `CELL_BOUNDARY` token for context-aware cell delimiter detection
 - Keep all existing tokens for Pandoc features
+
+**Why external scanner is needed:**
+- Distinguish `#| key: value` from `# comment` (both start with `#`)
+- Requires checking if we're at the start of a cell
+- Context-sensitive parsing beyond LR(1) capability
 
 ### 3. Language Injection Strategy
 

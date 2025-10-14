@@ -86,19 +86,30 @@
 - [ ] Test: R inline cell
 - [ ] Test: Mixed with code spans
 
+#### Shortcodes
+- [ ] Define `shortcode` rule
+- [ ] Parse `{{< name args >}}` syntax
+- [ ] Parse shortcode name
+- [ ] Parse shortcode arguments
+- [ ] Test: Basic shortcodes (video, embed, include)
+- [ ] Test: Shortcodes with URLs
+- [ ] Test: Shortcodes with file paths
+- [ ] Test: Self-closing shortcodes
+
 #### Enhanced Citations
 - [ ] Keep existing citation rule
 - [ ] Ensure cross-references don't conflict
 - [ ] Test: Citation vs cross-reference distinction
 - [ ] Test: `@author` (citation) vs `@fig-1` (cross-ref)
 
-### External Scanner (if needed)
+### External Scanner (Required)
 
-- [ ] Assess if cell boundary detection needs scanner
-- [ ] Assess if chunk option parsing needs scanner
-- [ ] Implement `CELL_BOUNDARY` token (if needed)
-- [ ] Implement `CHUNK_OPTION_START` token (if needed)
+- [ ] Extend pandoc-markdown scanner with Quarto tokens
+- [ ] Implement `CHUNK_OPTION_MARKER` token for `#|` at cell start
+- [ ] Implement `CELL_BOUNDARY` token for context-aware delimiters
+- [ ] Handle multi-line chunk option continuation (`|`)
 - [ ] Test scanner with edge cases
+- [ ] Test nested code blocks in cells
 
 ## Stage 3: Test Suite
 
@@ -107,6 +118,7 @@
 - [ ] test/corpus/chunk-options.txt (10+ cases)
 - [ ] test/corpus/cross-references.txt (10+ cases)
 - [ ] test/corpus/inline-cells.txt (5+ cases)
+- [ ] test/corpus/shortcodes.txt (8+ cases)
 - [ ] test/corpus/callouts.txt (6+ cases)
 - [ ] test/corpus/tabsets.txt (3+ cases)
 
@@ -251,16 +263,20 @@
 ### Architecture Decisions
 - [x] Use "Copy & Extend" strategy (not git submodules)
   - Rationale: Simpler build, easier to customize
+  - Implementation: Copy grammar.js from tree-sitter-pandoc-markdown
+  - Future: Consider npm package if needed
 
-- [ ] Scanner strategy (TBD)
-  - Option 1: Extend tree-sitter-pandoc-markdown scanner
-  - Option 2: New minimal scanner
-  - Decision: TBD after initial testing
+- [x] Scanner strategy (Decided)
+  - Decision: Extend existing scanner with Quarto-specific tokens
+  - Add: `CHUNK_OPTION_MARKER` for `#|` at cell start
+  - Add: `CELL_BOUNDARY` for context-aware cell delimiters
+  - Rationale: Chunk options and cell boundaries need context-sensitive parsing
 
-- [ ] Validation approach (TBD)
-  - Option 1: In grammar
-  - Option 2: Separate language server
-  - Decision: Likely separate tool (keeps grammar fast)
+- [x] Validation approach (Decided)
+  - Decision: Separate language server (not in grammar)
+  - Rationale: Keeps grammar fast and focused on structure
+  - Grammar: Parse structure only
+  - LSP: Validate semantics, provide autocomplete
 
 ### Implementation Decisions
 - [ ] Chunk option parsing strategy (TBD)

@@ -28,7 +28,7 @@ There are currently parsers for Pandoc Markdown and Quarto with different goals:
 
 | Feature | tree-sitter-quarto | Quarto Parser | tree-sitter-pandoc-markdown |
 |---------|----------------|---------------|----------------------------|
-| Parses chunk options (`#\| label:`) | ✅ | ❌ (handled by knitr) | ❌ |
+| Parses chunk options | ✅ | ❌ (handled by knitr) | ❌ |
 | Distinguishes xrefs from citations | ✅ | ❌ (both as citations) | ✅ |
 | Recognizes executable cells | ✅ | ⚠️ (as code blocks) | ❌ |
 | Callout semantic parsing | ✅ | ⚠️ (generic divs) | ⚠️ |
@@ -38,16 +38,20 @@ See [docs/plan.md](./docs/plan.md) for detailed comparison and architecture.
 
 ## Project Status
 
-**Current Phase:** Planning & Design
+**Current Phase:** Planning & Specification
 
 - [x] Architecture designed
 - [x] Implementation plan created
-- [ ] Repository initialized
+- [x] OpenSpec baseline specifications created (6 specs, 48 requirements)
+- [x] Project conventions documented
+- [ ] Repository initialized (grammar.js, package.json)
 - [ ] Base grammar ported
 - [ ] Executable cells implemented
 - [ ] Chunk options implemented
 - [ ] Tests created
 - [ ] Editor integration tested
+
+**Latest:** OpenSpec specifications define requirements for all core capabilities (grammar foundation, executable cells, chunk options, cross-references, inline code cells, language injection)
 
 **Timeline:** 6 weeks to production-ready (see [docs/plan.md](./docs/plan.md))
 
@@ -56,10 +60,11 @@ See [docs/plan.md](./docs/plan.md) for detailed comparison and architecture.
 ### Phase 1: Foundation
 - ✅ Parse executable code cells with language specifiers
 - ✅ Parse chunk options (`#| key: value`)
-- ✅ Distinguish cross-references (`@fig:plot`) from citations (`@smith2020`)
+- ✅ Distinguish cross-references (`@fig-plot`) from citations (`@smith2020`)
 - ✅ Parse inline code cells (`` `{python} expr` ``)
 
 ### Phase 2: Advanced Quarto Features
+- ⬜ Shortcodes (`{{< video url >}}`)
 - ⬜ Callout blocks (`::: {.callout-note}`)
 - ⬜ Tabsets (`::: {.panel-tabset}`)
 - ⬜ Conditional content (`::: {.content-visible when-format="html"}`)
@@ -175,7 +180,7 @@ See [docs/plan.md](./docs/plan.md) for:
 
 ## License
 
-MIT License (to be confirmed)
+MIT License - see [LICENSE](./LICENSE) file for details
 
 ## Related Projects
 

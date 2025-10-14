@@ -16,7 +16,7 @@ plot(data)
 The mean is `{python} mean(x)`.
 ```
 
-## tree-sitter-qmd (Our Implementation)
+## tree-sitter-quarto (Our Implementation)
 
 **Rich semantic nodes for editor features:**
 
@@ -169,7 +169,7 @@ The mean is `{python} mean(x)`.
 
 ### Cross-References
 
-| Feature | tree-sitter-qmd | Quarto Parser | tree-sitter-pandoc-md |
+| Feature | tree-sitter-quarto | Quarto Parser | tree-sitter-pandoc-md |
 |---------|----------------|---------------|----------------------|
 | `@fig-plot` | `(cross_reference type:fig id:plot)` | `(Cite citationId:"fig-plot")` | `(cross_reference)` |
 | Semantic type | ✅ Distinct | ❌ Same as citation | ✅ Distinct |
@@ -178,7 +178,7 @@ The mean is `{python} mean(x)`.
 
 ### Chunk Options
 
-| Feature | tree-sitter-qmd | Quarto Parser | tree-sitter-pandoc-md |
+| Feature | tree-sitter-quarto | Quarto Parser | tree-sitter-pandoc-md |
 |---------|----------------|---------------|----------------------|
 | `#\| label: foo` | `(chunk_option key:"label" value:"foo")` | `["label", "foo"]` | `(text)` |
 | Structure | ✅ Rich AST | ⚠️  Array | ❌ Flat text |
@@ -188,7 +188,7 @@ The mean is `{python} mean(x)`.
 
 ### Executable Cells
 
-| Feature | tree-sitter-qmd | Quarto Parser | tree-sitter-pandoc-md |
+| Feature | tree-sitter-quarto | Quarto Parser | tree-sitter-pandoc-md |
 |---------|----------------|---------------|----------------------|
 | Cell type | `(executable_code_cell)` | `(CodeBlock)` | `(fenced_code_block)` |
 | Semantic | ✅ Executable | ⚠️  Generic | ❌ Static code |
@@ -197,7 +197,7 @@ The mean is `{python} mean(x)`.
 
 ### Inline Code Cells
 
-| Feature | tree-sitter-qmd | Quarto Parser | tree-sitter-pandoc-md |
+| Feature | tree-sitter-quarto | Quarto Parser | tree-sitter-pandoc-md |
 |---------|----------------|---------------|----------------------|
 | `` `{python} expr` `` | `(inline_code_cell)` | `(Code)` | `(code_span)` |
 | Executable | ✅ Yes | ✅ Yes | ❌ Static |
@@ -208,7 +208,7 @@ The mean is `{python} mean(x)`.
 
 ### Authoring in Editor (Before Execution)
 
-**Best:** tree-sitter-qmd
+**Best:** tree-sitter-quarto
 - See chunk options structure while typing
 - Autocomplete and validation
 - Jump between references and definitions
@@ -229,7 +229,7 @@ The mean is `{python} mean(x)`.
 - Works with existing filter pipeline
 - Proven with quarto-web
 
-**Not Applicable:** tree-sitter-qmd
+**Not Applicable:** tree-sitter-quarto
 - Editor-focused, not rendering-focused
 - Would require AST → Pandoc conversion
 
@@ -243,7 +243,7 @@ The mean is `{python} mean(x)`.
 - Covers all Pandoc features
 - No Quarto-specific assumptions
 
-**Overkill:** tree-sitter-qmd
+**Overkill:** tree-sitter-quarto
 - Assumes Quarto features
 - Unnecessary for plain Pandoc
 
@@ -252,7 +252,7 @@ The mean is `{python} mean(x)`.
 
 ## Visual Highlighting Example
 
-### tree-sitter-qmd (Goal)
+### tree-sitter-quarto (Goal)
 
 ```qmd
 See @fig-plot for results.
@@ -309,7 +309,7 @@ The mean is `{python} mean(x)`.
 
 Each parser excels in its domain:
 
-- **tree-sitter-qmd:** Authoring experience in editors (our goal)
+- **tree-sitter-quarto:** Authoring experience in editors (our goal)
 - **Quarto Parser:** Rendering pipeline compatibility
 - **tree-sitter-pandoc-markdown:** General Pandoc Markdown editing
 

@@ -142,7 +142,8 @@ Since tree-sitter-pandoc-markdown already implements Pandoc features correctly, 
 
 **Extend tree-sitter-pandoc-markdown:**
 ```javascript
-const pandoc = require('../tree-sitter-pandoc-markdown/grammar.js');
+// Copy base grammar or use as dependency
+const pandoc = require('./pandoc-markdown-base');
 
 module.exports = grammar(pandoc, {
   name: 'quarto',

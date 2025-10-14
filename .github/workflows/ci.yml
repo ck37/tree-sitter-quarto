@@ -154,9 +154,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Generate parser
-        run: npx tree-sitter generate
-
       - name: Validate tree-sitter headers present
         run: |
           echo "Checking for required tree-sitter headers..."

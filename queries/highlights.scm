@@ -38,10 +38,8 @@
 (inline_code_cell
   (language_name) @function.builtin)
 
-(inline_code_cell
-  "`{" @punctuation.bracket
-  "}" @punctuation.bracket
-  "`" @punctuation.bracket)
+(inline_cell_delimiter) @punctuation.bracket
+(inline_cell_brace) @punctuation.bracket
 
 ; ============================================================================
 ; PANDOC MARKDOWN HIGHLIGHTS
@@ -103,8 +101,8 @@
 ; Block Quotes
 ; ------------
 
-(block_quote
-  (block_quote_marker) @punctuation.special) @markup.quote
+(block_quote) @markup.quote
+(block_quote_marker) @punctuation.special
 
 ; Lists
 ; -----
@@ -187,8 +185,7 @@
 ; ----------
 
 (raw_block
-  (raw_block_delimiter) @punctuation.delimiter
-  (raw_format) @attribute)
+  (raw_block_delimiter) @punctuation.delimiter)
 
 (raw_block_content) @embedded
 
@@ -197,8 +194,6 @@
 
 (footnote_definition
   (footnote_marker) @punctuation.special)
-
-(footnote_reference) @punctuation.special
 
 ; Link References
 ; ---------------

@@ -38,6 +38,3 @@
 ; Citations reference bibliography
 (citation
   key: (citation_key) @reference.citation)
-
-; Footnote references
-(footnote_reference) @reference.footnote

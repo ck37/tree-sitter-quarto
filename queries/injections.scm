@@ -274,17 +274,4 @@
 
 ; Raw Blocks
 ; ----------
-
-; HTML raw blocks
-((raw_block
-  format: (raw_format) @_format
-  (#match? @_format "\\{=html\\}")
-  content: (raw_block_content) @injection.content)
- (#set! injection.language "html"))
-
-; LaTeX raw blocks
-((raw_block
-  format: (raw_format) @_format
-  (#match? @_format "\\{=latex\\}")
-  content: (raw_block_content) @injection.content)
- (#set! injection.language "latex"))
+; Note: Cannot inject based on format since it's embedded in delimiter

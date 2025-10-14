@@ -40,8 +40,8 @@ module.exports = grammar({
 
   rules: {
     document: $ => choice(
-      seq($.yaml_front_matter, repeat($._block)),
-      seq($.percent_metadata, repeat($._block)),
+      prec(2, seq($.yaml_front_matter, repeat($._block))),
+      prec(2, seq($.percent_metadata, repeat($._block))),
       repeat($._block)
     ),
 
@@ -83,8 +83,8 @@ module.exports = grammar({
      *
      * Spec: openspec/specs/executable-cells/spec.md
      */
-    executable_code_cell: $ => seq(
-      field('open_delimiter', alias(token(prec(2, /```+/)), $.code_fence_delimiter)),
+    executable_code_cell: $ => prec(1, seq(
+      field('open_delimiter', alias(token(/```+/), $.code_fence_delimiter)),
       field('language_specifier', seq(
         '{',
         field('language', alias(/[a-zA-Z][a-zA-Z0-9_-]*/, $.language_name)),
@@ -94,9 +94,9 @@ module.exports = grammar({
       /\r?\n/,
       optional(field('chunk_options', $.chunk_options)),
       optional(field('content', $.cell_content)),
-      field('close_delimiter', alias(token(prec(2, /```+/)), $.code_fence_delimiter)),
+      field('close_delimiter', alias(token(/```+/), $.code_fence_delimiter)),
       /\r?\n/
-    ),
+    )),
 
     /**
      * Chunk Options
@@ -110,10 +110,14 @@ module.exports = grammar({
     chunk_options: $ => repeat1($.chunk_option),
 
     chunk_option: $ => seq(
-      $._chunk_option_marker,
+      token(prec(2, '#|')),
+      optional(/[ \t]*/),
       field('key', alias(/[a-zA-Z][a-zA-Z0-9-]*/, $.chunk_option_key)),
       ':',
-      optional(field('value', alias(/[^\r\n]+/, $.chunk_option_value))),
+      optional(seq(
+        optional(/[ \t]*/),
+        field('value', alias(/[^\r\n]+/, $.chunk_option_value))
+      )),
       /\r?\n/
     ),
 
@@ -133,13 +137,14 @@ module.exports = grammar({
     // ============================================================================
 
     // YAML Front Matter
-    yaml_front_matter: $ => seq(
-      token('---'),
-      /\r?\n/,
-      repeat(seq(alias(/[^\r\n]+/, $.yaml_line), /\r?\n/)),
-      choice(token('---'), token('...')),
+    // NOTE: Standalone `---` at document start is ambiguous with thematic break.
+    // This grammar treats it as (invalid) YAML front matter.
+    yaml_front_matter: $ => prec(-1, seq(
+      field('start', alias(token(seq('---', /\r?\n/)), $.yaml_front_matter_start)),
+      repeat(seq(alias(token(prec(-1, /[^\r\n]+/)), $.yaml_front_matter_content), /\r?\n/)),
+      field('close', alias(token(prec(1, choice('---', '...'))), $.yaml_front_matter_delimiter)),
       /\r?\n/
-    ),
+    )),
 
     // Percent Metadata (Pandoc extension)
     percent_metadata: $ => repeat1(seq(
@@ -191,14 +196,16 @@ module.exports = grammar({
     ),
 
     // Fenced Code Block (regular, non-executable)
-    fenced_code_block: $ => seq(
+    fenced_code_block: $ => prec(-1, seq(
       field('open', alias(token(/```+/), $.code_fence_delimiter)),
-      optional(field('info', alias(/[^\r\n{]+/, $.info_string))),
+      optional(field('info', $.info_string)),
       /\r?\n/,
       repeat(seq(alias(/[^\r\n]+/, $.code_line), /\r?\n/)),
       field('close', alias(token(/```+/), $.code_fence_delimiter)),
       /\r?\n/
-    ),
+    )),
+
+    info_string: $ => /[^\r\n{]+/,
 
     // HTML Block
     html_block: $ => seq(

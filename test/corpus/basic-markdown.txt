@@ -7,6 +7,7 @@ This is a paragraph.
 ---
 
 (document
+  (blank_line)
   (paragraph
     content: (inline
       (text))))
@@ -34,6 +35,7 @@ This has `inline code` in it.
 ---
 
 (document
+  (blank_line)
   (paragraph
     content: (inline
       (text)
@@ -57,12 +59,12 @@ print("hello")
   (fenced_code_block
     open: (code_fence_delimiter)
     info: (info_string)
+    (code_line)
     close: (code_fence_delimiter)))
 
 ==================
 YAML front matter
 ==================
-
 ---
 title: "My Document"
 ---

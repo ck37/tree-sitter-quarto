@@ -1391,13 +1391,34 @@
   {
     "type": "yaml_front_matter",
     "named": true,
-    "fields": {},
+    "fields": {
+      "close": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "yaml_front_matter_delimiter",
+            "named": true
+          }
+        ]
+      },
+      "start": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "yaml_front_matter_start",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": false,
       "types": [
         {
-          "type": "yaml_line",
+          "type": "yaml_front_matter_content",
           "named": true
         }
       ]
@@ -1405,6 +1426,10 @@
   },
   {
     "type": "!",
+    "named": false
+  },
+  {
+    "type": "#|",
     "named": false
   },
   {
@@ -1429,14 +1454,6 @@
   },
   {
     "type": "-",
-    "named": false
-  },
-  {
-    "type": "---",
-    "named": false
-  },
-  {
-    "type": "...",
     "named": false
   },
   {
@@ -1648,7 +1665,15 @@
     "named": true
   },
   {
-    "type": "yaml_line",
+    "type": "yaml_front_matter_content",
+    "named": true
+  },
+  {
+    "type": "yaml_front_matter_delimiter",
+    "named": true
+  },
+  {
+    "type": "yaml_front_matter_start",
     "named": true
   },
   {

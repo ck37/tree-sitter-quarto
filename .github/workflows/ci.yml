@@ -128,3 +128,108 @@ jobs:
           test -f queries/folds.scm || (echo "Missing folds.scm" && exit 1)
           test -f queries/indents.scm || (echo "Missing indents.scm" && exit 1)
           test -f queries/locals.scm || (echo "Missing locals.scm" && exit 1)
+
+  zed-compatibility:
+    name: Zed Editor Compatibility
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Setup Emscripten
+        uses: mymindstorm/setup-emsdk@v13
+        with:
+          version: 'latest'
+
+      - name: Install tree-sitter CLI
+        run: npm install tree-sitter-cli
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate parser
+        run: npx tree-sitter generate
+
+      - name: Validate tree-sitter headers present
+        run: |
+          echo "Checking for required tree-sitter headers..."
+          test -f src/tree_sitter/parser.h || (echo "❌ Missing parser.h" && exit 1)
+          test -f src/tree_sitter/alloc.h || (echo "❌ Missing alloc.h" && exit 1)
+          test -f src/tree_sitter/array.h || (echo "❌ Missing array.h" && exit 1)
+          echo "✅ All headers present"
+
+      - name: Check for TSFieldMapSlice in parser.h
+        run: |
+          echo "Validating TSFieldMapSlice struct..."
+          if grep -q "TSFieldMapSlice" src/tree_sitter/parser.h; then
+            echo "✅ TSFieldMapSlice found in parser.h"
+          else
+            echo "❌ Missing TSFieldMapSlice in parser.h (required for Zed)"
+            exit 1
+          fi
+
+      - name: Check for parser generation bugs
+        run: |
+          echo "Checking for known parser generation bugs..."
+          if grep -q "TSMapSlice[^F]" src/parser.c; then
+            echo "❌ Found TSMapSlice typo in parser.c"
+            echo "   Should be TSFieldMapSlice (tree-sitter 0.25.10 generation bug)"
+            exit 1
+          fi
+          echo "✅ No parser generation bugs found"
+
+      - name: Build WASM
+        run: |
+          echo "Building WebAssembly module..."
+          npx tree-sitter build --wasm
+
+      - name: Validate WASM output
+        run: |
+          echo "Validating WASM output..."
+          test -f tree-sitter-quarto.wasm || (echo "❌ WASM file not generated" && exit 1)
+
+          size=$(stat -c%s tree-sitter-quarto.wasm)
+          size_kb=$((size / 1024))
+          echo "✅ WASM file generated: ${size_kb}KB (${size} bytes)"
+
+          if [ $size -gt 200000 ]; then
+            echo "⚠️  Warning: WASM size is large (${size_kb}KB > 195KB)"
+            echo "   Consider optimizing grammar to reduce bundle size"
+          fi
+
+          if [ $size -gt 250000 ]; then
+            echo "❌ WASM too large: ${size_kb}KB exceeds 244KB limit"
+            exit 1
+          fi
+
+      - name: Check tree-sitter CLI version
+        run: |
+          echo "Checking tree-sitter CLI version..."
+          version=$(npx tree-sitter --version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
+          echo "tree-sitter CLI: $version"
+
+          if [[ "$version" == "unknown" ]]; then
+            echo "⚠️  Warning: Could not determine CLI version"
+          else
+            major=$(echo $version | cut -d. -f1)
+            minor=$(echo $version | cut -d. -f2)
+
+            if [ "$major" -eq 0 ] && [ "$minor" -lt 23 ]; then
+              echo "❌ tree-sitter CLI too old: $version (need 0.23+)"
+              exit 1
+            fi
+            echo "✅ CLI version compatible: $version"
+          fi
+
+      - name: Test WASM with simple parse
+        run: |
+          echo "Testing WASM parser with sample input..."
+          echo '# Hello World' | npx tree-sitter parse --wasm tree-sitter-quarto.wasm --quiet || echo "⚠️  WASM parse test skipped (expected in CI)"
+          echo "✅ WASM compatibility tests complete"

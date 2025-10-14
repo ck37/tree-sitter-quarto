@@ -1,0 +1,22 @@
+{
+  "grammars": [
+    {
+      "name": "quarto",
+      "camelcase": "Quarto",
+      "scope": "source.quarto",
+      "file-types": [
+        "qmd"
+      ],
+      "path": ".",
+      "highlights": [
+        "queries/highlights.scm"
+      ],
+      "injections": [
+        "queries/injections.scm"
+      ],
+      "locals": [
+        "queries/locals.scm"
+      ]
+    }
+  ]
+}

@@ -414,6 +414,7 @@ Both tree-sitter implementations serve the same purpose (editor integration) at 
 ## Related Documentation
 
 - **Architecture deep-dive:** [plan.md](./plan.md)
+- **Grammar language choice (JS vs Rust):** [grammar-language-choice.md](./grammar-language-choice.md)
 - **Relationship to Quarto Parser:** [relationship-to-quarto-markdown.md](./relationship-to-quarto-markdown.md)
 - **Editor integration:** [editor-integration.md](./editor-integration.md)
 - **Technical limitations:** [generic-fenced-div-limitation.md](./generic-fenced-div-limitation.md)

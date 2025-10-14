@@ -1,0 +1,122 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test Parser
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate parser
+        run: npx tree-sitter generate
+
+      - name: Run tests
+        run: npx tree-sitter test
+
+      - name: Parse example files
+        run: |
+          npx tree-sitter parse examples/*.qmd --quiet --stat
+
+  validate:
+    name: Validate Grammar
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Validate grammar structure
+        run: npx tree-sitter generate
+
+      - name: Check for warnings
+        run: |
+          npx tree-sitter generate 2>&1 | tee generate-output.txt
+          if grep -q "Error" generate-output.txt; then
+            echo "Grammar has errors"
+            exit 1
+          fi
+
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Check JavaScript syntax
+        run: node --check grammar.js
+
+      - name: Check for common issues
+        run: |
+          # Check for TODO comments that should be addressed
+          if grep -r "FIXME\|XXX" grammar.js src/*.c; then
+            echo "Found unaddressed FIXME/XXX comments"
+            # Don't fail on this for now
+          fi
+
+  queries:
+    name: Validate Queries
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate parser
+        run: npx tree-sitter generate
+
+      - name: Validate highlight queries
+        run: npx tree-sitter highlight examples/test-cell.qmd
+
+      - name: Check query files exist
+        run: |
+          test -f queries/highlights.scm || (echo "Missing highlights.scm" && exit 1)
+          test -f queries/injections.scm || (echo "Missing injections.scm" && exit 1)
+          test -f queries/folds.scm || (echo "Missing folds.scm" && exit 1)

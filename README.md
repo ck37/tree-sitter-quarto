@@ -2,7 +2,7 @@
 
 Tree-sitter parser for Quarto Markdown (`.qmd` files), optimized for editor integration.
 
-> **Status:** 🚧 Planning Phase - Not yet functional
+> **Status:** 🚀 Alpha - Parser functional, editor integration ready for testing
 
 ## What is this?
 
@@ -38,43 +38,54 @@ See [docs/plan.md](./docs/plan.md) for detailed comparison and architecture.
 
 ## Project Status
 
-**Current Phase:** Planning & Specification
+**Current Phase:** Alpha Implementation - Parser Functional
 
 - [x] Architecture designed
 - [x] Implementation plan created
 - [x] OpenSpec baseline specifications created (6 specs, 48 requirements)
 - [x] Project conventions documented
-- [ ] Repository initialized (grammar.js, package.json)
-- [ ] Base grammar ported
-- [ ] Executable cells implemented
-- [ ] Chunk options implemented
-- [ ] Tests created
-- [ ] Editor integration tested
+- [x] Repository initialized (grammar.js, package.json, bindings)
+- [x] Base grammar ported from tree-sitter-pandoc-markdown
+- [x] Executable cells implemented with `{language}` syntax
+- [x] Chunk options implemented with `#| key: value` parsing
+- [x] Cross-references distinguished from citations (`@fig-` vs `@author`)
+- [x] Inline code cells with language injection
+- [x] Query files created (highlights, injections, folds, indents, locals)
+- [x] GitHub CI setup (tests on Ubuntu/macOS, multiple Node versions)
+- [ ] Test suite comprehensive and passing
+- [ ] Editor integration tested (Neovim, Zed, Helix)
+- [ ] Performance validated on large documents
 
-**Latest:** OpenSpec specifications define requirements for all core capabilities (grammar foundation, executable cells, chunk options, cross-references, inline code cells, language injection)
+**Latest:** Parser successfully generates and parses Quarto documents. All core features implemented. Query files enable syntax highlighting and language injection for 15+ languages.
 
-**Timeline:** 6 weeks to production-ready (see [docs/plan.md](./docs/plan.md))
+**CI Status:** [![CI](https://github.com/ck37/tree-sitter-quarto/workflows/CI/badge.svg)](https://github.com/ck37/tree-sitter-quarto/actions)
 
-## Features (Planned)
+**Next Steps:** Comprehensive testing, editor plugin integration, performance optimization
 
-### Phase 1: Foundation
-- ✅ Parse executable code cells with language specifiers
-- ✅ Parse chunk options (`#| key: value`)
-- ✅ Distinguish cross-references (`@fig-plot`) from citations (`@smith2020`)
-- ✅ Parse inline code cells (`` `{python} expr` ``)
+## Features
 
-### Phase 2: Advanced Quarto Features
-- ⬜ Shortcodes (`{{< video url >}}`)
-- ⬜ Callout blocks (`::: {.callout-note}`)
-- ⬜ Tabsets (`::: {.panel-tabset}`)
-- ⬜ Conditional content (`::: {.content-visible when-format="html"}`)
-- ⬜ Figure/table cross-reference metadata
+### ✅ Implemented (Phase 1)
+- ✅ **Executable code cells** - Parse `{python}`, `{r}`, `{julia}` with language specifiers
+- ✅ **Chunk options** - Parse `#| key: value` syntax as structured data
+- ✅ **Cross-references** - Distinguish `@fig-plot` from `@smith2020` citations
+- ✅ **Inline code cells** - Parse `` `{python} expr` `` with language support
+- ✅ **Language injection** - 15+ languages supported (Python, R, Julia, SQL, Bash, JS, TS, Mermaid, etc.)
+- ✅ **Syntax highlighting** - Comprehensive queries for all constructs
+- ✅ **Code folding** - Cells, divs, lists, blocks
+- ✅ **Full Pandoc Markdown** - Headings, emphasis, links, images, tables, etc.
 
-### Phase 3: Validation & Editor Features
-- ⬜ Cross-reference validation
-- ⬜ Chunk option validation
-- ⬜ Language detection and injection
-- ⬜ YAML front matter enhancement
+### 🚧 In Progress (Phase 2)
+- ⬜ Shortcodes (`{{< video url >}}`) - Grammar implemented, needs testing
+- ⬜ Callout blocks (`::: {.callout-note}`) - Generic divs work, semantic parsing planned
+- ⬜ Tabsets (`::: {.panel-tabset}`) - Generic divs work, semantic parsing planned
+- ⬜ Conditional content - Generic divs work, attribute parsing planned
+- ⬜ Figure/table cross-reference metadata - Needs linking implementation
+
+### 📋 Planned (Phase 3)
+- ⬜ Cross-reference validation - Requires language server
+- ⬜ Chunk option validation - Requires language server
+- ⬜ Editor plugins - Neovim, Zed, Helix integration
+- ⬜ Performance optimization - Large document handling
 
 ## Example
 

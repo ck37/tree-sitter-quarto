@@ -60,8 +60,6 @@ See [docs/plan.md](./docs/plan.md) for detailed comparison and architecture.
 
 **Latest:** Parser successfully generates and parses Quarto documents. All core features implemented. Query files enable syntax highlighting and language injection for 15+ languages.
 
-**CI Status:** [![CI](https://github.com/ck37/tree-sitter-quarto/workflows/CI/badge.svg)](https://github.com/ck37/tree-sitter-quarto/actions)
-
 **Next Steps:** Comprehensive testing, editor plugin integration, performance optimization
 
 ## Features

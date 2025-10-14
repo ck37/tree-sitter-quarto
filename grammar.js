@@ -254,13 +254,12 @@ module.exports = grammar({
     ),
 
     // Shortcode Block
-    shortcode_block: $ => seq(
-      alias(token(/\{\{<\s*/), $.shortcode_open),
+    shortcode_block: $ => prec(1, seq(
+      alias(token(/\{\{<[ \t]*/), $.shortcode_open),
       field('name', alias(/[a-zA-Z][a-zA-Z0-9_-]*/, $.shortcode_name)),
-      optional(field('arguments', alias(/[^>]*/, $.shortcode_arguments))),
-      alias(token(/\s*>\}\}/), $.shortcode_close),
-      /\r?\n/
-    ),
+      optional(field('arguments', alias(/[ \t]+[^ \t\r\n>][^>\r\n]*/, $.shortcode_arguments))),
+      alias(token(/[ \t]*>\}\}\r?\n/), $.shortcode_close)
+    )),
 
     // Lists
     list: $ => choice(
@@ -394,7 +393,7 @@ module.exports = grammar({
       $.shortcode_inline
     ),
 
-    text: $ => /[^\r\n`*_\[@<$]+/,
+    text: $ => /[^\r\n`*_\[@<${]+/,
 
     code_span: $ => seq(
       alias(token('`'), $.code_span_delimiter),
@@ -494,10 +493,10 @@ module.exports = grammar({
      * {{< video url >}}
      */
     shortcode_inline: $ => seq(
-      alias(token(/\{\{<\s*/), $.shortcode_open),
+      alias(token(/\{\{<[ \t]*/), $.shortcode_open),
       field('name', alias(/[a-zA-Z][a-zA-Z0-9_-]*/, $.shortcode_name)),
-      optional(field('arguments', alias(/[^>]*/, $.shortcode_arguments))),
-      alias(token(/\s*>\}\}/), $.shortcode_close)
+      optional(field('arguments', alias(/[ \t]+[^ \t\r\n>][^>]*/, $.shortcode_arguments))),
+      alias(token(/[ \t]*>\}\}/), $.shortcode_close)
     ),
   }
 });

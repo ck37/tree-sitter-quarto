@@ -75,7 +75,7 @@ See [docs/plan.md](./docs/plan.md) for detailed comparison and architecture.
 - ✅ **Full Pandoc Markdown** - Headings, emphasis, links, images, tables, etc.
 
 ### 🚧 In Progress (Phase 2)
-- ⬜ Shortcodes (`{{< video url >}}`) - Grammar implemented, needs testing
+- ✅ Shortcodes (`{{< video url >}}`) - Fully implemented and tested (15 test cases)
 - ⬜ Callout blocks (`::: {.callout-note}`) - Generic divs work, semantic parsing planned
 - ⬜ Tabsets (`::: {.panel-tabset}`) - Generic divs work, semantic parsing planned
 - ⬜ Conditional content - Generic divs work, attribute parsing planned

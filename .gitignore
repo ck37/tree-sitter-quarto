@@ -29,6 +29,7 @@ Thumbs.db
 # Test artifacts
 test-results/
 coverage/
+test/tmp/
 
 # Package manager
 yarn.lock

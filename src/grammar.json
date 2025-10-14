@@ -1057,71 +1057,71 @@
       ]
     },
     "shortcode_block": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "PATTERN",
-              "value": "\\{\\{<\\s*"
-            }
-          },
-          "named": true,
-          "value": "shortcode_open"
-        },
-        {
-          "type": "FIELD",
-          "name": "name",
-          "content": {
+      "type": "PREC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
             "type": "ALIAS",
             "content": {
-              "type": "PATTERN",
-              "value": "[a-zA-Z][a-zA-Z0-9_-]*"
-            },
-            "named": true,
-            "value": "shortcode_name"
-          }
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "arguments",
+              "type": "TOKEN",
               "content": {
-                "type": "ALIAS",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "[^>]*"
-                },
-                "named": true,
-                "value": "shortcode_arguments"
+                "type": "PATTERN",
+                "value": "\\{\\{<[ \\t]*"
               }
             },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "TOKEN",
+            "named": true,
+            "value": "shortcode_open"
+          },
+          {
+            "type": "FIELD",
+            "name": "name",
             "content": {
-              "type": "PATTERN",
-              "value": "\\s*>\\}\\}"
+              "type": "ALIAS",
+              "content": {
+                "type": "PATTERN",
+                "value": "[a-zA-Z][a-zA-Z0-9_-]*"
+              },
+              "named": true,
+              "value": "shortcode_name"
             }
           },
-          "named": true,
-          "value": "shortcode_close"
-        },
-        {
-          "type": "PATTERN",
-          "value": "\\r?\\n"
-        }
-      ]
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "arguments",
+                "content": {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[ \\t]+[^ \\t\\r\\n>][^>\\r\\n]*"
+                  },
+                  "named": true,
+                  "value": "shortcode_arguments"
+                }
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "[ \\t]*>\\}\\}\\r?\\n"
+              }
+            },
+            "named": true,
+            "value": "shortcode_close"
+          }
+        ]
+      }
     },
     "list": {
       "type": "CHOICE",
@@ -1762,7 +1762,7 @@
     },
     "text": {
       "type": "PATTERN",
-      "value": "[^\\r\\n`*_\\[@<$]+"
+      "value": "[^\\r\\n`*_\\[@<${]+"
     },
     "code_span": {
       "type": "SEQ",
@@ -2341,7 +2341,7 @@
             "type": "TOKEN",
             "content": {
               "type": "PATTERN",
-              "value": "\\{\\{<\\s*"
+              "value": "\\{\\{<[ \\t]*"
             }
           },
           "named": true,
@@ -2370,7 +2370,7 @@
                 "type": "ALIAS",
                 "content": {
                   "type": "PATTERN",
-                  "value": "[^>]*"
+                  "value": "[ \\t]+[^ \\t\\r\\n>][^>]*"
                 },
                 "named": true,
                 "value": "shortcode_arguments"
@@ -2387,7 +2387,7 @@
             "type": "TOKEN",
             "content": {
               "type": "PATTERN",
-              "value": "\\s*>\\}\\}"
+              "value": "[ \\t]*>\\}\\}"
             }
           },
           "named": true,

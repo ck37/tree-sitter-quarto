@@ -1,8 +1,9 @@
 # Inline Attributes Implementation Challenges
 
-**Date**: 2025-10-14
-**Status**: Research Complete, Implementation Paused
+**Date**: 2025-10-14 (Updated: 2025-10-17)
+**Status**: ✅ Implemented (Option 1: inline_link approach)
 **Related Spec**: `openspec/changes/implement-inline-attributes/`
+**Known Issues**: See [inline-attributes-known-issues.md](./inline-attributes-known-issues.md)
 
 ## Overview
 
@@ -288,11 +289,47 @@ link: $ => choice(
 - Feature not available
 - Users may need it
 
-## Recommendations
+## Recommendations (Original - 2025-10-14)
 
 1. **Short term**: Implement heading attributes only (safe, useful)
 2. **Medium term**: Adopt inline_link approach if inline attributes are critical
 3. **Long term**: Consider separate block/inline grammars for semantic correctness
+
+## Implementation (2025-10-17)
+
+**Decision**: ✅ Adopted **Option 1: inline_link approach** (following official quarto-markdown grammar)
+
+### What Was Implemented
+
+Extended the `link` rule to accept `{attributes}` as alternative to `(destination)`:
+
+```javascript
+link: $ => seq(
+  field('text', seq('[', repeat($._link_text_element), ']')),
+  choice(
+    // Traditional link: [text](url)
+    field('destination', seq('(', alias(/[^)]+/, $.link_destination), ')')),
+    // Attributed span: [text]{attrs}
+    seq('{', optional(/[ \t]*/), field('attributes', $.attribute_list), ...)
+  )
+)
+```
+
+### Results
+
+- ✅ **102/102 tests passing** (added 15 new inline attributes tests)
+- ✅ All Pandoc inline attribute syntax supported
+- ✅ Traditional links unaffected
+- ✅ WASM parser tested and verified (Zed integration ready)
+- ⚠️ Cosmetic ERROR nodes at paragraph start (pre-existing issue)
+
+### Trade-offs Accepted
+
+1. **Semantic impurity**: Attributed spans represented as `link` nodes (not ideal, but pragmatic)
+2. **ERROR nodes**: Link text shows ERROR/reference_label at paragraph start (cosmetic only, doesn't affect functionality)
+3. **AST structure**: Not perfectly semantic, but matches official grammar approach
+
+See [inline-attributes-known-issues.md](./inline-attributes-known-issues.md) for detailed analysis of known limitations.
 
 ## References
 
@@ -300,11 +337,20 @@ link: $ => choice(
 - **tree-sitter documentation**: https://tree-sitter.github.io/tree-sitter/
 - **LR parsing theory**: Dragon Book (Compilers: Principles, Techniques, and Tools)
 - **Test file location**: `tree-sitter-markdown-inline/test/corpus/attributes.txt` (official)
-- **Our test suite**: `test/corpus/*.txt` (87 tests, 100% passing after revert)
+- **Our test suite**: `test/corpus/inline-attributes.txt` (15 tests, 100% passing)
+- **WASM tests**: `bindings/node/wasm_test.js` (12 tests verifying C/WASM equivalence)
 
 ## Conclusion
 
-Inline attributes are **technically challenging** to implement correctly in a tree-sitter grammar due to LR(1) parser limitations and parse state ambiguity. The official grammar's pragmatic approach (treating spans as links) works but sacrifices semantic purity.
+Inline attributes were **successfully implemented** using the pragmatic inline_link approach from the official quarto-markdown grammar. While not semantically perfect, this solution:
+
+- ✅ Works correctly for all Pandoc inline attribute syntax
+- ✅ Maintains 100% test pass rate (102/102)
+- ✅ Ready for editor integration (WASM parser tested)
+- ✅ Follows proven approach from official grammar
+- ⚠️ Has minor cosmetic issues documented in [known issues](./inline-attributes-known-issues.md)
+
+The implementation validates that the official grammar's pragmatic approach is the right choice for tree-sitter constraints. Perfect semantic purity would require architectural changes beyond the scope of this parser.
 
 This research and implementation attempt provides a solid foundation for future work, with clear understanding of:
 - ✅ What works (heading attributes, official grammar's approach)

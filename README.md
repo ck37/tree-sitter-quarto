@@ -59,6 +59,7 @@ Fully implemented:
 Known limitations:
 
 - Generic fenced divs (`::: {.custom-class}`) don't parse - [technical details](./docs/generic-fenced-div-limitation.md)
+- Inline attributes: `[text]{.class}` at paragraph start creates cosmetic ERROR nodes - [technical details](./docs/inline-attributes-known-issues.md)
 - Multi-line chunk option values not supported
 - See [plan.md](./docs/plan.md) for complete list
 

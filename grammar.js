@@ -625,11 +625,15 @@ module.exports = grammar({
       alias(token('^'), $.superscript_delimiter)
     ),
 
-    link: $ => seq(
+    link: $ => prec.right(seq(
       field('text', seq('[', repeat($._link_text_element), ']')),
       choice(
         // Traditional link: [text](url)
         field('destination', seq('(', alias(/[^)]+/, $.link_destination), ')')),
+        // Explicit reference: [text][ref]
+        field('reference', seq('[', alias(/[^\]]+/, $.reference_label), ']')),
+        // Collapsed reference: [text][]
+        field('reference', alias(token('[]'), $.reference_label)),
         // Attributed span: [text]{attrs} - Pandoc inline attributes
         seq(
           '{',
@@ -639,7 +643,7 @@ module.exports = grammar({
           '}'
         )
       )
-    ),
+    )),
 
     _link_text_element: $ => choice(
       $.link_text,

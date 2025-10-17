@@ -1387,6 +1387,24 @@
           }
         ]
       },
+      "reference": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "[",
+            "named": false
+          },
+          {
+            "type": "]",
+            "named": false
+          },
+          {
+            "type": "reference_label",
+            "named": true
+          }
+        ]
+      },
       "text": {
         "multiple": true,
         "required": true,

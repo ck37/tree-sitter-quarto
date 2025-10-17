@@ -39,6 +39,7 @@ The Quarto ecosystem benefits from **two complementary tree-sitter grammar imple
 | **Distinguishes xrefs from citations** | ✅ Semantic nodes | ✅ Semantic nodes | ❌ Both as citations | ✅ Via Pandoc features |
 | **Recognizes executable cells** | ✅ First-class nodes | ✅ First-class nodes | ⚠️ As code blocks | ❌ Not supported |
 | **Callout semantic parsing** | ✅ Specific node types | ✅ Specific node types | ⚠️ Generic divs | ⚠️ Generic divs |
+| **Zed-compatible scopes** | ✅ Yes | ✅ Yes (basic queries) | N/A | ⚠️ Traditional scopes |
 | **Primary use case** | **Editor integration** | **Editor integration** | **Document rendering** | **Pandoc editing** |
 | **Grammar type** | Unified | Dual (block + inline) | Pulldown-cmark | Dual (block + inline) |
 | **Output format** | tree-sitter AST | tree-sitter AST | Pandoc AST | tree-sitter AST |

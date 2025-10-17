@@ -2,19 +2,16 @@
 
 **Capability:** Semantic parsing of Quarto-specific fenced div types (callouts, tabsets, conditional content)
 
-**Status:** Draft - Not Yet Implemented
+**Status:** Implemented
 
 **Created:** 2025-10-14
+**Implemented:** 2025-10-17
 
-## Overview
+## Purpose
 
-Quarto extends Pandoc's fenced div syntax (`::: {.class}`) with semantic meaning for specific class names. This specification defines how the parser SHALL distinguish and semantically parse three categories of enhanced divs: callout blocks, tabsets, and conditional content.
+Semantic parsing of Quarto-specific fenced div types (callouts, tabsets, conditional content). Quarto extends Pandoc's fenced div syntax (`::: {.class}`) with semantic meaning for specific class names. The parser distinguishes and semantically parses three categories of enhanced divs using token-based matching with prec.dynamic() for disambiguation.
 
-**Current State:** The grammar inherits generic fenced div parsing from tree-sitter-pandoc-markdown, which correctly parses the structure but does not provide semantic nodes for Quarto-specific div types.
-
-**Enhancement Goal:** Create semantic AST nodes that distinguish callout types, tabset structure, and conditional content from generic divs.
-
-## Callout Blocks
+## Requirements
 
 ### Requirement: Callout Type Recognition
 

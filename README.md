@@ -6,7 +6,7 @@
 [![tree-sitter](https://img.shields.io/badge/tree--sitter-0.25.10-orange)](https://tree-sitter.github.io/)
 [![Node Version](https://img.shields.io/badge/node-%3E%3D16-brightgreen)](https://nodejs.org/)
 [![Status](https://img.shields.io/badge/status-alpha-yellow)](./docs/plan.md)
-[![Spec Coverage](https://img.shields.io/badge/spec%20coverage-98%25-brightgreen)](./openspec)
+[![Spec Coverage](https://img.shields.io/badge/spec%20coverage-100%25-brightgreen)](./openspec)
 
 Tree-sitter parser for [Quarto Markdown](https://quarto.org/) (`.qmd` files), optimized for editor integration.
 

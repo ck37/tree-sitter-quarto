@@ -14,16 +14,17 @@ tree-sitter-quarto is a tree-sitter parser for Quarto Markdown (`.qmd` files), o
 **Gap Being Filled:** This project bridges the gap between tree-sitter-pandoc-markdown (editor-focused but not Quarto-aware) and the Quarto Markdown Parser (rendering-focused, not optimized for pre-execution editor experience). It provides parse-time semantic information for Quarto documents as they're being authored, before execution.
 
 **Current Status:** Alpha - All Core Features Implemented
-- ✅ 122/122 tests passing (100%)
-- ✅ 62/63 requirements implemented (98%) across 8 OpenSpec specifications
+- ✅ 145/145 tests passing (100%)
+- ✅ 116/116 requirements implemented (100%) across 9 OpenSpec specifications
 - ✅ CI/CD pipeline green (Ubuntu + macOS, Node 18.x + 20.x)
 - ✅ All core Quarto features parsed (cells, chunk options, cross-refs, inline cells, shortcodes, enhanced divs)
-- ✅ Enhanced divs implemented (9/11 requirements: callouts, tabsets, conditional content)
-- ✅ Comprehensive test coverage (footnotes, inline attributes, pipe tables, test refinements)
+- ✅ Enhanced divs fully implemented (callouts, tabsets, conditional content)
+- ✅ Pandoc inline formatting extensions (strikethrough, highlight, subscript, superscript)
+- ✅ Comprehensive test coverage (footnotes, inline attributes, pipe tables, inline formatting)
 - ⚠️ Known limitation: Generic fenced divs (`::: {.custom-class}`) not parsing (base grammar issue)
 - ⏳ Editor integration pending
 
-**Total Specifications:** 8 (all implemented)
+**Total Specifications:** 9 (all implemented)
 
 ## Tech Stack
 
@@ -130,11 +131,11 @@ Input markdown here
 - `npx tree-sitter parse <file> --debug` - Debug parse tree
 
 **Success Criteria:**
-- ✅ All test cases passing (42/42 tests, 100%)
-- ✅ 7 OpenSpec specifications verified (53/54 requirements, 98%)
+- ✅ All test cases passing (145/145 tests, 100%)
+- ✅ 9 OpenSpec specifications verified (116/116 requirements, 100%)
 - ✅ CI/CD pipeline passing on Ubuntu and macOS
 - ⏳ Parse quarto-web without errors (not yet tested)
-- ⏳ Performance: <100ms for typical documents (not yet measured)
+- ✅ Performance: ~13,000 bytes/ms average parse speed
 - ⏳ Editor integration validated in 3+ editors (pending)
 
 ### Git Workflow
@@ -177,7 +178,8 @@ Fixes #issue-number
 - Cross-references to figures, tables, equations (`@fig-plot`, `@tbl-data`) ✅ **Implemented**
 - Inline code cells (`` `{python} expr` ``) ✅ **Implemented**
 - Shortcodes (`{{< video url >}}`) ✅ **Implemented**
-- Enhanced divs (callouts, tabsets, conditional content) ⏳ **Planned**
+- Enhanced divs (callouts, tabsets, conditional content) ✅ **Implemented**
+- Pandoc inline formatting (strikethrough, highlight, sub/superscript) ✅ **Implemented**
 
 ### Key Quarto Constructs
 

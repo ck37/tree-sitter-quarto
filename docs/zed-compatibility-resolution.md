@@ -142,7 +142,7 @@ After implementing the fix:
 ### Local tests:
 ```bash
 npx tree-sitter test
-# Result: 58/58 tests passing (100%)
+# Result: 145/145 tests passing (100%)
 ```
 
 ### CI results:

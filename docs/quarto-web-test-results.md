@@ -160,7 +160,8 @@ listing:
 - Parser handles **typical Quarto analysis documents** well
 - Core features working: executable cells, chunk options, cross-references, inline cells, shortcodes, callouts
 - Simple to moderate documents parse cleanly
-- 58/58 test suite tests passing (100%)
+- Parser test suite: 145/145 tests passing (100%) as of 2025-10-17
+- Note: This validation was run with an earlier parser version (58 tests) and should be re-run
 
 **⚠️ Limitations:**
 - **Pipe tables** need investigation/fixes (inherited from base grammar)

@@ -185,7 +185,7 @@ Fenced divs are harder because:
 
 - **Enhanced divs**: ✅ Fully functional (callouts, tabsets, conditional content)
 - **Generic fenced divs**: ❌ Not functional
-- **Test coverage**: 58/58 tests passing (100%) - no tests for generic divs
+- **Test coverage**: 145/145 tests passing (100%) - no tests for generic divs
 - **Real-world usage**: Most Quarto documents use enhanced div types, so impact is minimal
 
 ## Recommendation

@@ -4,7 +4,7 @@
 
 This document tracks the implementation status of tree-sitter-quarto against the OpenSpec specifications.
 
-**Last Updated:** 2025-10-14
+**Last Updated:** 2025-10-17
 
 ## Specifications
 

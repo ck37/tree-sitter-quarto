@@ -233,8 +233,9 @@
   "|" @punctuation.delimiter
   (table_delimiter_cell) @punctuation.special)
 
-(pipe_table_row
-  "|" @punctuation.delimiter)
+; Note: pipe_table_row is a token with no internal structure,
+; so we can't highlight individual delimiters within rows
+(pipe_table_row) @none
 
 (table_cell) @none
 

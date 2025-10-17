@@ -46,8 +46,6 @@ module.exports = grammar({
 
   conflicts: $ => [
     [$._inline_element, $._link_text_element],
-    [$.pipe_table, $.paragraph],
-    [$.pipe_table_header, $.inline],
     [$.executable_code_cell, $.fenced_code_block],  // Quarto: {python} vs python
     [$.shortcode_block, $.shortcode_inline],        // Shortcode can be block or inline
     [$.inline_code_cell, $.code_span],              // `r expr` vs `code`
@@ -408,13 +406,13 @@ module.exports = grammar({
       /\r?\n/
     ),
 
-    // Pipe Table
-    pipe_table: $ => prec.right(seq(
+    // Pipe Table (header + delimiter + zero or more rows)
+    pipe_table: $ => prec.dynamic(2, prec.right(seq(
       $.pipe_table_start,
       $.pipe_table_header,
       $.pipe_table_delimiter,
       repeat($.pipe_table_row)
-    )),
+    ))),
 
     pipe_table_header: $ => seq(
       token('|'),
@@ -434,14 +432,17 @@ module.exports = grammar({
       /\r?\n/
     ),
 
-    pipe_table_row: $ => seq(
-      token('|'),
+    // Note: pipe_table_row is wrapped in token() to ensure it's recognized as part
+    // of the table rather than starting a new paragraph. This means individual cells
+    // are not exposed as separate AST nodes, but the full row text is available.
+    pipe_table_row: $ => prec.dynamic(1, token(seq(
+      '|',
       repeat1(seq(
-        field('content', alias(/[^|\r\n]+/, $.table_cell)),
-        token('|')
+        /[^|\r\n]+/,
+        '|'
       )),
       /\r?\n/
-    ),
+    ))),
 
     // Attribute List (for divs, cells, links/spans, headings, etc.)
     attribute_list: $ => choice(

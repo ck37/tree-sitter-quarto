@@ -76,16 +76,13 @@ static void skip_whitespace(TSLexer *lexer) {
 
 // Check if current position starts a pipe table
 static bool scan_pipe_table_start(TSLexer *lexer) {
-  // After the initial '|', check if this looks like a table
-  // Look ahead to see if there's a delimiter row following
+  // This is a zero-width lookahead token - it validates but doesn't consume
+  // Mark the end at the start to make this a zero-width token
+  lexer->mark_end(lexer);
 
   // Skip to end of current line
   while (lexer->lookahead != '\n' && lexer->lookahead != '\r' && lexer->lookahead != 0) {
-    if (lexer->lookahead == '|') {
-      lexer->advance(lexer, false);
-    } else {
-      lexer->advance(lexer, false);
-    }
+    lexer->advance(lexer, false);
   }
 
   // Check if next line starts with | and has alignment markers
@@ -106,11 +103,9 @@ static bool scan_pipe_table_start(TSLexer *lexer) {
   skip_whitespace(lexer);
 
   // Check for alignment marker (:-*- or -:)
-  bool has_colon = false;
   bool has_dash = false;
 
   if (lexer->lookahead == ':') {
-    has_colon = true;
     lexer->advance(lexer, false);
   }
 
@@ -120,7 +115,6 @@ static bool scan_pipe_table_start(TSLexer *lexer) {
   }
 
   if (lexer->lookahead == ':') {
-    has_colon = true;
     lexer->advance(lexer, false);
   }
 

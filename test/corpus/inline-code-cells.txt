@@ -173,3 +173,24 @@ Use `{python} x` not `regular code` here.
         (code_span_content)
         (code_span_delimiter))
       (text))))
+
+================================================================================
+Empty inline code cell
+================================================================================
+
+An empty cell: `{python}` here.
+
+--------------------------------------------------------------------------------
+
+(document
+  (blank_line)
+  (paragraph
+    content: (inline
+      (text)
+      (inline_code_cell
+        (inline_cell_delimiter)
+        language: (language_name)
+        (inline_cell_brace)
+        content: (cell_content)
+        (inline_cell_delimiter))
+      (text))))

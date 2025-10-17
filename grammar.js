@@ -733,13 +733,13 @@ module.exports = grammar({
         field('language', alias(/[a-zA-Z][a-zA-Z0-9_-]*/, $.language_name)),
         alias(token('}'), $.inline_cell_brace),
         optional(/[ \t]+/),
-        field('content', alias(/[^`]+/, $.cell_content)),
+        field('content', alias(/[^`]*/, $.cell_content)),
         alias(token('`'), $.inline_cell_delimiter)
       ),
       // Shorthand syntax: `r expr`
       seq(
         alias(token(seq('`r', /[ \t]+/)), $.inline_cell_delimiter),
-        field('content', alias(/[^`]+/, $.cell_content)),
+        field('content', alias(/[^`]*/, $.cell_content)),
         alias(token('`'), $.inline_cell_delimiter)
       )
     )),

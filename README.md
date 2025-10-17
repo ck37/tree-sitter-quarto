@@ -1,7 +1,7 @@
 # tree-sitter-quarto
 
 [![CI](https://github.com/ck37/tree-sitter-quarto/workflows/CI/badge.svg)](https://github.com/ck37/tree-sitter-quarto/actions)
-[![Tests](https://img.shields.io/badge/tests-145%2F145%20passing-brightgreen)](https://github.com/ck37/tree-sitter-quarto/actions)
+[![Tests](https://img.shields.io/badge/tests-159%2F159%20passing-brightgreen)](https://github.com/ck37/tree-sitter-quarto/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![tree-sitter](https://img.shields.io/badge/tree--sitter-0.25.10-orange)](https://tree-sitter.github.io/)
 [![Node Version](https://img.shields.io/badge/node-%3E%3D16-brightgreen)](https://nodejs.org/)
@@ -65,7 +65,6 @@ Known limitations:
 
 - Generic fenced divs (`::: {.custom-class}`) don't parse - [technical details](./docs/generic-fenced-div-limitation.md)
 - Inline attributes: `[text]{.class}` at paragraph start creates cosmetic ERROR nodes - [technical details](./docs/inline-attributes-known-issues.md)
-- Multi-line chunk option values not supported
 - See [plan.md](./docs/plan.md) for complete list
 
 ## Relationship to Official Quarto Grammars
@@ -136,6 +135,23 @@ Output AST (simplified):
     (inline_code_cell language:"python" ...))
   (shortcode_block name:"video" ...))
 ```
+
+## Editor Support
+
+### Zed Editor
+
+**[zed-quarto-extension](https://github.com/ck37/zed-quarto-extension)** - Full-featured Zed extension with syntax highlighting and language injection for Quarto documents.
+
+Install by adding to your Zed `extensions.toml` or search for "Quarto" in the Zed extensions panel.
+
+### Other Editors
+
+This parser works with any editor that supports tree-sitter grammars:
+- **Neovim** - Use with nvim-treesitter
+- **Helix** - Native tree-sitter support
+- **VSCode** - Via tree-sitter extensions
+
+See [editor integration guide](./docs/editor-integration.md) for detailed instructions.
 
 ## Installation
 

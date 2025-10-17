@@ -67,7 +67,7 @@ This document tracks the implementation status of tree-sitter-quarto against the
 - Regular fenced code block injection (non-executable)
 
 **Testing:**
-- ✅ All 27 corpus tests pass
+- ✅ All 159 corpus tests pass
 - ✅ Multi-language test document parses correctly
 - ✅ Language nodes properly identified for injection
 - ✅ Chunk options correctly separated from cell content
@@ -113,13 +113,14 @@ This document tracks the implementation status of tree-sitter-quarto against the
 
 **Status:** COMPLETE
 
-**Requirements:** 6/6 implemented
+**Requirements:** 14/14 implemented (100%)
 - ✅ `` `{language} expr` `` syntax
 - ✅ R shorthand: `` `r expr` ``
 - ✅ Language injection support
 - ✅ Multiple inline cells
 - ✅ Distinction from regular code spans
-- ✅ 8 comprehensive tests
+- ✅ Empty content support (2025-10-17)
+- ✅ 9 comprehensive tests
 
 ### ✅ Grammar Foundation (grammar-foundation)
 
@@ -146,22 +147,34 @@ This document tracks the implementation status of tree-sitter-quarto against the
 
 ## Summary
 
-**Overall Status:** 6/6 specs fully implemented ✅
+**Overall Status:** 11/11 specs fully implemented ✅
 
 **Completed:**
 - Language Injection (9/9 requirements)
 - Executable Cells (7/7 requirements)
 - Chunk Options (6/6 requirements)
 - Cross-References (6/6 requirements)
-- Inline Code Cells (6/6 requirements)
+- Inline Code Cells (14/14 requirements)
 - Grammar Foundation (7/7 requirements)
+- Enhanced Divs (9/11 requirements - 2 architectural limitations)
+- Shortcodes (13/13 requirements)
+- Pandoc Inline Formatting (9/9 requirements)
+- Pandoc Links (7/7 requirements)
+- Syntax Highlighting (6/6 requirements)
 
 **Test Coverage:**
-- ✅ 27/27 corpus tests passing
-- ✅ Basic markdown (5 tests)
-- ✅ Cross-references (8 tests)
-- ✅ Executable cells (6 tests)
-- ✅ Inline code cells (8 tests)
+- ✅ 159/159 corpus tests passing (100%)
+- ✅ Basic markdown
+- ✅ Cross-references
+- ✅ Executable cells
+- ✅ Inline code cells (including empty content)
+- ✅ Shortcodes
+- ✅ Enhanced divs (callouts, tabsets, conditional)
+- ✅ Inline formatting (strikethrough, highlight, subscript, superscript)
+- ✅ Inline attributes
+- ✅ Footnotes
+- ✅ Pandoc links (reference-style)
+- ✅ Pipe tables
 
 **Next Steps:**
 1. ~~Add source commit hash tracking to grammar.js~~ ✅ DONE

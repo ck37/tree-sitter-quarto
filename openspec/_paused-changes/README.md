@@ -1,8 +1,18 @@
 # Paused OpenSpec Changes
 
-This directory contains OpenSpec changes that have been paused due to technical challenges or blocking issues.
+This directory contains OpenSpec changes that have been paused due to technical challenges or blocking issues, or completed externally.
 
-**Currently:** No paused changes
+**Currently:** 1 change (completed externally)
+
+## Current
+
+### add-zed-integration-example
+
+**Status**: ✅ Completed Externally (2025-10-17)
+**Location**: https://github.com/ck37/zed-quarto-extension
+**Outcome**: Full Zed extension developed in separate repository
+
+The Zed integration work was completed in a dedicated repository rather than as an example within tree-sitter-quarto. See `add-zed-integration-example/COMPLETED_EXTERNALLY.md` for details.
 
 ## Previously Paused (Now Completed)
 

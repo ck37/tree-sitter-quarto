@@ -332,12 +332,13 @@ token(seq('`r', /[ \t]+/))
 
 ## Known Limitations
 
-### Empty Content Not Supported
-**Pattern:** `/[^`]+/` requires at least one character
+### Empty Content Now Supported ✅
+**Pattern:** `/[^`]*/` allows zero or more characters
 **Example:** `` `{python}` `` (empty content)
-**Status:** Not supported - pattern needs at least one char
-**Impact:** Low - empty inline cells are rare/meaningless
-**Workaround:** Use `` `{python} ` `` (with space)
+**Status:** ✅ SUPPORTED (2025-10-17)
+**Implementation:** grammar.js lines 736, 742
+**Test:** test/corpus/inline-code-cells.txt test #73
+**Impact:** None - feature now works correctly
 
 ## Recommendations
 
@@ -359,15 +360,15 @@ token(seq('`r', /[ \t]+/))
 
 ## Conclusion
 
-The inline-code-cells spec is **fully implemented** with one minor limitation:
+The inline-code-cells spec is **100% fully implemented**:
 
-- ✅ **13 of 14 requirements** fully implemented
-- ⚠️ **1 requirement** (empty content) not supported (low impact)
-- ✅ 8 comprehensive test cases covering main scenarios
+- ✅ **14 of 14 requirements** fully implemented
+- ✅ **Empty content support added** (2025-10-17)
+- ✅ 9 comprehensive test cases covering all scenarios
 - ✅ Language injection for Python, R, Julia
 - ✅ Shorthand syntax working with space detection
-- ✅ All 27 tests passing in CI
+- ✅ All 159 tests passing in CI
 
-The implementation correctly distinguishes inline code cells from regular code spans, provides structured nodes for language injection, and supports both curly brace and shorthand syntax.
+The implementation correctly distinguishes inline code cells from regular code spans, provides structured nodes for language injection, and supports both curly brace and shorthand syntax, including empty content cells.
 
-**Recommendation:** Production-ready, no critical work required. Empty content support is optional enhancement.
+**Recommendation:** Production-ready with all features complete.

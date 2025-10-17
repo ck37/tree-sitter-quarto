@@ -52,7 +52,8 @@
     "prebuilds/**",
     "bindings/**",
     "queries/**",
-    "src/**"
+    "src/**",
+    "tree-sitter-quarto.wasm"
   ],
   "scripts": {
     "install": "node-gyp-build",

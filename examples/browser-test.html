@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tree-sitter-quarto WASM Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #333;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 300px;
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            font-size: 13px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        pre {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .status {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .status.loading {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .stats {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .stats strong {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>tree-sitter-quarto WASM Parser Test</h1>
+
+    <div id="status" class="status loading">Loading parser...</div>
+
+    <button id="parseBtn" disabled>Parse Quarto Markdown</button>
+
+    <div class="container">
+        <div>
+            <div class="label">Input (Quarto Markdown):</div>
+            <textarea id="input"># Heading
+
+Here is [highlighted text]{#id .alert} with inline attributes.
+
+Traditional [link](https://example.com) also works.
+
+```{python #fig-plot}
+import matplotlib.pyplot as plt
+plt.plot([1, 2, 3])
+```
+
+See @fig-plot for the visualization.
+
+Inline code: `{python} 2 + 2`
+
+Extended formatting:
+- Strikethrough: ~~deleted~~
+- Highlight: ==important==
+- Subscript: H~2~O
+- Superscript: x^2^</textarea>
+        </div>
+
+        <div>
+            <div class="label">Parse Tree Output:</div>
+            <pre id="output">Waiting for parse...</pre>
+        </div>
+    </div>
+
+    <div class="stats" id="stats" style="display: none;">
+        <strong>Parse Stats:</strong><br>
+        Time: <span id="parseTime">-</span>ms<br>
+        Tree size: <span id="treeSize">-</span> nodes<br>
+        Has errors: <span id="hasErrors">-</span>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/web-tree-sitter@0.21.0/tree-sitter.js"></script>
+    <script>
+        let parser = null;
+        let Quarto = null;
+
+        const statusEl = document.getElementById('status');
+        const parseBtn = document.getElementById('parseBtn');
+        const inputEl = document.getElementById('input');
+        const outputEl = document.getElementById('output');
+        const statsEl = document.getElementById('stats');
+        const parseTimeEl = document.getElementById('parseTime');
+        const treeSizeEl = document.getElementById('treeSize');
+        const hasErrorsEl = document.getElementById('hasErrors');
+
+        async function init() {
+            try {
+                // Initialize tree-sitter
+                await TreeSitter.init();
+                parser = new TreeSitter();
+
+                // Load Quarto language
+                Quarto = await TreeSitter.Language.load('../tree-sitter-quarto.wasm');
+                parser.setLanguage(Quarto);
+
+                statusEl.textContent = 'Parser loaded successfully!';
+                statusEl.className = 'status success';
+                parseBtn.disabled = false;
+
+                // Auto-parse initial content
+                parse();
+            } catch (error) {
+                statusEl.textContent = `Error loading parser: ${error.message}`;
+                statusEl.className = 'status error';
+                console.error('Parser load error:', error);
+            }
+        }
+
+        function countNodes(node) {
+            let count = 1;
+            for (let i = 0; i < node.childCount; i++) {
+                count += countNodes(node.child(i));
+            }
+            return count;
+        }
+
+        function treeToString(node, depth = 0) {
+            const indent = '  '.repeat(depth);
+            let result = `${indent}(${node.type}`;
+
+            if (node.childCount === 0) {
+                const text = node.text.replace(/\n/g, '\\n');
+                if (text.length > 50) {
+                    result += ` "${text.substring(0, 47)}..."`;
+                } else {
+                    result += ` "${text}"`;
+                }
+            }
+
+            result += ')';
+
+            if (node.childCount > 0) {
+                result += '\n';
+                for (let i = 0; i < node.childCount; i++) {
+                    result += treeToString(node.child(i), depth + 1);
+                    if (i < node.childCount - 1) {
+                        result += '\n';
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        function parse() {
+            if (!parser || !Quarto) {
+                outputEl.textContent = 'Parser not loaded';
+                return;
+            }
+
+            const code = inputEl.value;
+            const startTime = performance.now();
+            const tree = parser.parse(code);
+            const endTime = performance.now();
+
+            const parseTime = (endTime - startTime).toFixed(2);
+            const treeSize = countNodes(tree.rootNode);
+            const hasErrors = tree.rootNode.hasError();
+
+            outputEl.textContent = treeToString(tree.rootNode);
+
+            parseTimeEl.textContent = parseTime;
+            treeSizeEl.textContent = treeSize;
+            hasErrorsEl.textContent = hasErrors ? 'Yes ⚠️' : 'No ✓';
+            statsEl.style.display = 'block';
+
+            console.log('Parse tree:', tree.rootNode);
+            console.log('Parse time:', parseTime, 'ms');
+        }
+
+        parseBtn.addEventListener('click', parse);
+        inputEl.addEventListener('input', () => {
+            if (parser && Quarto) {
+                parse();
+            }
+        });
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>

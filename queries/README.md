@@ -4,73 +4,75 @@ This directory contains tree-sitter query files for syntax highlighting and othe
 
 ## Structure
 
-### Standard Queries (`queries/`)
+### Default Queries (`queries/`)
 
-- **highlights.scm** - Uses modern nvim-treesitter scope conventions (`@markup.*`)
-  - Compatible with Neovim, Helix, and other editors following nvim-treesitter standards
-  - Future-proof as the ecosystem migrates to unified scope naming
+- **highlights.scm** - Uses Zed-compatible legacy scope conventions (`@text.*`, `@emphasis.strong`)
+  - **Default for broad editor compatibility**, especially Zed editor
+  - Pragmatic choice due to Zed's architectural limitation (cannot override queries in extensions)
+  - Works with Zed, Helix, VSCode, and older editors
+  - See issue #5 for architectural reasoning
 
 - **injections.scm** - Language injection queries for embedded code blocks
 - **folds.scm** - Code folding patterns
 - **indents.scm** - Smart indentation rules
 - **locals.scm** - Variable scoping for code intelligence
 
-### Zed-Specific Queries (`queries/zed/`)
+### Neovim-Specific Queries (`queries/nvim/`)
 
-- **highlights.scm** - Uses legacy Zed scope conventions (`@text.*`, `@emphasis.strong`)
-  - Required for compatibility with Zed's current theming system
-  - Zed automatically prefers `queries/zed/` over standard queries when available
-  - Will be deprecated once Zed adopts nvim-treesitter scope conventions
+- **highlights.scm** - Uses modern nvim-treesitter scope conventions (`@markup.*`)
+  - For Neovim users who prefer standard tree-sitter community conventions
+  - Neovim users can configure nvim-treesitter to use this file
+  - Future-proof as more editors adopt nvim-treesitter standards
+
+### Why Legacy Scopes as Default?
+
+Zed editor's architecture prevents extensions from overriding grammar queries when grammars are loaded via repository reference. This means:
+1. Zed clones the grammar and loads `queries/highlights.scm` directly
+2. Extensions cannot provide alternative query files
+3. No scope remapping is possible at the extension level
+
+Since Zed support is critical for the zed-quarto-extension project, we make Zed-compatible scopes the default. Modern scopes are preserved in `queries/nvim/` for users who prefer them.
 
 ## Scope Naming Conventions
 
-### Modern (nvim-treesitter)
+### Legacy (Zed-compatible) - DEFAULT
 
 Used in `queries/highlights.scm`:
 
-| Construct | Modern Scope |
-|-----------|-------------|
-| Headings | `@markup.heading` |
-| Italic | `@markup.italic` |
-| Bold | `@markup.bold` |
-| Inline code | `@markup.raw.inline` |
-| Code blocks | `@markup.raw.block` |
-| Link text | `@markup.link.label` |
-| Link URL | `@markup.link.url` |
-| Block quotes | `@markup.quote` |
-| List markers | `@markup.list.marker` |
-| Inline math | `@markup.math.inline` |
-| Display math | `@markup.math.block` |
+| Construct | Legacy Scope | Modern Equivalent |
+|-----------|-------------|-------------------|
+| Headings | `@text.title` | `@markup.heading` |
+| Italic | `@text.emphasis` | `@markup.italic` |
+| Bold | `@emphasis.strong` | `@markup.bold` |
+| Code (any) | `@text.literal` | `@markup.raw.inline` / `@markup.raw.block` |
+| Link text | `@text.reference` | `@markup.link.label` |
+| Link URL | `@text.uri` | `@markup.link.url` |
+| Block quotes | `@comment` | `@markup.quote` |
+| List markers | `@punctuation.special` | `@markup.list.marker` |
+| Math (any) | `@string` | `@markup.math.inline` / `@markup.math.block` |
 
-### Legacy (Zed)
+### Modern (nvim-treesitter)
 
-Used in `queries/zed/highlights.scm`:
-
-| Construct | Legacy Scope |
-|-----------|-------------|
-| Headings | `@text.title` |
-| Italic | `@text.emphasis` |
-| Bold | `@emphasis.strong` |
-| Code (any) | `@text.literal` |
-| Link text | `@text.reference` |
-| Link URL | `@text.uri` |
-| Block quotes | `@comment` |
-| List markers | `@punctuation.special` |
-| Math (any) | `@string` |
+Used in `queries/nvim/highlights.scm` - see table above for mapping.
 
 ## References
 
 - [nvim-treesitter scope naming](https://github.com/nvim-treesitter/nvim-treesitter/blob/master/CONTRIBUTING.md#parser-configurations)
-- [Zed scope naming decision](https://github.com/ck37/zed-quarto-extension/blob/main/docs/scope-naming-decision.md)
+- [Zed architectural limitation (issue #5)](https://github.com/ck37/tree-sitter-quarto/issues/5)
 - [tree-sitter query syntax](https://tree-sitter.github.io/tree-sitter/syntax-highlighting#queries)
 
 ## Maintenance
 
 When updating syntax highlighting:
 
-1. Update `queries/highlights.scm` with modern `@markup.*` scopes
-2. Update `queries/zed/highlights.scm` with corresponding legacy scopes
+1. Update `queries/highlights.scm` with legacy scopes (Zed-compatible)
+2. Update `queries/nvim/highlights.scm` with corresponding modern scopes
 3. Keep both files structurally identical except for scope names
 4. Run `npx tree-sitter test` to verify queries are valid
 
-Once Zed adopts nvim-treesitter conventions, `queries/zed/highlights.scm` can be removed.
+## Future Migration Path
+
+If Zed adds support for extension-level query overrides OR adopts nvim-treesitter scope conventions:
+1. We can revert to modern scopes as default in `queries/highlights.scm`
+2. Provide legacy scopes in `queries/zed/highlights.scm` for backward compatibility
+3. Eventually deprecate legacy scopes once Zed fully supports modern conventions

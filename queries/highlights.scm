@@ -1,10 +1,31 @@
 ; Quarto Syntax Highlighting (tree-sitter-quarto)
 ;
-; This file uses modern nvim-treesitter scope naming conventions (@markup.*)
-; for compatibility with standard tree-sitter tooling and editors like Neovim.
+; This file uses Zed-compatible legacy scope names (@text.*, @emphasis.strong)
+; as the default for broad editor compatibility. These scopes work with:
+; - Zed editor (primary reason for this choice)
+; - Helix editor (supports both legacy and modern)
+; - Older editors and themes
 ;
-; For Zed editor compatibility, use queries/zed/highlights.scm which provides
-; legacy scope names (@text.*, @emphasis.strong) that work with Zed's current themes.
+; IMPORTANT: This is a pragmatic decision due to Zed's architectural limitation:
+; Zed cannot override grammar queries at the extension level when grammars are
+; loaded via repository reference. Making Zed scopes the default enables
+; tree-sitter-quarto to work in Zed without workarounds.
+;
+; For Neovim users who prefer modern scopes: Use queries/nvim/highlights.scm
+; which provides modern nvim-treesitter conventions (@markup.*).
+;
+; Scope mapping (legacy -> modern):
+;   @text.title -> @markup.heading
+;   @text.emphasis -> @markup.italic
+;   @emphasis.strong -> @markup.bold
+;   @text.literal -> @markup.raw.inline / @markup.raw.block
+;   @text.reference -> @markup.link.label
+;   @text.uri -> @markup.link.url
+;   @comment (block quotes) -> @markup.quote
+;   @punctuation.special (lists) -> @markup.list.marker
+;   @string (math) -> @markup.math.inline / @markup.math.block
+;
+; Reference: https://github.com/ck37/zed-quarto-extension/blob/main/docs/scope-naming-decision.md
 
 ; Syntax highlighting queries for tree-sitter-quarto
 ; Based on openspec/specs/language-injection/spec.md
@@ -58,38 +79,38 @@
 
 (atx_heading
   (atx_heading_marker) @punctuation.special
-  content: (inline) @markup.heading)
+  content: (inline) @text.title)
 
 (setext_heading
-  content: (inline) @markup.heading
+  content: (inline) @text.title
   (setext_heading_marker) @punctuation.special)
 
 ; Emphasis/Strong
 ; ---------------
 
-(emphasis) @markup.italic
+(emphasis) @text.emphasis
 
-(strong_emphasis) @markup.bold
+(strong_emphasis) @emphasis.strong
 
 ; Inline Formatting (Pandoc extensions)
 ; -------------------------------------
 
-(strikethrough) @markup.strikethrough
+(strikethrough) @text.strike
 
-(highlight) @markup.mark
+(highlight) @text.highlight
 
-(subscript) @markup.subscript
+(subscript) @text.subscript
 
-(superscript) @markup.superscript
+(superscript) @text.super
 
 ; Code
 ; ----
 
-(code_span) @markup.raw.inline
+(code_span) @text.literal
 
 (code_span_delimiter) @punctuation.delimiter
 
-(fenced_code_block) @markup.raw.block
+(fenced_code_block) @text.literal
 
 (code_fence_delimiter) @punctuation.delimiter
 
@@ -99,12 +120,12 @@
 ; --------------
 
 (link
-  text: (_) @markup.link.label
-  destination: (link_destination) @markup.link.url)
+  text: (_) @text.reference
+  destination: (link_destination) @text.uri)
 
 (image
-  alt: (_) @markup.link.label
-  source: (image_source) @markup.link.url)
+  alt: (_) @text.reference
+  source: (image_source) @text.uri)
 
 "[" @punctuation.bracket
 "]" @punctuation.bracket
@@ -122,19 +143,19 @@
 ; Block Quotes
 ; ------------
 
-(block_quote) @markup.quote
+(block_quote) @comment
 (block_quote_marker) @punctuation.special
 
 ; Lists
 ; -----
 
-(list_marker) @markup.list.marker
+(list_marker) @punctuation.special
 
 (ordered_list_item
-  (list_marker) @markup.list.marker)
+  (list_marker) @punctuation.special)
 
 (unordered_list_item
-  (list_marker) @markup.list.marker)
+  (list_marker) @punctuation.special)
 
 ; Thematic Breaks
 ; ---------------
@@ -178,11 +199,11 @@
 
 (inline_math
   (math_delimiter) @punctuation.delimiter
-  (math_content) @markup.math.inline)
+  (math_content) @string)
 
 (display_math
   (math_delimiter) @punctuation.delimiter
-  (math_content) @markup.math.block)
+  (math_content) @string)
 
 ; YAML Front Matter
 ; -----------------
@@ -220,8 +241,8 @@
 ; ---------------
 
 (link_reference_definition
-  label: (_) @markup.link.label
-  destination: (link_destination) @markup.link.url)
+  label: (_) @text.reference
+  destination: (link_destination) @text.uri)
 
 (link_title) @string
 

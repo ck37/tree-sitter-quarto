@@ -94,12 +94,16 @@ Executable cells will support language injection for:
 - Distinguish `#| option` from `# comment` based on cell context
 
 **Scope Naming Philosophy:**
-- Use **standard tree-sitter scopes** (`@markup.*`, `@function`, `@property`)
-- Remain editor-agnostic - same grammar works in Neovim, Helix, VSCode, Zed
-- Editor extensions handle scope remapping (e.g., `@markup.heading` → `@text.title` for Zed)
-- Separation of concerns: grammar = semantic parsing, extension = visual presentation
-- Single source of truth: one `queries/highlights.scm` for all editors
-- Reference: https://github.com/ck37/zed-quarto-extension/issues/4
+- Use **Zed-compatible legacy scopes** (`@text.*`, `@emphasis.strong`) as default in `queries/highlights.scm`
+- **Pragmatic decision**: Zed's architecture prevents extension-level query overrides when grammars are loaded via repository reference
+- **Broad compatibility**: Legacy scopes work in Zed, Helix, VSCode, and older editors
+- **Modern scopes preserved**: `queries/nvim/highlights.scm` provides nvim-treesitter conventions (`@markup.*`)
+- **Separation of concerns**: Grammar = semantic parsing (unchanged); queries = editor-specific presentation
+- **Editor-specific query files**: Standard tree-sitter practice to provide `queries/nvim/`, `queries/helix/`, etc.
+- **Reference**: https://github.com/ck37/tree-sitter-quarto/issues/5 (architectural decision)
+
+**Why legacy scopes as default:**
+Zed extensions cannot override grammar queries when referencing grammars via `repository` + `rev` in `extension.toml`. Zed clones the grammar and loads `queries/highlights.scm` directly, ignoring extension-provided queries. This architectural limitation makes it impossible to use modern scopes with Zed without making them the default. Since Zed support is a blocker for the zed-quarto-extension project, we prioritize Zed compatibility over theoretical "editor-agnostic purity."
 
 ### Testing Strategy
 

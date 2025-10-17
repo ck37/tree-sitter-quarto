@@ -111,7 +111,10 @@ module.exports = grammar({
       field('language_specifier', seq(
         '{',
         field('language', alias(/[a-zA-Z][a-zA-Z0-9_-]*/, $.language_name)),
-        optional(field('attributes', $.attribute_list)),
+        optional(seq(
+          /[ \t]+/,
+          field('attributes', $.attribute_list)
+        )),
         '}'
       )),
       /\r?\n/,
@@ -440,18 +443,34 @@ module.exports = grammar({
       /\r?\n/
     ),
 
-    // Attribute List (for divs, cells, etc.)
+    // Attribute List (for divs, cells, links/spans, headings, etc.)
     attribute_list: $ => choice(
       seq(
         field('id', alias(/#[a-zA-Z][a-zA-Z0-9_-]*/, $.attribute_id)),
-        repeat(field('class', alias(/\.[a-zA-Z][a-zA-Z0-9_-]*/, $.attribute_class))),
-        repeat(field('attribute', $.key_value_attribute))
+        repeat(seq(
+          /[ \t]+/,
+          field('class', alias(/\.[a-zA-Z][a-zA-Z0-9_-]*/, $.attribute_class))
+        )),
+        repeat(seq(
+          /[ \t]+/,
+          field('attribute', $.key_value_attribute)
+        ))
       ),
       seq(
-        repeat1(field('class', alias(/\.[a-zA-Z][a-zA-Z0-9_-]*/, $.attribute_class))),
-        repeat(field('attribute', $.key_value_attribute))
+        field('class', alias(/\.[a-zA-Z][a-zA-Z0-9_-]*/, $.attribute_class)),
+        repeat(seq(
+          /[ \t]+/,
+          field('class', alias(/\.[a-zA-Z][a-zA-Z0-9_-]*/, $.attribute_class))
+        )),
+        repeat(seq(
+          /[ \t]+/,
+          field('attribute', $.key_value_attribute)
+        ))
       ),
-      repeat1(field('attribute', $.key_value_attribute))
+      repeat1(seq(
+        optional(/[ \t]+/),
+        field('attribute', $.key_value_attribute)
+      ))
     ),
 
     key_value_attribute: $ => seq(
@@ -518,7 +537,18 @@ module.exports = grammar({
 
     link: $ => seq(
       field('text', seq('[', repeat($._link_text_element), ']')),
-      field('destination', seq('(', alias(/[^)]+/, $.link_destination), ')'))
+      choice(
+        // Traditional link: [text](url)
+        field('destination', seq('(', alias(/[^)]+/, $.link_destination), ')')),
+        // Attributed span: [text]{attrs} - Pandoc inline attributes
+        seq(
+          '{',
+          optional(/[ \t]*/),
+          field('attributes', $.attribute_list),
+          optional(/[ \t]*/),
+          '}'
+        )
+      )
     ),
 
     _link_text_element: $ => choice(

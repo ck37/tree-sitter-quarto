@@ -39,9 +39,10 @@ module.exports = grammar({
   extras: $ => [/\s/],
 
   externals: $ => [
-    $.pipe_table_start,           // From pandoc-markdown
-    $._chunk_option_marker,       // Quarto: #| at start of cell
-    $._cell_boundary,             // Quarto: Track cell context
+    $.pipe_table_start,                // From pandoc-markdown
+    $._chunk_option_marker,            // Quarto: #| at start of cell
+    $._cell_boundary,                  // Quarto: Track cell context
+    $._chunk_option_continuation,      // Quarto: Multi-line chunk option continuation
   ],
 
   conflicts: $ => [
@@ -125,23 +126,49 @@ module.exports = grammar({
     /**
      * Chunk Options
      *
+     * Single-line:
      * #| label: fig-plot
      * #| echo: false
-     * #| fig-cap: "Sample plot"
+     *
+     * Multi-line:
+     * #| fig-cap: |
+     * #|   This is a multi-line caption
+     * #|   spanning multiple lines
      *
      * Spec: openspec/specs/chunk-options/spec.md
      */
     chunk_options: $ => repeat1($.chunk_option),
 
-    chunk_option: $ => seq(
-      token(prec(2, '#|')),
-      optional(/[ \t]*/),
-      field('key', alias(/[a-zA-Z][a-zA-Z0-9-]*/, $.chunk_option_key)),
-      ':',
-      optional(seq(
+    chunk_option: $ => choice(
+      // Single-line chunk option
+      seq(
+        token(prec(2, '#|')),
         optional(/[ \t]*/),
-        field('value', alias(/[^\r\n]+/, $.chunk_option_value))
-      )),
+        field('key', alias(/[a-zA-Z][a-zA-Z0-9-]*/, $.chunk_option_key)),
+        ':',
+        optional(seq(
+          optional(/[ \t]*/),
+          field('value', alias(/[^\r\n|]+/, $.chunk_option_value))
+        )),
+        /\r?\n/
+      ),
+      // Multi-line chunk option with pipe continuation
+      seq(
+        token(prec(2, '#|')),
+        optional(/[ \t]*/),
+        field('key', alias(/[a-zA-Z][a-zA-Z0-9-]*/, $.chunk_option_key)),
+        ':',
+        optional(/[ \t]*/),
+        '|',
+        /\r?\n/,
+        repeat1($.chunk_option_continuation)
+      )
+    ),
+
+    chunk_option_continuation: $ => seq(
+      $._chunk_option_continuation,
+      optional(/[ \t]*/),
+      field('value', alias(/[^\r\n]+/, $.chunk_option_value)),
       /\r?\n/
     ),
 

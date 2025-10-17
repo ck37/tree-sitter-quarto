@@ -258,6 +258,32 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "chunk_option_continuation",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "chunk_option_continuation",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "chunk_option_value",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {

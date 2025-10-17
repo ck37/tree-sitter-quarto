@@ -5,6 +5,7 @@
  * 1. pipe_table_start - Validate pipe table syntax
  * 2. _chunk_option_marker - Detect #| at start of executable cells
  * 3. _cell_boundary - Track executable cell context
+ * 4. _chunk_option_continuation - Detect multi-line chunk option continuations
  *
  * Spec: openspec/specs/grammar-foundation/spec.md
  *       openspec/specs/chunk-options/spec.md
@@ -19,6 +20,7 @@ enum TokenType {
   PIPE_TABLE_START,
   CHUNK_OPTION_MARKER,
   CELL_BOUNDARY,
+  CHUNK_OPTION_CONTINUATION,
 };
 
 // Scanner state
@@ -142,6 +144,47 @@ static bool scan_chunk_option_marker(Scanner *scanner, TSLexer *lexer) {
   return false;
 }
 
+// Check if current position is a chunk option continuation
+static bool scan_chunk_option_continuation(Scanner *scanner, TSLexer *lexer) {
+  // Check for #| pattern with required whitespace
+  // The grammar context (inside repeat1 after multi-line chunk option) ensures this is only
+  // called when appropriate, so we don't need to check in_executable_cell state
+  if (lexer->lookahead == '#') {
+    lexer->advance(lexer, false);
+    if (lexer->lookahead == '|') {
+      lexer->advance(lexer, false);
+      // Continuation lines must have whitespace after #|
+      if (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+        skip_whitespace(lexer);
+        // Mark end after consuming #| and whitespace
+        lexer->mark_end(lexer);
+
+        // Now lookahead to check if this line contains a key: pattern (new chunk option)
+        // Check if line starts with a key (letter followed by colon later)
+        if ((lexer->lookahead >= 'a' && lexer->lookahead <= 'z') ||
+            (lexer->lookahead >= 'A' && lexer->lookahead <= 'Z')) {
+          // Look for colon to detect new chunk option
+          while ((lexer->lookahead >= 'a' && lexer->lookahead <= 'z') ||
+                 (lexer->lookahead >= 'A' && lexer->lookahead <= 'Z') ||
+                 (lexer->lookahead >= '0' && lexer->lookahead <= '9') ||
+                 lexer->lookahead == '-') {
+            lexer->advance(lexer, false);
+          }
+          // If we find a colon, this is a new chunk option, not a continuation
+          if (lexer->lookahead == ':') {
+            return false;
+          }
+        }
+
+        // Not a new chunk option, so it's a continuation
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 // Check if current position is a cell boundary (fence delimiter)
 static bool scan_cell_boundary(Scanner *scanner, TSLexer *lexer) {
   // Count backticks
@@ -192,7 +235,7 @@ bool tree_sitter_quarto_external_scanner_scan(
   Scanner *scanner = (Scanner *)payload;
 
   // Skip leading whitespace for most tokens
-  if (valid_symbols[CHUNK_OPTION_MARKER]) {
+  if (valid_symbols[CHUNK_OPTION_MARKER] || valid_symbols[CHUNK_OPTION_CONTINUATION]) {
     // Don't skip whitespace for chunk options - position matters
   } else {
     skip_whitespace(lexer);
@@ -203,6 +246,15 @@ bool tree_sitter_quarto_external_scanner_scan(
   if (valid_symbols[PIPE_TABLE_START]) {
     if (scan_pipe_table_start(lexer)) {
       lexer->result_symbol = PIPE_TABLE_START;
+      return true;
+    }
+  }
+
+  // Check for continuation first if expecting it
+  if (valid_symbols[CHUNK_OPTION_CONTINUATION]) {
+    if (scan_chunk_option_continuation(scanner, lexer)) {
+      lexer->result_symbol = CHUNK_OPTION_CONTINUATION;
+      // Still expecting more continuations potentially
       return true;
     }
   }

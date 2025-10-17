@@ -71,6 +71,17 @@
 
 (strong_emphasis) @markup.bold
 
+; Inline Formatting (Pandoc extensions)
+; -------------------------------------
+
+(strikethrough) @markup.strikethrough
+
+(highlight) @markup.mark
+
+(subscript) @markup.subscript
+
+(superscript) @markup.superscript
+
 ; Code
 ; ----
 

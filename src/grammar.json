@@ -2229,6 +2229,22 @@
         },
         {
           "type": "SYMBOL",
+          "name": "strikethrough"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "highlight"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "subscript"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "superscript"
+        },
+        {
+          "type": "SYMBOL",
           "name": "link"
         },
         {
@@ -2249,21 +2265,29 @@
         },
         {
           "type": "SYMBOL",
+          "name": "equals_sign"
+        },
+        {
+          "type": "SYMBOL",
           "name": "text"
         }
       ]
     },
     "text": {
       "type": "PATTERN",
-      "value": "[^\\r\\n`*_\\[@<${^]+"
+      "value": "[^\\r\\n`*_\\[@<${^~=]+"
+    },
+    "equals_sign": {
+      "type": "STRING",
+      "value": "="
     },
     "link_text": {
       "type": "PATTERN",
-      "value": "[^\\r\\n`*_\\[@<${\\]]+"
+      "value": "[^\\r\\n`*_\\[@<${\\]~=]+"
     },
     "footnote_text": {
       "type": "PATTERN",
-      "value": "[^\\r\\n`*_\\[@<${\\[\\]^]+"
+      "value": "[^\\r\\n`*_\\[@<${\\[\\]^~=]+"
     },
     "code_span": {
       "type": "SEQ",
@@ -2502,6 +2526,162 @@
           }
         ]
       }
+    },
+    "strikethrough": {
+      "type": "PREC_LEFT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "STRING",
+                "value": "~~"
+              }
+            },
+            "named": true,
+            "value": "strikethrough_delimiter"
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_inline_element"
+            }
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "STRING",
+                "value": "~~"
+              }
+            },
+            "named": true,
+            "value": "strikethrough_delimiter"
+          }
+        ]
+      }
+    },
+    "highlight": {
+      "type": "PREC_LEFT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "STRING",
+                "value": "=="
+              }
+            },
+            "named": true,
+            "value": "highlight_delimiter"
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_inline_element"
+            }
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "STRING",
+                "value": "=="
+              }
+            },
+            "named": true,
+            "value": "highlight_delimiter"
+          }
+        ]
+      }
+    },
+    "subscript": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "STRING",
+              "value": "~"
+            }
+          },
+          "named": true,
+          "value": "subscript_delimiter"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[^\\s~]+"
+          },
+          "named": true,
+          "value": "subscript_content"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "STRING",
+              "value": "~"
+            }
+          },
+          "named": true,
+          "value": "subscript_delimiter"
+        }
+      ]
+    },
+    "superscript": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "STRING",
+              "value": "^"
+            }
+          },
+          "named": true,
+          "value": "superscript_delimiter"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[^\\s^]+"
+          },
+          "named": true,
+          "value": "superscript_content"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "STRING",
+              "value": "^"
+            }
+          },
+          "named": true,
+          "value": "superscript_delimiter"
+        }
+      ]
     },
     "link": {
       "type": "SEQ",

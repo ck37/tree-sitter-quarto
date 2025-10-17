@@ -86,6 +86,17 @@
 
 (strong_emphasis) @emphasis.strong
 
+; Inline Formatting (Pandoc extensions)
+; -------------------------------------
+
+(strikethrough) @text.strike
+
+(highlight) @text.highlight
+
+(subscript) @text.subscript
+
+(superscript) @text.super
+
 ; Code
 ; ----
 

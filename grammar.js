@@ -525,21 +525,29 @@ module.exports = grammar({
       $.inline_math,
       $.emphasis,
       $.strong_emphasis,
+      $.strikethrough,          // Pandoc: ~~text~~
+      $.highlight,              // Pandoc: ==text== - must come before equals_sign
+      $.subscript,              // Pandoc: H~2~O
+      $.superscript,            // Pandoc: x^2^
       $.link,
       $.image,
       $.citation,
       $.cross_reference,        // Quarto: @fig-plot
       $.shortcode_inline,
+      $.equals_sign,            // Single = in equations (not part of ==)
       $.text                    // text last - fallback for anything not matched
     ),
 
-    text: $ => /[^\r\n`*_\[@<${^]+/,
+    text: $ => /[^\r\n`*_\[@<${^~=]+/,
+
+    // Single equals sign (for equations like E=mc^2^, not part of ==)
+    equals_sign: $ => '=',
 
     // Text inside link brackets - excludes ] to allow proper link parsing
-    link_text: $ => /[^\r\n`*_\[@<${\]]+/,
+    link_text: $ => /[^\r\n`*_\[@<${\]~=]+/,
 
     // Text inside inline footnotes - excludes ] and ^ and [ to allow proper footnote parsing
-    footnote_text: $ => /[^\r\n`*_\[@<${\[\]^]+/,
+    footnote_text: $ => /[^\r\n`*_\[@<${\[\]^~=]+/,
 
     code_span: $ => seq(
       alias(token('`'), $.code_span_delimiter),
@@ -562,6 +570,60 @@ module.exports = grammar({
       seq(alias(token('**'), $.strong_emphasis_delimiter), repeat1($._inline_element), alias(token('**'), $.strong_emphasis_delimiter)),
       seq(alias(token('__'), $.strong_emphasis_delimiter), repeat1($._inline_element), alias(token('__'), $.strong_emphasis_delimiter))
     )),
+
+    /**
+     * Strikethrough (Pandoc extension)
+     *
+     * ~~deleted text~~
+     *
+     * Spec: openspec/specs/pandoc-inline-formatting/spec.md
+     */
+    strikethrough: $ => prec.left(seq(
+      alias(token('~~'), $.strikethrough_delimiter),
+      repeat1($._inline_element),
+      alias(token('~~'), $.strikethrough_delimiter)
+    )),
+
+    /**
+     * Highlight/Mark (Pandoc extension)
+     *
+     * ==highlighted text==
+     *
+     * Spec: openspec/specs/pandoc-inline-formatting/spec.md
+     */
+    highlight: $ => prec.left(seq(
+      alias(token('=='), $.highlight_delimiter),
+      repeat1($._inline_element),
+      alias(token('=='), $.highlight_delimiter)
+    )),
+
+    /**
+     * Subscript (Pandoc extension)
+     *
+     * H~2~O
+     *
+     * No whitespace allowed after opening ~ or before closing ~
+     * Spec: openspec/specs/pandoc-inline-formatting/spec.md
+     */
+    subscript: $ => seq(
+      alias(token('~'), $.subscript_delimiter),
+      alias(/[^\s~]+/, $.subscript_content),
+      alias(token('~'), $.subscript_delimiter)
+    ),
+
+    /**
+     * Superscript (Pandoc extension)
+     *
+     * x^2^
+     *
+     * No whitespace allowed after opening ^ or before closing ^
+     * Spec: openspec/specs/pandoc-inline-formatting/spec.md
+     */
+    superscript: $ => seq(
+      alias(token('^'), $.superscript_delimiter),
+      alias(/[^\s^]+/, $.superscript_content),
+      alias(token('^'), $.superscript_delimiter)
+    ),
 
     link: $ => seq(
       field('text', seq('[', repeat($._link_text_element), ']')),

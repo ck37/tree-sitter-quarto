@@ -2,28 +2,19 @@
 
 This directory contains OpenSpec changes that have been paused due to technical challenges or blocking issues.
 
-## implement-inline-attributes
+**Currently:** No paused changes
 
-**Status**: Research Complete, Implementation Paused
-**Date Paused**: 2025-10-14
-**Reason**: LR(1) parser ambiguity causes 23 test regressions
-**Documentation**: `docs/inline-attributes-implementation-challenges.md`
+## Previously Paused (Now Completed)
 
-### Summary
+### implement-inline-attributes
 
-Attempted to implement Pandoc-style inline attributes (`[text]{#id .class}`) but encountered fundamental challenges with tree-sitter's LR(1) parser:
+**Status**: ✅ Completed and Archived (2025-10-17)
+**Location**: `openspec/changes/archive/implement-inline-attributes`
+**Outcome**: Successfully implemented after initial pause
 
-- **Research**: Completed investigation of official quarto-markdown grammar
-- **Finding**: Official grammar treats spans as `inline_link` variants (semantically imperfect but working)
-- **Attempts**: Tried external scanner lookahead and precedence-based approaches
-- **Result**: Both caused 23 unrelated tests to fail due to parse state conflicts
-- **Recommendation**: Either adopt official grammar's approach or implement heading attributes only
+The inline attributes feature was successfully implemented despite initial LR(1) parser challenges. The implementation uses the link-based approach from the official quarto-markdown grammar and includes:
+- 15 passing tests for inline attributes
+- Support for `[text]{#id}`, `[text]{.class}`, and `[text]{key="value"}` syntax
+- WASM parser verification confirming correct parsing
 
-### Future Work
-
-This spec can be resumed when:
-1. Decision is made to adopt inline_link approach (proven to work)
-2. Deep grammar redesign is undertaken (split block/inline grammars)
-3. Tree-sitter improves lookahead capabilities (unlikely)
-
-See the full spec in `implement-inline-attributes/` and detailed analysis in `docs/inline-attributes-implementation-challenges.md`.
+See archived spec for full implementation details.

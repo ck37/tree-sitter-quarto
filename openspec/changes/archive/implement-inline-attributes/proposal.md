@@ -1,5 +1,10 @@
 # Proposal: Implement Inline Attributes
 
+> **✅ COMPLETED:** 2025-10-17
+> **Implementation:** Successfully implemented using link-based approach from official quarto-markdown grammar
+> **Test Coverage:** 15 passing tests in `test/corpus/inline-attributes.txt`
+> **Status:** Archived - All features working, known cosmetic issue documented in `docs/inline-attributes-known-issues.md`
+
 ## Why
 
 Pandoc Markdown supports inline attributes (also called "bracketed spans") using the syntax `[text]{#id .class key=value}`. This feature allows authors to add IDs, CSS classes, and custom attributes to arbitrary spans of text within a document.

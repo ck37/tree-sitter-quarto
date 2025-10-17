@@ -39,7 +39,7 @@ The Quarto ecosystem benefits from **two complementary tree-sitter grammar imple
 | **Distinguishes xrefs from citations** | ✅ Semantic nodes | ✅ Semantic nodes | ❌ Both as citations | ✅ Via Pandoc features |
 | **Recognizes executable cells** | ✅ First-class nodes | ✅ First-class nodes | ⚠️ As code blocks | ❌ Not supported |
 | **Callout semantic parsing** | ✅ Specific node types | ✅ Specific node types | ⚠️ Generic divs | ⚠️ Generic divs |
-| **Zed-compatible scopes** | ✅ Yes | ✅ Yes (basic queries) | N/A | ⚠️ Traditional scopes |
+| **Zed-compatible scopes** | ✅ Yes (5 query files) | ✅ Yes (highlights/injections only) | N/A | ⚠️ Traditional scopes |
 | **Primary use case** | **Editor integration** | **Editor integration** | **Document rendering** | **Pandoc editing** |
 | **Grammar type** | Unified | Dual (block + inline) | Pulldown-cmark | Dual (block + inline) |
 | **Output format** | tree-sitter AST | tree-sitter AST | Pandoc AST | tree-sitter AST |
@@ -344,6 +344,37 @@ Both tree-sitter implementations serve the same purpose (editor integration) at 
 | Parse `{{< video >}}` | ✅ | ✅ | ✅ |
 | Block vs inline distinction | ✅ | ✅ | ✅ |
 | Semantic nodes | ✅ | ✅ | ✅ |
+
+### Query File Coverage
+
+| Query File | tree-sitter-quarto | quarto-markdown (tree-sitter) | tree-sitter-pandoc-markdown |
+|------------|-------------------|-------------------------------|----------------------------|
+| **highlights.scm** | ✅ Comprehensive (5.4KB, Zed-compatible) | ✅ Basic (Zed-compatible) | ✅ Comprehensive (traditional scopes) |
+| **injections.scm** | ✅ Comprehensive (6.2KB, 13 languages) | ✅ Basic | ✅ Comprehensive |
+| **folds.scm** | ✅ Yes (cells, divs, headings) | ❌ Not yet | ✅ Yes |
+| **indents.scm** | ✅ Yes | ❌ Not yet | ✅ Yes |
+| **locals.scm** | ✅ Yes (variable scoping) | ❌ Not yet | ✅ Yes |
+
+**Key differences:**
+
+**tree-sitter-quarto:**
+- 5 complete query files ready for production use
+- Zed-compatible scopes in highlights.scm (updated 2025-10-17)
+- 13 language injections (Python, R, Julia, SQL, Bash, JS/TS, OJS, etc.)
+- Code folding for executable cells, divs, callouts, headings
+- Indentation rules for Quarto-specific blocks
+- Local variable scoping for code intelligence
+
+**quarto-markdown (tree-sitter):**
+- highlights.scm and injections.scm present with Zed-compatible scopes
+- Sufficient for basic syntax highlighting
+- Missing folds, indents, locals (expected to be added as it approaches production)
+- Will have comprehensive queries when production-ready (needed for RStudio/Positron)
+
+**tree-sitter-pandoc-markdown:**
+- Complete query files with traditional tree-sitter scope names
+- Not Zed-specific but works with most editors
+- Production-ready for Pandoc Markdown editing
 
 ## Performance Characteristics
 

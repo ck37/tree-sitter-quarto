@@ -1,7 +1,7 @@
 # tree-sitter-quarto
 
 [![CI](https://github.com/ck37/tree-sitter-quarto/workflows/CI/badge.svg)](https://github.com/ck37/tree-sitter-quarto/actions)
-[![Tests](https://img.shields.io/badge/tests-68%2F68%20passing-brightgreen)](https://github.com/ck37/tree-sitter-quarto/actions)
+[![Tests](https://img.shields.io/badge/tests-102%2F102%20passing-brightgreen)](https://github.com/ck37/tree-sitter-quarto/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![tree-sitter](https://img.shields.io/badge/tree--sitter-0.25.10-orange)](https://tree-sitter.github.io/)
 [![Node Version](https://img.shields.io/badge/node-%3E%3D16-brightgreen)](https://nodejs.org/)
@@ -42,6 +42,7 @@ Fully implemented:
 - Chunk options - Parse `#| key: value` as structured data
 - Cross-references - Distinguish `@fig-plot` from `@smith2020` citations
 - Inline code cells - `` `{python} expr` `` with language injection
+- Inline attributes - Pandoc span syntax `[text]{.class}`, `[text]{#id .class key="value"}`
 - Shortcodes - `{{< video url >}}` in block and inline contexts
 - Enhanced divs - Callouts, tabsets, conditional content
   - `::: {.callout-note}` - 5 types: note, warning, important, tip, caution

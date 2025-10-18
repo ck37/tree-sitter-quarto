@@ -105,32 +105,9 @@ Output AST (simplified):
 
 ## Editor Support
 
-### Zed Editor
+**Zed:** Install the [zed-quarto-extension](https://github.com/ck37/zed-quarto-extension) via the Zed extensions panel or `extensions.toml`.
 
-**[zed-quarto-extension](https://github.com/ck37/zed-quarto-extension)** - Full-featured Zed extension with syntax highlighting and language injection for Quarto documents.
-
-Install by adding to your Zed `extensions.toml` or search for "Quarto" in the Zed extensions panel.
-
-### Other Editors
-
-This parser works with any editor that supports tree-sitter grammars:
-- **Neovim** - Use with nvim-treesitter
-- **Helix** - Native tree-sitter support
-- **VSCode** - Via tree-sitter extensions
-
-See [editor integration guide](./docs/editor-integration.md) for detailed instructions.
-
-## Installation
-
-For editor extension developers:
-
-```toml
-# Cargo.toml
-[dependencies]
-tree-sitter-quarto = { git = "https://github.com/ck37/tree-sitter-quarto" }
-```
-
-See [editor integration guide](./docs/editor-integration.md) for detailed instructions.
+**Other editors:** Compatible with Neovim (nvim-treesitter), Helix, and VSCode. For editor extension developers, add `tree-sitter-quarto = { git = "https://github.com/ck37/tree-sitter-quarto" }` to your dependencies. See [editor integration guide](./docs/editor-integration.md) for detailed instructions.
 
 ## Documentation
 

@@ -27,10 +27,8 @@
   },
   "devDependencies": {
     "prebuildify": "^6.0.0",
+    "tree-sitter": "^0.25.0",
     "tree-sitter-cli": "^0.25.10"
-  },
-  "peerDependencies": {
-    "tree-sitter": "^0.21.0"
   },
   "peerDependenciesMeta": {
     "tree-sitter": {
@@ -65,6 +63,11 @@
     "test:corpus": "tree-sitter test",
     "test:bindings": "node --test bindings/node/binding_test.js",
     "test:wasm": "npm run build:wasm && node --test bindings/node/wasm_test.js",
-    "test:all": "npm run test && npm run test:wasm"
+    "test:all": "npm run test && npm run test:wasm",
+    "benchmark": "node scripts/benchmark-cli.js",
+    "benchmark:baseline": "node scripts/benchmark-cli.js --save-baseline",
+    "benchmark:compare": "node scripts/benchmark-cli.js --compare",
+    "validate": "bash scripts/validate-corpus.sh",
+    "validate:sample": "MAX_SAMPLE=20 bash scripts/validate-corpus.sh"
   }
 }

@@ -1,0 +1,2292 @@
+---
+title: "Large Benchmark Document - Comprehensive Analysis"
+subtitle: "Performance Testing for tree-sitter-quarto"
+author:
+  - name: "Test Suite"
+    affiliation: "tree-sitter-quarto project"
+date: 2025-10-17
+format:
+  html:
+    code-fold: true
+    code-summary: "Show code"
+    toc: true
+    toc-depth: 3
+    number-sections: true
+bibliography: references.bib
+---
+
+
+# Analysis Part 1
+
+    toc: true
+---
+
+## Overview {#sec-overview}
+
+This medium-sized document (~500 lines) exercises a mix of Quarto features including executable code cells, chunk options, cross-references, callouts, and tabsets.
+
+## Data Analysis {#sec-analysis}
+
+### Loading Data
+
+```{python}
+#| label: load-data
+#| echo: true
+import pandas as pd
+import numpy as np
+
+# Generate sample data
+np.random.seed(42)
+data = pd.DataFrame({
+    'x': np.random.randn(100),
+    'y': np.random.randn(100),
+    'category': np.random.choice(['A', 'B', 'C'], 100)
+})
+```
+
+### Exploratory Analysis
+
+```{python}
+#| label: tbl-summary
+#| tbl-cap: "Summary Statistics"
+#| echo: false
+data.describe()
+```
+
+See @tbl-summary for descriptive statistics.
+
+### Visualization
+
+```{python}
+#| label: fig-scatter
+#| fig-cap: "Scatter plot of x vs y"
+#| fig-width: 8
+#| fig-height: 6
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.scatterplot(data=data, x='x', y='y', hue='category')
+plt.title('Relationship between X and Y')
+plt.show()
+```
+
+The scatter plot in @fig-scatter shows the distribution across categories.
+
+## Statistical Methods {#sec-methods}
+
+### Linear Regression
+
+::: {.callout-important}
+## Model Assumptions
+
+Before fitting a linear model, verify:
+
+1. **Linearity**: Relationship is approximately linear
+2. **Independence**: Observations are independent
+3. **Homoscedasticity**: Constant variance of residuals
+4. **Normality**: Residuals are normally distributed
+:::
+
+```{python}
+#| label: model-fit
+#| echo: true
+from sklearn.linear_model import LinearRegression
+
+model = LinearRegression()
+model.fit(data[['x']], data['y'])
+predictions = model.predict(data[['x']])
+
+print(f"Coefficient: {model.coef_[0]:.4f}")
+print(f"Intercept: {model.intercept_:.4f}")
+```
+
+### Model Diagnostics
+
+```{python}
+#| label: fig-residuals
+#| fig-cap: "Residual plot"
+residuals = data['y'] - predictions
+plt.scatter(predictions, residuals)
+plt.axhline(y=0, color='r', linestyle='--')
+plt.xlabel('Fitted values')
+plt.ylabel('Residuals')
+plt.title('Residual Plot')
+plt.show()
+```
+
+Examine @fig-residuals for patterns that might violate assumptions.
+
+## Results Presentation {#sec-results}
+
+### Performance Metrics
+
+The model achieved an R² score of `{python} model.score(data[['x']], data['y']):.3f`.
+
+### Comparison with Baseline
+
+::: {.panel-tabset}
+
+## Method A
+
+```{python}
+#| echo: true
+# Method A implementation
+method_a_score = 0.75
+print(f"Method A Score: {method_a_score}")
+```
+
+## Method B
+
+```{python}
+#| echo: true
+# Method B implementation  
+method_b_score = 0.82
+print(f"Method B Score: {method_b_score}")
+```
+
+## Method C
+
+```{python}
+#| echo: true
+# Method C implementation
+method_c_score = 0.79
+print(f"Method C Score: {method_c_score}")
+```
+
+:::
+
+## Mathematical Framework {#sec-math}
+
+The general linear model can be expressed as:
+
+$$
+y = \beta_0 + \beta_1 x + \epsilon
+$$ {#eq-linear}
+
+Where:
+- $y$ is the response variable
+- $x$ is the predictor variable
+- $\beta_0$ is the intercept
+- $\beta_1$ is the slope
+- $\epsilon \sim N(0, \sigma^2)$ is the error term
+
+From @eq-linear, we can derive the least squares estimator:
+
+$$
+\hat{\beta} = (X^T X)^{-1} X^T y
+$$ {#eq-ols}
+
+## Advanced Techniques {#sec-advanced}
+
+### Bootstrap Confidence Intervals
+
+```{python}
+#| label: bootstrap
+#| echo: true
+from sklearn.utils import resample
+
+n_iterations = 1000
+coefficients = []
+
+for i in range(n_iterations):
+    # Resample with replacement
+    sample = resample(data)
+    model.fit(sample[['x']], sample['y'])
+    coefficients.append(model.coef_[0])
+
+coefficients = np.array(coefficients)
+ci_lower = np.percentile(coefficients, 2.5)
+ci_upper = np.percentile(coefficients, 97.5)
+
+print(f"95% CI: [{ci_lower:.4f}, {ci_upper:.4f}]")
+```
+
+::: {.callout-tip}
+Bootstrap methods provide robust estimates of uncertainty without assuming parametric distributions.
+:::
+
+### Cross-Validation
+
+```{python}
+#| label: cv
+#| echo: true
+from sklearn.model_selection import cross_val_score
+
+cv_scores = cross_val_score(model, data[['x']], data['y'], cv=5)
+print(f"CV Scores: {cv_scores}")
+print(f"Mean CV Score: {cv_scores.mean():.4f}")
+print(f"Std CV Score: {cv_scores.std():.4f}")
+```
+
+## Discussion {#sec-discussion}
+
+### Key Findings
+
+1. **Relationship strength**: The correlation between x and y is moderate
+2. **Model performance**: Cross-validation suggests reasonable generalization
+3. **Robustness**: Bootstrap CIs indicate stable parameter estimates
+
+### Limitations
+
+::: {.callout-warning}
+## Study Limitations
+
+- Sample size is limited to 100 observations
+- Only bivariate relationships examined
+- Assumes linear relationships
+- Does not account for confounding variables
+:::
+
+### Future Directions
+
+Further research should explore:
+
+- **Non-linear models**: Polynomial regression, GAMs
+- **Multivariate analysis**: Include additional predictors
+- **Time series**: Temporal dynamics if applicable
+- **Causal inference**: Experimental designs
+
+## Related Work {#sec-related}
+
+According to @smith2020, similar methods have been successfully applied in various domains. The approach by @jones2021 extends these ideas to high-dimensional settings.
+
+## Implementation Notes {#sec-implementation}
+
+### Software Versions
+
+```{python}
+#| echo: true
+import sys
+print(f"Python: {sys.version}")
+print(f"NumPy: {np.__version__}")
+print(f"Pandas: {pd.__version__}")
+```
+
+### Reproducibility
+
+::: {.callout-note}
+All analyses use `np.random.seed(42)` for reproducibility. The complete code is available in this document.
+:::
+
+### Performance Considerations
+
+For larger datasets (n > 10,000):
+- Consider using `dask` for parallel processing
+- Use `scipy.sparse` for sparse matrices
+- Leverage GPU acceleration with `cupy` or `rapids`
+
+## Appendix {#sec-appendix}
+
+### Additional Visualizations
+
+```{python}
+#| label: fig-histograms
+#| fig-cap: "Distribution of variables"
+#| layout-ncol: 2
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+
+axes[0].hist(data['x'], bins=20, edgecolor='black')
+axes[0].set_title('Distribution of X')
+axes[0].set_xlabel('X')
+
+axes[1].hist(data['y'], bins=20, edgecolor='black')
+axes[1].set_title('Distribution of Y')
+axes[1].set_xlabel('Y')
+
+plt.tight_layout()
+plt.show()
+```
+
+### Data Dictionary
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| x | float | Predictor variable (standardized) |
+| y | float | Response variable (standardized) |
+| category | string | Categorical grouping (A, B, C) |
+
+: Variable definitions {#tbl-dictionary}
+
+### Code Snippets
+
+Utility functions for data processing:
+
+```python
+def standardize(x):
+    """Standardize a variable to mean 0, std 1"""
+    return (x - x.mean()) / x.std()
+
+def calculate_rmse(y_true, y_pred):
+    """Calculate root mean squared error"""
+    return np.sqrt(np.mean((y_true - y_pred)**2))
+```
+
+## References {#sec-references}
+
+- Smith, J. (2020). *Statistical Methods for Data Science*. Academic Press.
+- Jones, A. (2021). "High-dimensional regression techniques." *Journal of Statistics*, 45(2), 123-145.
+
+## Session Info
+
+```{python}
+#| echo: true
+import platform
+print(f"Platform: {platform.platform()}")
+print(f"Processor: {platform.processor()}")
+```
+
+---
+
+**Document generated:** 2025-10-17
+
+**Word count:** ~500 lines with mixed Quarto features
+
+# Analysis Part 2
+
+    toc: true
+---
+
+## Overview {#sec-overview}
+
+This medium-sized document (~500 lines) exercises a mix of Quarto features including executable code cells, chunk options, cross-references, callouts, and tabsets.
+
+## Data Analysis {#sec-analysis}
+
+### Loading Data
+
+```{python}
+#| label: load-data
+#| echo: true
+import pandas as pd
+import numpy as np
+
+# Generate sample data
+np.random.seed(42)
+data = pd.DataFrame({
+    'x': np.random.randn(100),
+    'y': np.random.randn(100),
+    'category': np.random.choice(['A', 'B', 'C'], 100)
+})
+```
+
+### Exploratory Analysis
+
+```{python}
+#| label: tbl-summary
+#| tbl-cap: "Summary Statistics"
+#| echo: false
+data.describe()
+```
+
+See @tbl-summary for descriptive statistics.
+
+### Visualization
+
+```{python}
+#| label: fig-scatter
+#| fig-cap: "Scatter plot of x vs y"
+#| fig-width: 8
+#| fig-height: 6
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.scatterplot(data=data, x='x', y='y', hue='category')
+plt.title('Relationship between X and Y')
+plt.show()
+```
+
+The scatter plot in @fig-scatter shows the distribution across categories.
+
+## Statistical Methods {#sec-methods}
+
+### Linear Regression
+
+::: {.callout-important}
+## Model Assumptions
+
+Before fitting a linear model, verify:
+
+1. **Linearity**: Relationship is approximately linear
+2. **Independence**: Observations are independent
+3. **Homoscedasticity**: Constant variance of residuals
+4. **Normality**: Residuals are normally distributed
+:::
+
+```{python}
+#| label: model-fit
+#| echo: true
+from sklearn.linear_model import LinearRegression
+
+model = LinearRegression()
+model.fit(data[['x']], data['y'])
+predictions = model.predict(data[['x']])
+
+print(f"Coefficient: {model.coef_[0]:.4f}")
+print(f"Intercept: {model.intercept_:.4f}")
+```
+
+### Model Diagnostics
+
+```{python}
+#| label: fig-residuals
+#| fig-cap: "Residual plot"
+residuals = data['y'] - predictions
+plt.scatter(predictions, residuals)
+plt.axhline(y=0, color='r', linestyle='--')
+plt.xlabel('Fitted values')
+plt.ylabel('Residuals')
+plt.title('Residual Plot')
+plt.show()
+```
+
+Examine @fig-residuals for patterns that might violate assumptions.
+
+## Results Presentation {#sec-results}
+
+### Performance Metrics
+
+The model achieved an R² score of `{python} model.score(data[['x']], data['y']):.3f`.
+
+### Comparison with Baseline
+
+::: {.panel-tabset}
+
+## Method A
+
+```{python}
+#| echo: true
+# Method A implementation
+method_a_score = 0.75
+print(f"Method A Score: {method_a_score}")
+```
+
+## Method B
+
+```{python}
+#| echo: true
+# Method B implementation  
+method_b_score = 0.82
+print(f"Method B Score: {method_b_score}")
+```
+
+## Method C
+
+```{python}
+#| echo: true
+# Method C implementation
+method_c_score = 0.79
+print(f"Method C Score: {method_c_score}")
+```
+
+:::
+
+## Mathematical Framework {#sec-math}
+
+The general linear model can be expressed as:
+
+$$
+y = \beta_0 + \beta_1 x + \epsilon
+$$ {#eq-linear}
+
+Where:
+- $y$ is the response variable
+- $x$ is the predictor variable
+- $\beta_0$ is the intercept
+- $\beta_1$ is the slope
+- $\epsilon \sim N(0, \sigma^2)$ is the error term
+
+From @eq-linear, we can derive the least squares estimator:
+
+$$
+\hat{\beta} = (X^T X)^{-1} X^T y
+$$ {#eq-ols}
+
+## Advanced Techniques {#sec-advanced}
+
+### Bootstrap Confidence Intervals
+
+```{python}
+#| label: bootstrap
+#| echo: true
+from sklearn.utils import resample
+
+n_iterations = 1000
+coefficients = []
+
+for i in range(n_iterations):
+    # Resample with replacement
+    sample = resample(data)
+    model.fit(sample[['x']], sample['y'])
+    coefficients.append(model.coef_[0])
+
+coefficients = np.array(coefficients)
+ci_lower = np.percentile(coefficients, 2.5)
+ci_upper = np.percentile(coefficients, 97.5)
+
+print(f"95% CI: [{ci_lower:.4f}, {ci_upper:.4f}]")
+```
+
+::: {.callout-tip}
+Bootstrap methods provide robust estimates of uncertainty without assuming parametric distributions.
+:::
+
+### Cross-Validation
+
+```{python}
+#| label: cv
+#| echo: true
+from sklearn.model_selection import cross_val_score
+
+cv_scores = cross_val_score(model, data[['x']], data['y'], cv=5)
+print(f"CV Scores: {cv_scores}")
+print(f"Mean CV Score: {cv_scores.mean():.4f}")
+print(f"Std CV Score: {cv_scores.std():.4f}")
+```
+
+## Discussion {#sec-discussion}
+
+### Key Findings
+
+1. **Relationship strength**: The correlation between x and y is moderate
+2. **Model performance**: Cross-validation suggests reasonable generalization
+3. **Robustness**: Bootstrap CIs indicate stable parameter estimates
+
+### Limitations
+
+::: {.callout-warning}
+## Study Limitations
+
+- Sample size is limited to 100 observations
+- Only bivariate relationships examined
+- Assumes linear relationships
+- Does not account for confounding variables
+:::
+
+### Future Directions
+
+Further research should explore:
+
+- **Non-linear models**: Polynomial regression, GAMs
+- **Multivariate analysis**: Include additional predictors
+- **Time series**: Temporal dynamics if applicable
+- **Causal inference**: Experimental designs
+
+## Related Work {#sec-related}
+
+According to @smith2020, similar methods have been successfully applied in various domains. The approach by @jones2021 extends these ideas to high-dimensional settings.
+
+## Implementation Notes {#sec-implementation}
+
+### Software Versions
+
+```{python}
+#| echo: true
+import sys
+print(f"Python: {sys.version}")
+print(f"NumPy: {np.__version__}")
+print(f"Pandas: {pd.__version__}")
+```
+
+### Reproducibility
+
+::: {.callout-note}
+All analyses use `np.random.seed(42)` for reproducibility. The complete code is available in this document.
+:::
+
+### Performance Considerations
+
+For larger datasets (n > 10,000):
+- Consider using `dask` for parallel processing
+- Use `scipy.sparse` for sparse matrices
+- Leverage GPU acceleration with `cupy` or `rapids`
+
+## Appendix {#sec-appendix}
+
+### Additional Visualizations
+
+```{python}
+#| label: fig-histograms
+#| fig-cap: "Distribution of variables"
+#| layout-ncol: 2
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+
+axes[0].hist(data['x'], bins=20, edgecolor='black')
+axes[0].set_title('Distribution of X')
+axes[0].set_xlabel('X')
+
+axes[1].hist(data['y'], bins=20, edgecolor='black')
+axes[1].set_title('Distribution of Y')
+axes[1].set_xlabel('Y')
+
+plt.tight_layout()
+plt.show()
+```
+
+### Data Dictionary
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| x | float | Predictor variable (standardized) |
+| y | float | Response variable (standardized) |
+| category | string | Categorical grouping (A, B, C) |
+
+: Variable definitions {#tbl-dictionary}
+
+### Code Snippets
+
+Utility functions for data processing:
+
+```python
+def standardize(x):
+    """Standardize a variable to mean 0, std 1"""
+    return (x - x.mean()) / x.std()
+
+def calculate_rmse(y_true, y_pred):
+    """Calculate root mean squared error"""
+    return np.sqrt(np.mean((y_true - y_pred)**2))
+```
+
+## References {#sec-references}
+
+- Smith, J. (2020). *Statistical Methods for Data Science*. Academic Press.
+- Jones, A. (2021). "High-dimensional regression techniques." *Journal of Statistics*, 45(2), 123-145.
+
+## Session Info
+
+```{python}
+#| echo: true
+import platform
+print(f"Platform: {platform.platform()}")
+print(f"Processor: {platform.processor()}")
+```
+
+---
+
+**Document generated:** 2025-10-17
+
+**Word count:** ~500 lines with mixed Quarto features
+
+# Analysis Part 3
+
+    toc: true
+---
+
+## Overview {#sec-overview}
+
+This medium-sized document (~500 lines) exercises a mix of Quarto features including executable code cells, chunk options, cross-references, callouts, and tabsets.
+
+## Data Analysis {#sec-analysis}
+
+### Loading Data
+
+```{python}
+#| label: load-data
+#| echo: true
+import pandas as pd
+import numpy as np
+
+# Generate sample data
+np.random.seed(42)
+data = pd.DataFrame({
+    'x': np.random.randn(100),
+    'y': np.random.randn(100),
+    'category': np.random.choice(['A', 'B', 'C'], 100)
+})
+```
+
+### Exploratory Analysis
+
+```{python}
+#| label: tbl-summary
+#| tbl-cap: "Summary Statistics"
+#| echo: false
+data.describe()
+```
+
+See @tbl-summary for descriptive statistics.
+
+### Visualization
+
+```{python}
+#| label: fig-scatter
+#| fig-cap: "Scatter plot of x vs y"
+#| fig-width: 8
+#| fig-height: 6
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.scatterplot(data=data, x='x', y='y', hue='category')
+plt.title('Relationship between X and Y')
+plt.show()
+```
+
+The scatter plot in @fig-scatter shows the distribution across categories.
+
+## Statistical Methods {#sec-methods}
+
+### Linear Regression
+
+::: {.callout-important}
+## Model Assumptions
+
+Before fitting a linear model, verify:
+
+1. **Linearity**: Relationship is approximately linear
+2. **Independence**: Observations are independent
+3. **Homoscedasticity**: Constant variance of residuals
+4. **Normality**: Residuals are normally distributed
+:::
+
+```{python}
+#| label: model-fit
+#| echo: true
+from sklearn.linear_model import LinearRegression
+
+model = LinearRegression()
+model.fit(data[['x']], data['y'])
+predictions = model.predict(data[['x']])
+
+print(f"Coefficient: {model.coef_[0]:.4f}")
+print(f"Intercept: {model.intercept_:.4f}")
+```
+
+### Model Diagnostics
+
+```{python}
+#| label: fig-residuals
+#| fig-cap: "Residual plot"
+residuals = data['y'] - predictions
+plt.scatter(predictions, residuals)
+plt.axhline(y=0, color='r', linestyle='--')
+plt.xlabel('Fitted values')
+plt.ylabel('Residuals')
+plt.title('Residual Plot')
+plt.show()
+```
+
+Examine @fig-residuals for patterns that might violate assumptions.
+
+## Results Presentation {#sec-results}
+
+### Performance Metrics
+
+The model achieved an R² score of `{python} model.score(data[['x']], data['y']):.3f`.
+
+### Comparison with Baseline
+
+::: {.panel-tabset}
+
+## Method A
+
+```{python}
+#| echo: true
+# Method A implementation
+method_a_score = 0.75
+print(f"Method A Score: {method_a_score}")
+```
+
+## Method B
+
+```{python}
+#| echo: true
+# Method B implementation  
+method_b_score = 0.82
+print(f"Method B Score: {method_b_score}")
+```
+
+## Method C
+
+```{python}
+#| echo: true
+# Method C implementation
+method_c_score = 0.79
+print(f"Method C Score: {method_c_score}")
+```
+
+:::
+
+## Mathematical Framework {#sec-math}
+
+The general linear model can be expressed as:
+
+$$
+y = \beta_0 + \beta_1 x + \epsilon
+$$ {#eq-linear}
+
+Where:
+- $y$ is the response variable
+- $x$ is the predictor variable
+- $\beta_0$ is the intercept
+- $\beta_1$ is the slope
+- $\epsilon \sim N(0, \sigma^2)$ is the error term
+
+From @eq-linear, we can derive the least squares estimator:
+
+$$
+\hat{\beta} = (X^T X)^{-1} X^T y
+$$ {#eq-ols}
+
+## Advanced Techniques {#sec-advanced}
+
+### Bootstrap Confidence Intervals
+
+```{python}
+#| label: bootstrap
+#| echo: true
+from sklearn.utils import resample
+
+n_iterations = 1000
+coefficients = []
+
+for i in range(n_iterations):
+    # Resample with replacement
+    sample = resample(data)
+    model.fit(sample[['x']], sample['y'])
+    coefficients.append(model.coef_[0])
+
+coefficients = np.array(coefficients)
+ci_lower = np.percentile(coefficients, 2.5)
+ci_upper = np.percentile(coefficients, 97.5)
+
+print(f"95% CI: [{ci_lower:.4f}, {ci_upper:.4f}]")
+```
+
+::: {.callout-tip}
+Bootstrap methods provide robust estimates of uncertainty without assuming parametric distributions.
+:::
+
+### Cross-Validation
+
+```{python}
+#| label: cv
+#| echo: true
+from sklearn.model_selection import cross_val_score
+
+cv_scores = cross_val_score(model, data[['x']], data['y'], cv=5)
+print(f"CV Scores: {cv_scores}")
+print(f"Mean CV Score: {cv_scores.mean():.4f}")
+print(f"Std CV Score: {cv_scores.std():.4f}")
+```
+
+## Discussion {#sec-discussion}
+
+### Key Findings
+
+1. **Relationship strength**: The correlation between x and y is moderate
+2. **Model performance**: Cross-validation suggests reasonable generalization
+3. **Robustness**: Bootstrap CIs indicate stable parameter estimates
+
+### Limitations
+
+::: {.callout-warning}
+## Study Limitations
+
+- Sample size is limited to 100 observations
+- Only bivariate relationships examined
+- Assumes linear relationships
+- Does not account for confounding variables
+:::
+
+### Future Directions
+
+Further research should explore:
+
+- **Non-linear models**: Polynomial regression, GAMs
+- **Multivariate analysis**: Include additional predictors
+- **Time series**: Temporal dynamics if applicable
+- **Causal inference**: Experimental designs
+
+## Related Work {#sec-related}
+
+According to @smith2020, similar methods have been successfully applied in various domains. The approach by @jones2021 extends these ideas to high-dimensional settings.
+
+## Implementation Notes {#sec-implementation}
+
+### Software Versions
+
+```{python}
+#| echo: true
+import sys
+print(f"Python: {sys.version}")
+print(f"NumPy: {np.__version__}")
+print(f"Pandas: {pd.__version__}")
+```
+
+### Reproducibility
+
+::: {.callout-note}
+All analyses use `np.random.seed(42)` for reproducibility. The complete code is available in this document.
+:::
+
+### Performance Considerations
+
+For larger datasets (n > 10,000):
+- Consider using `dask` for parallel processing
+- Use `scipy.sparse` for sparse matrices
+- Leverage GPU acceleration with `cupy` or `rapids`
+
+## Appendix {#sec-appendix}
+
+### Additional Visualizations
+
+```{python}
+#| label: fig-histograms
+#| fig-cap: "Distribution of variables"
+#| layout-ncol: 2
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+
+axes[0].hist(data['x'], bins=20, edgecolor='black')
+axes[0].set_title('Distribution of X')
+axes[0].set_xlabel('X')
+
+axes[1].hist(data['y'], bins=20, edgecolor='black')
+axes[1].set_title('Distribution of Y')
+axes[1].set_xlabel('Y')
+
+plt.tight_layout()
+plt.show()
+```
+
+### Data Dictionary
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| x | float | Predictor variable (standardized) |
+| y | float | Response variable (standardized) |
+| category | string | Categorical grouping (A, B, C) |
+
+: Variable definitions {#tbl-dictionary}
+
+### Code Snippets
+
+Utility functions for data processing:
+
+```python
+def standardize(x):
+    """Standardize a variable to mean 0, std 1"""
+    return (x - x.mean()) / x.std()
+
+def calculate_rmse(y_true, y_pred):
+    """Calculate root mean squared error"""
+    return np.sqrt(np.mean((y_true - y_pred)**2))
+```
+
+## References {#sec-references}
+
+- Smith, J. (2020). *Statistical Methods for Data Science*. Academic Press.
+- Jones, A. (2021). "High-dimensional regression techniques." *Journal of Statistics*, 45(2), 123-145.
+
+## Session Info
+
+```{python}
+#| echo: true
+import platform
+print(f"Platform: {platform.platform()}")
+print(f"Processor: {platform.processor()}")
+```
+
+---
+
+**Document generated:** 2025-10-17
+
+**Word count:** ~500 lines with mixed Quarto features
+
+# Analysis Part 4
+
+    toc: true
+---
+
+## Overview {#sec-overview}
+
+This medium-sized document (~500 lines) exercises a mix of Quarto features including executable code cells, chunk options, cross-references, callouts, and tabsets.
+
+## Data Analysis {#sec-analysis}
+
+### Loading Data
+
+```{python}
+#| label: load-data
+#| echo: true
+import pandas as pd
+import numpy as np
+
+# Generate sample data
+np.random.seed(42)
+data = pd.DataFrame({
+    'x': np.random.randn(100),
+    'y': np.random.randn(100),
+    'category': np.random.choice(['A', 'B', 'C'], 100)
+})
+```
+
+### Exploratory Analysis
+
+```{python}
+#| label: tbl-summary
+#| tbl-cap: "Summary Statistics"
+#| echo: false
+data.describe()
+```
+
+See @tbl-summary for descriptive statistics.
+
+### Visualization
+
+```{python}
+#| label: fig-scatter
+#| fig-cap: "Scatter plot of x vs y"
+#| fig-width: 8
+#| fig-height: 6
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.scatterplot(data=data, x='x', y='y', hue='category')
+plt.title('Relationship between X and Y')
+plt.show()
+```
+
+The scatter plot in @fig-scatter shows the distribution across categories.
+
+## Statistical Methods {#sec-methods}
+
+### Linear Regression
+
+::: {.callout-important}
+## Model Assumptions
+
+Before fitting a linear model, verify:
+
+1. **Linearity**: Relationship is approximately linear
+2. **Independence**: Observations are independent
+3. **Homoscedasticity**: Constant variance of residuals
+4. **Normality**: Residuals are normally distributed
+:::
+
+```{python}
+#| label: model-fit
+#| echo: true
+from sklearn.linear_model import LinearRegression
+
+model = LinearRegression()
+model.fit(data[['x']], data['y'])
+predictions = model.predict(data[['x']])
+
+print(f"Coefficient: {model.coef_[0]:.4f}")
+print(f"Intercept: {model.intercept_:.4f}")
+```
+
+### Model Diagnostics
+
+```{python}
+#| label: fig-residuals
+#| fig-cap: "Residual plot"
+residuals = data['y'] - predictions
+plt.scatter(predictions, residuals)
+plt.axhline(y=0, color='r', linestyle='--')
+plt.xlabel('Fitted values')
+plt.ylabel('Residuals')
+plt.title('Residual Plot')
+plt.show()
+```
+
+Examine @fig-residuals for patterns that might violate assumptions.
+
+## Results Presentation {#sec-results}
+
+### Performance Metrics
+
+The model achieved an R² score of `{python} model.score(data[['x']], data['y']):.3f`.
+
+### Comparison with Baseline
+
+::: {.panel-tabset}
+
+## Method A
+
+```{python}
+#| echo: true
+# Method A implementation
+method_a_score = 0.75
+print(f"Method A Score: {method_a_score}")
+```
+
+## Method B
+
+```{python}
+#| echo: true
+# Method B implementation  
+method_b_score = 0.82
+print(f"Method B Score: {method_b_score}")
+```
+
+## Method C
+
+```{python}
+#| echo: true
+# Method C implementation
+method_c_score = 0.79
+print(f"Method C Score: {method_c_score}")
+```
+
+:::
+
+## Mathematical Framework {#sec-math}
+
+The general linear model can be expressed as:
+
+$$
+y = \beta_0 + \beta_1 x + \epsilon
+$$ {#eq-linear}
+
+Where:
+- $y$ is the response variable
+- $x$ is the predictor variable
+- $\beta_0$ is the intercept
+- $\beta_1$ is the slope
+- $\epsilon \sim N(0, \sigma^2)$ is the error term
+
+From @eq-linear, we can derive the least squares estimator:
+
+$$
+\hat{\beta} = (X^T X)^{-1} X^T y
+$$ {#eq-ols}
+
+## Advanced Techniques {#sec-advanced}
+
+### Bootstrap Confidence Intervals
+
+```{python}
+#| label: bootstrap
+#| echo: true
+from sklearn.utils import resample
+
+n_iterations = 1000
+coefficients = []
+
+for i in range(n_iterations):
+    # Resample with replacement
+    sample = resample(data)
+    model.fit(sample[['x']], sample['y'])
+    coefficients.append(model.coef_[0])
+
+coefficients = np.array(coefficients)
+ci_lower = np.percentile(coefficients, 2.5)
+ci_upper = np.percentile(coefficients, 97.5)
+
+print(f"95% CI: [{ci_lower:.4f}, {ci_upper:.4f}]")
+```
+
+::: {.callout-tip}
+Bootstrap methods provide robust estimates of uncertainty without assuming parametric distributions.
+:::
+
+### Cross-Validation
+
+```{python}
+#| label: cv
+#| echo: true
+from sklearn.model_selection import cross_val_score
+
+cv_scores = cross_val_score(model, data[['x']], data['y'], cv=5)
+print(f"CV Scores: {cv_scores}")
+print(f"Mean CV Score: {cv_scores.mean():.4f}")
+print(f"Std CV Score: {cv_scores.std():.4f}")
+```
+
+## Discussion {#sec-discussion}
+
+### Key Findings
+
+1. **Relationship strength**: The correlation between x and y is moderate
+2. **Model performance**: Cross-validation suggests reasonable generalization
+3. **Robustness**: Bootstrap CIs indicate stable parameter estimates
+
+### Limitations
+
+::: {.callout-warning}
+## Study Limitations
+
+- Sample size is limited to 100 observations
+- Only bivariate relationships examined
+- Assumes linear relationships
+- Does not account for confounding variables
+:::
+
+### Future Directions
+
+Further research should explore:
+
+- **Non-linear models**: Polynomial regression, GAMs
+- **Multivariate analysis**: Include additional predictors
+- **Time series**: Temporal dynamics if applicable
+- **Causal inference**: Experimental designs
+
+## Related Work {#sec-related}
+
+According to @smith2020, similar methods have been successfully applied in various domains. The approach by @jones2021 extends these ideas to high-dimensional settings.
+
+## Implementation Notes {#sec-implementation}
+
+### Software Versions
+
+```{python}
+#| echo: true
+import sys
+print(f"Python: {sys.version}")
+print(f"NumPy: {np.__version__}")
+print(f"Pandas: {pd.__version__}")
+```
+
+### Reproducibility
+
+::: {.callout-note}
+All analyses use `np.random.seed(42)` for reproducibility. The complete code is available in this document.
+:::
+
+### Performance Considerations
+
+For larger datasets (n > 10,000):
+- Consider using `dask` for parallel processing
+- Use `scipy.sparse` for sparse matrices
+- Leverage GPU acceleration with `cupy` or `rapids`
+
+## Appendix {#sec-appendix}
+
+### Additional Visualizations
+
+```{python}
+#| label: fig-histograms
+#| fig-cap: "Distribution of variables"
+#| layout-ncol: 2
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+
+axes[0].hist(data['x'], bins=20, edgecolor='black')
+axes[0].set_title('Distribution of X')
+axes[0].set_xlabel('X')
+
+axes[1].hist(data['y'], bins=20, edgecolor='black')
+axes[1].set_title('Distribution of Y')
+axes[1].set_xlabel('Y')
+
+plt.tight_layout()
+plt.show()
+```
+
+### Data Dictionary
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| x | float | Predictor variable (standardized) |
+| y | float | Response variable (standardized) |
+| category | string | Categorical grouping (A, B, C) |
+
+: Variable definitions {#tbl-dictionary}
+
+### Code Snippets
+
+Utility functions for data processing:
+
+```python
+def standardize(x):
+    """Standardize a variable to mean 0, std 1"""
+    return (x - x.mean()) / x.std()
+
+def calculate_rmse(y_true, y_pred):
+    """Calculate root mean squared error"""
+    return np.sqrt(np.mean((y_true - y_pred)**2))
+```
+
+## References {#sec-references}
+
+- Smith, J. (2020). *Statistical Methods for Data Science*. Academic Press.
+- Jones, A. (2021). "High-dimensional regression techniques." *Journal of Statistics*, 45(2), 123-145.
+
+## Session Info
+
+```{python}
+#| echo: true
+import platform
+print(f"Platform: {platform.platform()}")
+print(f"Processor: {platform.processor()}")
+```
+
+---
+
+**Document generated:** 2025-10-17
+
+**Word count:** ~500 lines with mixed Quarto features
+
+# Extended Analysis Part 5
+
+    toc: true
+---
+
+## Overview {#sec-overview}
+
+This medium-sized document (~500 lines) exercises a mix of Quarto features including executable code cells, chunk options, cross-references, callouts, and tabsets.
+
+## Data Analysis {#sec-analysis}
+
+### Loading Data
+
+```{python}
+#| label: load-data
+#| echo: true
+import pandas as pd
+import numpy as np
+
+# Generate sample data
+np.random.seed(42)
+data = pd.DataFrame({
+    'x': np.random.randn(100),
+    'y': np.random.randn(100),
+    'category': np.random.choice(['A', 'B', 'C'], 100)
+})
+```
+
+### Exploratory Analysis
+
+```{python}
+#| label: tbl-summary
+#| tbl-cap: "Summary Statistics"
+#| echo: false
+data.describe()
+```
+
+See @tbl-summary for descriptive statistics.
+
+### Visualization
+
+```{python}
+#| label: fig-scatter
+#| fig-cap: "Scatter plot of x vs y"
+#| fig-width: 8
+#| fig-height: 6
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.scatterplot(data=data, x='x', y='y', hue='category')
+plt.title('Relationship between X and Y')
+plt.show()
+```
+
+The scatter plot in @fig-scatter shows the distribution across categories.
+
+## Statistical Methods {#sec-methods}
+
+### Linear Regression
+
+::: {.callout-important}
+## Model Assumptions
+
+Before fitting a linear model, verify:
+
+1. **Linearity**: Relationship is approximately linear
+2. **Independence**: Observations are independent
+3. **Homoscedasticity**: Constant variance of residuals
+4. **Normality**: Residuals are normally distributed
+:::
+
+```{python}
+#| label: model-fit
+#| echo: true
+from sklearn.linear_model import LinearRegression
+
+model = LinearRegression()
+model.fit(data[['x']], data['y'])
+predictions = model.predict(data[['x']])
+
+print(f"Coefficient: {model.coef_[0]:.4f}")
+print(f"Intercept: {model.intercept_:.4f}")
+```
+
+### Model Diagnostics
+
+```{python}
+#| label: fig-residuals
+#| fig-cap: "Residual plot"
+residuals = data['y'] - predictions
+plt.scatter(predictions, residuals)
+plt.axhline(y=0, color='r', linestyle='--')
+plt.xlabel('Fitted values')
+plt.ylabel('Residuals')
+plt.title('Residual Plot')
+plt.show()
+```
+
+Examine @fig-residuals for patterns that might violate assumptions.
+
+## Results Presentation {#sec-results}
+
+### Performance Metrics
+
+The model achieved an R² score of `{python} model.score(data[['x']], data['y']):.3f`.
+
+### Comparison with Baseline
+
+::: {.panel-tabset}
+
+## Method A
+
+```{python}
+#| echo: true
+# Method A implementation
+method_a_score = 0.75
+print(f"Method A Score: {method_a_score}")
+```
+
+## Method B
+
+```{python}
+#| echo: true
+# Method B implementation  
+method_b_score = 0.82
+print(f"Method B Score: {method_b_score}")
+```
+
+## Method C
+
+```{python}
+#| echo: true
+# Method C implementation
+method_c_score = 0.79
+print(f"Method C Score: {method_c_score}")
+```
+
+:::
+
+## Mathematical Framework {#sec-math}
+
+The general linear model can be expressed as:
+
+$$
+y = \beta_0 + \beta_1 x + \epsilon
+$$ {#eq-linear}
+
+Where:
+- $y$ is the response variable
+- $x$ is the predictor variable
+- $\beta_0$ is the intercept
+- $\beta_1$ is the slope
+- $\epsilon \sim N(0, \sigma^2)$ is the error term
+
+From @eq-linear, we can derive the least squares estimator:
+
+$$
+\hat{\beta} = (X^T X)^{-1} X^T y
+$$ {#eq-ols}
+
+## Advanced Techniques {#sec-advanced}
+
+### Bootstrap Confidence Intervals
+
+```{python}
+#| label: bootstrap
+#| echo: true
+from sklearn.utils import resample
+
+n_iterations = 1000
+coefficients = []
+
+for i in range(n_iterations):
+    # Resample with replacement
+    sample = resample(data)
+    model.fit(sample[['x']], sample['y'])
+    coefficients.append(model.coef_[0])
+
+coefficients = np.array(coefficients)
+ci_lower = np.percentile(coefficients, 2.5)
+ci_upper = np.percentile(coefficients, 97.5)
+
+print(f"95% CI: [{ci_lower:.4f}, {ci_upper:.4f}]")
+```
+
+::: {.callout-tip}
+Bootstrap methods provide robust estimates of uncertainty without assuming parametric distributions.
+:::
+
+### Cross-Validation
+
+```{python}
+#| label: cv
+#| echo: true
+from sklearn.model_selection import cross_val_score
+
+cv_scores = cross_val_score(model, data[['x']], data['y'], cv=5)
+print(f"CV Scores: {cv_scores}")
+print(f"Mean CV Score: {cv_scores.mean():.4f}")
+print(f"Std CV Score: {cv_scores.std():.4f}")
+```
+
+## Discussion {#sec-discussion}
+
+### Key Findings
+
+1. **Relationship strength**: The correlation between x and y is moderate
+2. **Model performance**: Cross-validation suggests reasonable generalization
+3. **Robustness**: Bootstrap CIs indicate stable parameter estimates
+
+### Limitations
+
+::: {.callout-warning}
+## Study Limitations
+
+- Sample size is limited to 100 observations
+- Only bivariate relationships examined
+- Assumes linear relationships
+- Does not account for confounding variables
+:::
+
+### Future Directions
+
+Further research should explore:
+
+- **Non-linear models**: Polynomial regression, GAMs
+- **Multivariate analysis**: Include additional predictors
+- **Time series**: Temporal dynamics if applicable
+- **Causal inference**: Experimental designs
+
+## Related Work {#sec-related}
+
+According to @smith2020, similar methods have been successfully applied in various domains. The approach by @jones2021 extends these ideas to high-dimensional settings.
+
+## Implementation Notes {#sec-implementation}
+
+### Software Versions
+
+```{python}
+#| echo: true
+import sys
+print(f"Python: {sys.version}")
+print(f"NumPy: {np.__version__}")
+print(f"Pandas: {pd.__version__}")
+```
+
+### Reproducibility
+
+::: {.callout-note}
+All analyses use `np.random.seed(42)` for reproducibility. The complete code is available in this document.
+:::
+
+### Performance Considerations
+
+For larger datasets (n > 10,000):
+- Consider using `dask` for parallel processing
+- Use `scipy.sparse` for sparse matrices
+- Leverage GPU acceleration with `cupy` or `rapids`
+
+## Appendix {#sec-appendix}
+
+### Additional Visualizations
+
+```{python}
+#| label: fig-histograms
+#| fig-cap: "Distribution of variables"
+#| layout-ncol: 2
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+
+axes[0].hist(data['x'], bins=20, edgecolor='black')
+axes[0].set_title('Distribution of X')
+axes[0].set_xlabel('X')
+
+axes[1].hist(data['y'], bins=20, edgecolor='black')
+axes[1].set_title('Distribution of Y')
+axes[1].set_xlabel('Y')
+
+plt.tight_layout()
+plt.show()
+```
+
+### Data Dictionary
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| x | float | Predictor variable (standardized) |
+| y | float | Response variable (standardized) |
+| category | string | Categorical grouping (A, B, C) |
+
+: Variable definitions {#tbl-dictionary}
+
+### Code Snippets
+
+Utility functions for data processing:
+
+```python
+def standardize(x):
+    """Standardize a variable to mean 0, std 1"""
+    return (x - x.mean()) / x.std()
+
+def calculate_rmse(y_true, y_pred):
+    """Calculate root mean squared error"""
+    return np.sqrt(np.mean((y_true - y_pred)**2))
+```
+
+## References {#sec-references}
+
+- Smith, J. (2020). *Statistical Methods for Data Science*. Academic Press.
+- Jones, A. (2021). "High-dimensional regression techniques." *Journal of Statistics*, 45(2), 123-145.
+
+## Session Info
+
+```{python}
+#| echo: true
+import platform
+print(f"Platform: {platform.platform()}")
+print(f"Processor: {platform.processor()}")
+```
+
+---
+
+**Document generated:** 2025-10-17
+
+**Word count:** ~500 lines with mixed Quarto features
+
+# Extended Analysis Part 6
+
+    toc: true
+---
+
+## Overview {#sec-overview}
+
+This medium-sized document (~500 lines) exercises a mix of Quarto features including executable code cells, chunk options, cross-references, callouts, and tabsets.
+
+## Data Analysis {#sec-analysis}
+
+### Loading Data
+
+```{python}
+#| label: load-data
+#| echo: true
+import pandas as pd
+import numpy as np
+
+# Generate sample data
+np.random.seed(42)
+data = pd.DataFrame({
+    'x': np.random.randn(100),
+    'y': np.random.randn(100),
+    'category': np.random.choice(['A', 'B', 'C'], 100)
+})
+```
+
+### Exploratory Analysis
+
+```{python}
+#| label: tbl-summary
+#| tbl-cap: "Summary Statistics"
+#| echo: false
+data.describe()
+```
+
+See @tbl-summary for descriptive statistics.
+
+### Visualization
+
+```{python}
+#| label: fig-scatter
+#| fig-cap: "Scatter plot of x vs y"
+#| fig-width: 8
+#| fig-height: 6
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.scatterplot(data=data, x='x', y='y', hue='category')
+plt.title('Relationship between X and Y')
+plt.show()
+```
+
+The scatter plot in @fig-scatter shows the distribution across categories.
+
+## Statistical Methods {#sec-methods}
+
+### Linear Regression
+
+::: {.callout-important}
+## Model Assumptions
+
+Before fitting a linear model, verify:
+
+1. **Linearity**: Relationship is approximately linear
+2. **Independence**: Observations are independent
+3. **Homoscedasticity**: Constant variance of residuals
+4. **Normality**: Residuals are normally distributed
+:::
+
+```{python}
+#| label: model-fit
+#| echo: true
+from sklearn.linear_model import LinearRegression
+
+model = LinearRegression()
+model.fit(data[['x']], data['y'])
+predictions = model.predict(data[['x']])
+
+print(f"Coefficient: {model.coef_[0]:.4f}")
+print(f"Intercept: {model.intercept_:.4f}")
+```
+
+### Model Diagnostics
+
+```{python}
+#| label: fig-residuals
+#| fig-cap: "Residual plot"
+residuals = data['y'] - predictions
+plt.scatter(predictions, residuals)
+plt.axhline(y=0, color='r', linestyle='--')
+plt.xlabel('Fitted values')
+plt.ylabel('Residuals')
+plt.title('Residual Plot')
+plt.show()
+```
+
+Examine @fig-residuals for patterns that might violate assumptions.
+
+## Results Presentation {#sec-results}
+
+### Performance Metrics
+
+The model achieved an R² score of `{python} model.score(data[['x']], data['y']):.3f`.
+
+### Comparison with Baseline
+
+::: {.panel-tabset}
+
+## Method A
+
+```{python}
+#| echo: true
+# Method A implementation
+method_a_score = 0.75
+print(f"Method A Score: {method_a_score}")
+```
+
+## Method B
+
+```{python}
+#| echo: true
+# Method B implementation  
+method_b_score = 0.82
+print(f"Method B Score: {method_b_score}")
+```
+
+## Method C
+
+```{python}
+#| echo: true
+# Method C implementation
+method_c_score = 0.79
+print(f"Method C Score: {method_c_score}")
+```
+
+:::
+
+## Mathematical Framework {#sec-math}
+
+The general linear model can be expressed as:
+
+$$
+y = \beta_0 + \beta_1 x + \epsilon
+$$ {#eq-linear}
+
+Where:
+- $y$ is the response variable
+- $x$ is the predictor variable
+- $\beta_0$ is the intercept
+- $\beta_1$ is the slope
+- $\epsilon \sim N(0, \sigma^2)$ is the error term
+
+From @eq-linear, we can derive the least squares estimator:
+
+$$
+\hat{\beta} = (X^T X)^{-1} X^T y
+$$ {#eq-ols}
+
+## Advanced Techniques {#sec-advanced}
+
+### Bootstrap Confidence Intervals
+
+```{python}
+#| label: bootstrap
+#| echo: true
+from sklearn.utils import resample
+
+n_iterations = 1000
+coefficients = []
+
+for i in range(n_iterations):
+    # Resample with replacement
+    sample = resample(data)
+    model.fit(sample[['x']], sample['y'])
+    coefficients.append(model.coef_[0])
+
+coefficients = np.array(coefficients)
+ci_lower = np.percentile(coefficients, 2.5)
+ci_upper = np.percentile(coefficients, 97.5)
+
+print(f"95% CI: [{ci_lower:.4f}, {ci_upper:.4f}]")
+```
+
+::: {.callout-tip}
+Bootstrap methods provide robust estimates of uncertainty without assuming parametric distributions.
+:::
+
+### Cross-Validation
+
+```{python}
+#| label: cv
+#| echo: true
+from sklearn.model_selection import cross_val_score
+
+cv_scores = cross_val_score(model, data[['x']], data['y'], cv=5)
+print(f"CV Scores: {cv_scores}")
+print(f"Mean CV Score: {cv_scores.mean():.4f}")
+print(f"Std CV Score: {cv_scores.std():.4f}")
+```
+
+## Discussion {#sec-discussion}
+
+### Key Findings
+
+1. **Relationship strength**: The correlation between x and y is moderate
+2. **Model performance**: Cross-validation suggests reasonable generalization
+3. **Robustness**: Bootstrap CIs indicate stable parameter estimates
+
+### Limitations
+
+::: {.callout-warning}
+## Study Limitations
+
+- Sample size is limited to 100 observations
+- Only bivariate relationships examined
+- Assumes linear relationships
+- Does not account for confounding variables
+:::
+
+### Future Directions
+
+Further research should explore:
+
+- **Non-linear models**: Polynomial regression, GAMs
+- **Multivariate analysis**: Include additional predictors
+- **Time series**: Temporal dynamics if applicable
+- **Causal inference**: Experimental designs
+
+## Related Work {#sec-related}
+
+According to @smith2020, similar methods have been successfully applied in various domains. The approach by @jones2021 extends these ideas to high-dimensional settings.
+
+## Implementation Notes {#sec-implementation}
+
+### Software Versions
+
+```{python}
+#| echo: true
+import sys
+print(f"Python: {sys.version}")
+print(f"NumPy: {np.__version__}")
+print(f"Pandas: {pd.__version__}")
+```
+
+### Reproducibility
+
+::: {.callout-note}
+All analyses use `np.random.seed(42)` for reproducibility. The complete code is available in this document.
+:::
+
+### Performance Considerations
+
+For larger datasets (n > 10,000):
+- Consider using `dask` for parallel processing
+- Use `scipy.sparse` for sparse matrices
+- Leverage GPU acceleration with `cupy` or `rapids`
+
+## Appendix {#sec-appendix}
+
+### Additional Visualizations
+
+```{python}
+#| label: fig-histograms
+#| fig-cap: "Distribution of variables"
+#| layout-ncol: 2
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+
+axes[0].hist(data['x'], bins=20, edgecolor='black')
+axes[0].set_title('Distribution of X')
+axes[0].set_xlabel('X')
+
+axes[1].hist(data['y'], bins=20, edgecolor='black')
+axes[1].set_title('Distribution of Y')
+axes[1].set_xlabel('Y')
+
+plt.tight_layout()
+plt.show()
+```
+
+### Data Dictionary
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| x | float | Predictor variable (standardized) |
+| y | float | Response variable (standardized) |
+| category | string | Categorical grouping (A, B, C) |
+
+: Variable definitions {#tbl-dictionary}
+
+### Code Snippets
+
+Utility functions for data processing:
+
+```python
+def standardize(x):
+    """Standardize a variable to mean 0, std 1"""
+    return (x - x.mean()) / x.std()
+
+def calculate_rmse(y_true, y_pred):
+    """Calculate root mean squared error"""
+    return np.sqrt(np.mean((y_true - y_pred)**2))
+```
+
+## References {#sec-references}
+
+- Smith, J. (2020). *Statistical Methods for Data Science*. Academic Press.
+- Jones, A. (2021). "High-dimensional regression techniques." *Journal of Statistics*, 45(2), 123-145.
+
+## Session Info
+
+```{python}
+#| echo: true
+import platform
+print(f"Platform: {platform.platform()}")
+print(f"Processor: {platform.processor()}")
+```
+
+---
+
+**Document generated:** 2025-10-17
+
+**Word count:** ~500 lines with mixed Quarto features
+
+# Extended Analysis Part 7
+
+    toc: true
+---
+
+## Overview {#sec-overview}
+
+This medium-sized document (~500 lines) exercises a mix of Quarto features including executable code cells, chunk options, cross-references, callouts, and tabsets.
+
+## Data Analysis {#sec-analysis}
+
+### Loading Data
+
+```{python}
+#| label: load-data
+#| echo: true
+import pandas as pd
+import numpy as np
+
+# Generate sample data
+np.random.seed(42)
+data = pd.DataFrame({
+    'x': np.random.randn(100),
+    'y': np.random.randn(100),
+    'category': np.random.choice(['A', 'B', 'C'], 100)
+})
+```
+
+### Exploratory Analysis
+
+```{python}
+#| label: tbl-summary
+#| tbl-cap: "Summary Statistics"
+#| echo: false
+data.describe()
+```
+
+See @tbl-summary for descriptive statistics.
+
+### Visualization
+
+```{python}
+#| label: fig-scatter
+#| fig-cap: "Scatter plot of x vs y"
+#| fig-width: 8
+#| fig-height: 6
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.scatterplot(data=data, x='x', y='y', hue='category')
+plt.title('Relationship between X and Y')
+plt.show()
+```
+
+The scatter plot in @fig-scatter shows the distribution across categories.
+
+## Statistical Methods {#sec-methods}
+
+### Linear Regression
+
+::: {.callout-important}
+## Model Assumptions
+
+Before fitting a linear model, verify:
+
+1. **Linearity**: Relationship is approximately linear
+2. **Independence**: Observations are independent
+3. **Homoscedasticity**: Constant variance of residuals
+4. **Normality**: Residuals are normally distributed
+:::
+
+```{python}
+#| label: model-fit
+#| echo: true
+from sklearn.linear_model import LinearRegression
+
+model = LinearRegression()
+model.fit(data[['x']], data['y'])
+predictions = model.predict(data[['x']])
+
+print(f"Coefficient: {model.coef_[0]:.4f}")
+print(f"Intercept: {model.intercept_:.4f}")
+```
+
+### Model Diagnostics
+
+```{python}
+#| label: fig-residuals
+#| fig-cap: "Residual plot"
+residuals = data['y'] - predictions
+plt.scatter(predictions, residuals)
+plt.axhline(y=0, color='r', linestyle='--')
+plt.xlabel('Fitted values')
+plt.ylabel('Residuals')
+plt.title('Residual Plot')
+plt.show()
+```
+
+Examine @fig-residuals for patterns that might violate assumptions.
+
+## Results Presentation {#sec-results}
+
+### Performance Metrics
+
+The model achieved an R² score of `{python} model.score(data[['x']], data['y']):.3f`.
+
+### Comparison with Baseline
+
+::: {.panel-tabset}
+
+## Method A
+
+```{python}
+#| echo: true
+# Method A implementation
+method_a_score = 0.75
+print(f"Method A Score: {method_a_score}")
+```
+
+## Method B
+
+```{python}
+#| echo: true
+# Method B implementation  
+method_b_score = 0.82
+print(f"Method B Score: {method_b_score}")
+```
+
+## Method C
+
+```{python}
+#| echo: true
+# Method C implementation
+method_c_score = 0.79
+print(f"Method C Score: {method_c_score}")
+```
+
+:::
+
+## Mathematical Framework {#sec-math}
+
+The general linear model can be expressed as:
+
+$$
+y = \beta_0 + \beta_1 x + \epsilon
+$$ {#eq-linear}
+
+Where:
+- $y$ is the response variable
+- $x$ is the predictor variable
+- $\beta_0$ is the intercept
+- $\beta_1$ is the slope
+- $\epsilon \sim N(0, \sigma^2)$ is the error term
+
+From @eq-linear, we can derive the least squares estimator:
+
+$$
+\hat{\beta} = (X^T X)^{-1} X^T y
+$$ {#eq-ols}
+
+## Advanced Techniques {#sec-advanced}
+
+### Bootstrap Confidence Intervals
+
+```{python}
+#| label: bootstrap
+#| echo: true
+from sklearn.utils import resample
+
+n_iterations = 1000
+coefficients = []
+
+for i in range(n_iterations):
+    # Resample with replacement
+    sample = resample(data)
+    model.fit(sample[['x']], sample['y'])
+    coefficients.append(model.coef_[0])
+
+coefficients = np.array(coefficients)
+ci_lower = np.percentile(coefficients, 2.5)
+ci_upper = np.percentile(coefficients, 97.5)
+
+print(f"95% CI: [{ci_lower:.4f}, {ci_upper:.4f}]")
+```
+
+::: {.callout-tip}
+Bootstrap methods provide robust estimates of uncertainty without assuming parametric distributions.
+:::
+
+### Cross-Validation
+
+```{python}
+#| label: cv
+#| echo: true
+from sklearn.model_selection import cross_val_score
+
+cv_scores = cross_val_score(model, data[['x']], data['y'], cv=5)
+print(f"CV Scores: {cv_scores}")
+print(f"Mean CV Score: {cv_scores.mean():.4f}")
+print(f"Std CV Score: {cv_scores.std():.4f}")
+```
+
+## Discussion {#sec-discussion}
+
+### Key Findings
+
+1. **Relationship strength**: The correlation between x and y is moderate
+2. **Model performance**: Cross-validation suggests reasonable generalization
+3. **Robustness**: Bootstrap CIs indicate stable parameter estimates
+
+### Limitations
+
+::: {.callout-warning}
+## Study Limitations
+
+- Sample size is limited to 100 observations
+- Only bivariate relationships examined
+- Assumes linear relationships
+- Does not account for confounding variables
+:::
+
+### Future Directions
+
+Further research should explore:
+
+- **Non-linear models**: Polynomial regression, GAMs
+- **Multivariate analysis**: Include additional predictors
+- **Time series**: Temporal dynamics if applicable
+- **Causal inference**: Experimental designs
+
+## Related Work {#sec-related}
+
+According to @smith2020, similar methods have been successfully applied in various domains. The approach by @jones2021 extends these ideas to high-dimensional settings.
+
+## Implementation Notes {#sec-implementation}
+
+### Software Versions
+
+```{python}
+#| echo: true
+import sys
+print(f"Python: {sys.version}")
+print(f"NumPy: {np.__version__}")
+print(f"Pandas: {pd.__version__}")
+```
+
+### Reproducibility
+
+::: {.callout-note}
+All analyses use `np.random.seed(42)` for reproducibility. The complete code is available in this document.
+:::
+
+### Performance Considerations
+
+For larger datasets (n > 10,000):
+- Consider using `dask` for parallel processing
+- Use `scipy.sparse` for sparse matrices
+- Leverage GPU acceleration with `cupy` or `rapids`
+
+## Appendix {#sec-appendix}
+
+### Additional Visualizations
+
+```{python}
+#| label: fig-histograms
+#| fig-cap: "Distribution of variables"
+#| layout-ncol: 2
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+
+axes[0].hist(data['x'], bins=20, edgecolor='black')
+axes[0].set_title('Distribution of X')
+axes[0].set_xlabel('X')
+
+axes[1].hist(data['y'], bins=20, edgecolor='black')
+axes[1].set_title('Distribution of Y')
+axes[1].set_xlabel('Y')
+
+plt.tight_layout()
+plt.show()
+```
+
+### Data Dictionary
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| x | float | Predictor variable (standardized) |
+| y | float | Response variable (standardized) |
+| category | string | Categorical grouping (A, B, C) |
+
+: Variable definitions {#tbl-dictionary}
+
+### Code Snippets
+
+Utility functions for data processing:
+
+```python
+def standardize(x):
+    """Standardize a variable to mean 0, std 1"""
+    return (x - x.mean()) / x.std()
+
+def calculate_rmse(y_true, y_pred):
+    """Calculate root mean squared error"""
+    return np.sqrt(np.mean((y_true - y_pred)**2))
+```
+
+## References {#sec-references}
+
+- Smith, J. (2020). *Statistical Methods for Data Science*. Academic Press.
+- Jones, A. (2021). "High-dimensional regression techniques." *Journal of Statistics*, 45(2), 123-145.
+
+## Session Info
+
+```{python}
+#| echo: true
+import platform
+print(f"Platform: {platform.platform()}")
+print(f"Processor: {platform.processor()}")
+```
+
+---
+
+**Document generated:** 2025-10-17
+
+**Word count:** ~500 lines with mixed Quarto features

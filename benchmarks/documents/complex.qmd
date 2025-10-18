@@ -1,0 +1,281 @@
+---
+title: "Complex Benchmark - Edge Cases and Nesting"
+format: html
+---
+
+## Deeply Nested Structures
+
+::: {.callout-note}
+### Nested Callout with Code
+
+```{python}
+#| label: nested-code
+#| echo: true
+# Code inside callout
+x = [1, 2, 3]
+```
+
+::: {.callout-warning}
+#### Even Deeper Nesting
+
+This tests deeply nested divs with **formatting** and `inline code`.
+
+- List item 1
+- List item 2
+  - Nested list
+  - More nesting
+:::
+:::
+
+## Multiple Languages
+
+```{python}
+#| label: py-cell
+import numpy as np
+data_py = np.array([1, 2, 3])
+```
+
+```{r}
+#| label: r-cell
+library(ggplot2)
+data_r <- c(1, 2, 3)
+```
+
+```{julia}
+#| label: julia-cell
+data_julia = [1, 2, 3]
+```
+
+```{sql}
+#| label: sql-cell
+SELECT * FROM table WHERE id > 0;
+```
+
+```{bash}
+#| label: bash-cell
+echo "Hello from bash"
+```
+
+## Complex Chunk Options
+
+```{python}
+#| label: fig-complex
+#| fig-cap: |
+#|   This is a multi-line caption
+#|   spanning multiple lines
+#|   with complex formatting
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-width: 10
+#| fig-height: 8
+#| fig-align: center
+import matplotlib.pyplot as plt
+plt.plot([1,2,3])
+plt.show()
+```
+
+## All Cross-Reference Types
+
+See @fig-complex, @tbl-data, @eq-formula, @sec-intro, and @lst-code.
+
+```{python}
+#| label: tbl-data
+#| tbl-cap: "Complex table"
+import pandas as pd
+pd.DataFrame({'a': [1,2], 'b': [3,4]})
+```
+
+$$
+E = mc^2
+$$ {#eq-formula}
+
+### Section {#sec-intro}
+
+Content here.
+
+```{.python #lst-code lst-cap="Code listing"}
+def complex_function():
+    return 42
+```
+
+## Edge Case: Empty Code Cell
+
+```{python}
+#| label: empty-cell
+```
+
+## Edge Case: Cell with Only Options
+
+```{python}
+#| echo: false
+#| eval: false
+```
+
+## Inline Elements Stress Test
+
+This paragraph contains `{python} 1+1` and `{r} 2+2` inline code, **bold**, *italic*, ~~strikethrough~~, ==highlight==, H~2~O, x^2^, and @fig-complex cross-refs all in one line with [links](https://example.com) and ![images](img.png).
+
+## Pandoc Footnotes
+
+Here's an inline footnote^[This is inline] and a reference footnote[^1].
+
+[^1]: This is a reference footnote with **formatting**.
+
+## Tabset with Code
+
+::: {.panel-tabset}
+
+### Python
+
+```{python}
+print("Python tab")
+```
+
+### R
+
+```{r}
+print("R tab")
+```
+
+### Julia
+
+```{julia}
+println("Julia tab")
+```
+
+:::
+
+## Conditional Content
+
+::: {.content-visible when-format="html"}
+HTML-only content with **formatting**.
+:::
+
+::: {.content-hidden when-format="pdf"}
+Hidden from PDF.
+:::
+
+## Callout Variations
+
+::: {.callout-note}
+Note callout
+:::
+
+::: {.callout-tip}
+Tip callout
+:::
+
+::: {.callout-warning}
+Warning callout
+:::
+
+::: {.callout-caution}
+Caution callout
+:::
+
+::: {.callout-important}
+Important callout
+:::
+
+## Complex Table
+
+| A | B | C | D | E |
+|---|---|---|---|---|
+| 1 | 2 | 3 | 4 | 5 |
+| 6 | 7 | 8 | 9 | 10 |
+
+: Complex table {#tbl-complex}
+
+## Math Edge Cases
+
+Inline: $x^2 + y^2 = z^2$
+
+Display:
+
+$$
+\begin{aligned}
+f(x) &= \int_{-\infty}^{\infty} g(t) dt \\
+     &= \sum_{i=1}^{n} x_i
+\end{aligned}
+$$
+
+## Shortcode Examples
+
+{{< video https://example.com/video.mp4 >}}
+
+{{< embed notebook.ipynb >}}
+
+## Lists Edge Cases
+
+1. Ordered item 1
+2. Ordered item 2
+   a. Sub-item a
+   b. Sub-item b
+3. Back to top level
+
+- Unordered
+  - Nested
+    - Deep nest
+      - Very deep
+
+## Citations and Cross-refs Mixed
+
+According to @smith2020, see @fig-complex and @eq-formula for details.
+
+## Block Quote with Formatting
+
+> This is a block quote
+> with **bold** and *italic*
+> and `code` spans.
+
+## Link Variations
+
+[Regular link](https://example.com)
+
+<https://autolink.example.com>
+
+[Reference link][ref1]
+
+[ref1]: https://example.com "Title"
+
+## HTML Blocks
+
+<div class="custom">
+  <p>HTML content</p>
+</div>
+
+## Code Fence Variations
+
+```
+Plain code block
+```
+
+```python
+# Language-tagged block
+print("hello")
+```
+
+## Inline Formatting Combinations
+
+This **bold *and italic* combined** text.
+
+This ~~deleted **bold deleted**~~ text.
+
+## Edge: Empty Sections
+
+###
+
+### Empty Header
+
+## Final Edge Cases
+
+Multiple blank lines test:
+
+
+
+End of document with trailing content.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+## The End

@@ -1,0 +1,118 @@
+name: Benchmarks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    name: Performance Benchmarks
+    runs-on: ubuntu-latest
+    continue-on-error: true  # Non-blocking initially
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install tree-sitter CLI
+        run: npm install tree-sitter-cli
+
+      - name: Generate parser
+        run: npx tree-sitter generate
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run benchmarks
+        run: npm run benchmark:compare
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: benchmark-results
+          path: benchmarks/results.json
+          retention-days: 30
+
+  validation:
+    name: Real-World Validation
+    runs-on: ubuntu-latest
+    continue-on-error: true  # Non-blocking initially
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install tree-sitter CLI
+        run: npm install tree-sitter-cli
+
+      - name: Generate parser
+        run: npx tree-sitter generate
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run validation on sample corpus
+        run: npm run validate:sample
+
+      - name: Upload validation report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: validation-report
+          path: benchmarks/validation/
+          retention-days: 30
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            // Read validation results
+            let resultsPath = 'benchmarks/validation/results.json';
+            if (!fs.existsSync(resultsPath)) {
+              console.log('No validation results found');
+              return;
+            }
+
+            const results = JSON.parse(fs.readFileSync(resultsPath, 'utf8'));
+
+            // Create comment body
+            const body = `## Validation Results
+
+            **Corpus:** quarto-web (sample)
+            **Success Rate:** ${results.results.success_rate}%
+
+            | Metric | Value |
+            |--------|-------|
+            | Total files | ${results.results.total_files} |
+            | Successful | ${results.results.successful} |
+            | Failed | ${results.results.failed} |
+
+            ${results.results.success_rate >= 90 ? '✅ PASS - Success rate ≥90%' : '⚠️ Below 90% target'}
+            `;
+
+            // Post comment
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body
+            });

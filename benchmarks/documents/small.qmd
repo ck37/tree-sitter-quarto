@@ -1,0 +1,104 @@
+---
+title: "Small Benchmark Document"
+format: html
+---
+
+## Introduction
+
+This is a small test document (~100 lines) with minimal Quarto features.
+
+## Code Cell
+
+```{python}
+#| label: fig-simple
+#| echo: true
+import matplotlib.pyplot as plt
+plt.plot([1, 2, 3, 4])
+plt.show()
+```
+
+## Cross-reference
+
+See @fig-simple for a simple plot.
+
+## Math
+
+The equation $E = mc^2$ represents energy-mass equivalence.
+
+Display math:
+
+$$
+\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}
+$$
+
+## Lists
+
+- Item 1
+- Item 2
+- Item 3
+
+## Table
+
+| Column A | Column B |
+|----------|----------|
+| Data 1   | Data 2   |
+| Data 3   | Data 4   |
+
+## Callout
+
+::: {.callout-note}
+This is a note callout.
+:::
+
+## Inline Code
+
+The mean is `{python} sum([1,2,3])/3`.
+
+## Emphasis
+
+This is **bold** and *italic* text.
+
+## Citation
+
+According to @smith2020, the results are significant.
+
+## Conclusion
+
+This document exercises basic Quarto features in about 100 lines.
+
+## Additional Sections
+
+### Subsection 1
+
+Some content here.
+
+### Subsection 2
+
+More content here.
+
+### Subsection 3
+
+Even more content.
+
+## Code Block
+
+```python
+def hello():
+    print("Hello, World!")
+```
+
+## Quote
+
+> This is a blockquote.
+
+## Link
+
+Visit [Quarto](https://quarto.org) for more information.
+
+## Footnote
+
+Here is a footnote reference[^1].
+
+[^1]: This is the footnote content.
+
+## End

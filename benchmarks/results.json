@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-10-18T02:49:46.158Z",
+  "timestamp": "2025-10-18T16:57:46.015Z",
   "node_version": "v24.10.0",
   "platform": "darwin",
   "arch": "arm64",
@@ -10,13 +10,13 @@
       "size": 4171,
       "lines": 282,
       "parse": {
-        "avgTime": 314.8772585,
-        "stdDev": 31.997963545503016,
-        "minTime": 281.6947919999998,
-        "maxTime": 398.0315840000003,
+        "avgTime": 310.5117792,
+        "stdDev": 8.360269722511196,
+        "minTime": 299.45949999999993,
+        "maxTime": 327.99524999999994,
         "iterations": 10
       },
-      "throughput": 13.246431386851015,
+      "throughput": 13.432662718129826,
       "hasErrors": true,
       "warnings": 2
     },
@@ -25,13 +25,13 @@
       "size": 51048,
       "lines": 2293,
       "parse": {
-        "avgTime": 308.54374149999995,
-        "stdDev": 9.458196850911914,
-        "minTime": 291.4305830000003,
-        "maxTime": 324.9993749999994,
+        "avgTime": 331.75465399999985,
+        "stdDev": 13.278206166441768,
+        "minTime": 314.25829200000044,
+        "maxTime": 357.65891699999975,
         "iterations": 10
       },
-      "throughput": 165.44817843923116,
+      "throughput": 153.87274717779852,
       "hasErrors": true,
       "warnings": 3
     },
@@ -40,13 +40,13 @@
       "size": 7329,
       "lines": 330,
       "parse": {
-        "avgTime": 303.06547069999976,
-        "stdDev": 12.105314137137487,
-        "minTime": 285.2883330000004,
-        "maxTime": 330.5206249999992,
+        "avgTime": 317.4197250000001,
+        "stdDev": 11.840690104720727,
+        "minTime": 303.1959160000006,
+        "maxTime": 337.84454200000073,
         "iterations": 10
       },
-      "throughput": 24.182893495164528,
+      "throughput": 23.089302342505647,
       "hasErrors": true,
       "warnings": 2
     },
@@ -55,15 +55,15 @@
       "size": 1340,
       "lines": 105,
       "parse": {
-        "avgTime": 292.99016259999973,
-        "stdDev": 5.631786560361119,
-        "minTime": 286.06854099999873,
-        "maxTime": 303.7736669999995,
+        "avgTime": 320.17440820000013,
+        "stdDev": 10.56468890793732,
+        "minTime": 309.37208400000054,
+        "maxTime": 340.5035829999997,
         "iterations": 10
       },
-      "throughput": 4.573532394769903,
-      "hasErrors": true,
-      "warnings": 2
+      "throughput": 4.18521894842687,
+      "hasErrors": false,
+      "warnings": 1
     }
   ]
 }

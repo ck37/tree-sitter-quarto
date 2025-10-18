@@ -43,6 +43,10 @@ module.exports = grammar({
     $._chunk_option_marker,            // Quarto: #| at start of cell
     $._cell_boundary,                  // Quarto: Track cell context
     $._chunk_option_continuation,      // Quarto: Multi-line chunk option continuation
+    $._subscript_open,                 // Pandoc: Context-aware ~ opening delimiter
+    $._subscript_close,                // Pandoc: Context-aware ~ closing delimiter
+    $._superscript_open,               // Pandoc: Context-aware ^ opening delimiter
+    $._superscript_close,              // Pandoc: Context-aware ^ closing delimiter
   ],
 
   conflicts: $ => [
@@ -586,6 +590,8 @@ module.exports = grammar({
       $.cross_reference,        // Quarto: @fig-plot
       $.shortcode_inline,
       $.equals_sign,            // Single = in equations (not part of ==)
+      alias('~', $.tilde),      // Fallback for isolated tilde when scanner rejects subscript
+      alias('^', $.caret),      // Fallback for isolated caret when scanner rejects superscript
       $.text                    // text last - fallback for anything not matched
     ),
 
@@ -595,7 +601,7 @@ module.exports = grammar({
     equals_sign: $ => '=',
 
     // Text inside link brackets - excludes ] to allow proper link parsing
-    link_text: $ => /[^\r\n`*_\[@<${\]~=]+/,
+    link_text: $ => /[^\r\n`*_\[@<${\]^~=]+/,
 
     // Text inside inline footnotes - excludes ] and ^ and [ to allow proper footnote parsing
     footnote_text: $ => /[^\r\n`*_\[@<${\[\]^~=]+/,
@@ -653,13 +659,14 @@ module.exports = grammar({
      *
      * H~2~O
      *
-     * No whitespace allowed after opening ~ or before closing ~
+     * Uses external scanner to prevent false positives on isolated ~ in text.
+     * Scanner validates context and ensures proper delimiter pairing.
      * Spec: openspec/specs/pandoc-inline-formatting/spec.md
      */
     subscript: $ => seq(
-      alias(token('~'), $.subscript_delimiter),
-      alias(/[^\s~]+/, $.subscript_content),
-      alias(token('~'), $.subscript_delimiter)
+      alias($._subscript_open, $.subscript_delimiter),
+      repeat1($._inline_element),
+      alias($._subscript_close, $.subscript_delimiter)
     ),
 
     /**
@@ -667,13 +674,14 @@ module.exports = grammar({
      *
      * x^2^
      *
-     * No whitespace allowed after opening ^ or before closing ^
+     * Uses external scanner to prevent false positives on isolated ^ in text.
+     * Scanner validates context, ensures proper delimiter pairing, and disambiguates from footnotes (^[).
      * Spec: openspec/specs/pandoc-inline-formatting/spec.md
      */
     superscript: $ => seq(
-      alias(token('^'), $.superscript_delimiter),
-      alias(/[^\s^]+/, $.superscript_content),
-      alias(token('^'), $.superscript_delimiter)
+      alias($._superscript_open, $.superscript_delimiter),
+      repeat1($._inline_element),
+      alias($._superscript_close, $.superscript_delimiter)
     ),
 
     link: $ => prec.right(seq(

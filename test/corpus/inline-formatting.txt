@@ -157,7 +157,7 @@ H~2~O
       (text)
       (subscript
         (subscript_delimiter)
-        (subscript_content)
+        (text)
         (subscript_delimiter))
       (text))))
 
@@ -176,17 +176,17 @@ C~6~H~12~O~6~
       (text)
       (subscript
         (subscript_delimiter)
-        (subscript_content)
+        (text)
         (subscript_delimiter))
       (text)
       (subscript
         (subscript_delimiter)
-        (subscript_content)
+        (text)
         (subscript_delimiter))
       (text)
       (subscript
         (subscript_delimiter)
-        (subscript_content)
+        (text)
         (subscript_delimiter)))))
 
 ================================================================================
@@ -204,7 +204,7 @@ The formula for water is H~2~O.
       (text)
       (subscript
         (subscript_delimiter)
-        (subscript_content)
+        (text)
         (subscript_delimiter))
       (text))))
 
@@ -223,7 +223,7 @@ x^2^
       (text)
       (superscript
         (superscript_delimiter)
-        (superscript_content)
+        (text)
         (superscript_delimiter)))))
 
 ================================================================================
@@ -243,7 +243,7 @@ E=mc^2^
       (text)
       (superscript
         (superscript_delimiter)
-        (superscript_content)
+        (text)
         (superscript_delimiter)))))
 
 ================================================================================
@@ -261,7 +261,7 @@ Superscript: Multiple digits
       (text)
       (superscript
         (superscript_delimiter)
-        (superscript_content)
+        (text)
         (superscript_delimiter)))))
 
 ================================================================================
@@ -279,7 +279,7 @@ The area is x^2^ square units.
       (text)
       (superscript
         (superscript_delimiter)
-        (superscript_content)
+        (text)
         (superscript_delimiter))
       (text))))
 
@@ -318,12 +318,12 @@ Text with **bold**, *italic*, ~~strikethrough~~, ==highlight==, H~2~O, and x^2^.
       (text)
       (subscript
         (subscript_delimiter)
-        (subscript_content)
+        (text)
         (subscript_delimiter))
       (text)
       (superscript
         (superscript_delimiter)
-        (superscript_content)
+        (text)
         (superscript_delimiter))
       (text))))
 
@@ -361,7 +361,7 @@ Single ~subscript~ versus ~~strikethrough~~.
       (text)
       (subscript
         (subscript_delimiter)
-        (subscript_content)
+        (text)
         (subscript_delimiter))
       (text)
       (strikethrough

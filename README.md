@@ -167,21 +167,6 @@ tree-sitter-quarto = { git = "https://github.com/ck37/tree-sitter-quarto" }
 
 See [editor integration guide](./docs/editor-integration.md) for detailed instructions.
 
-## Performance
-
-Benchmarks show excellent performance, exceeding production targets:
-
-- **Throughput:** 14,387 bytes/ms average (2.8x faster than 5000 bytes/ms target)
-- **Parse time:** 0.09-3.57ms for typical documents (sub-millisecond for most files)
-- **Comparison:** Matches the fastest tree-sitter parsers
-- **Details:** See [throughput-investigation-2025-10-18.md](./docs/throughput-investigation-2025-10-18.md)
-
-Run benchmarks:
-```bash
-npm run benchmark:wasm          # Accurate measurements using native binding
-npm run benchmark:wasm:compare  # Compare to baseline with regression detection
-```
-
 ## Documentation
 
 See the [docs/](./docs/) directory for detailed documentation including implementation plan, parser comparisons, editor integration guide, and technical details.

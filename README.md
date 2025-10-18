@@ -63,8 +63,10 @@ Fully implemented:
 
 Known limitations:
 
+- **Block attributes** (e.g., `## Heading {#id}`) - Deferred to v0.2.0, requires external C++ scanner. Use fenced divs as workaround: `::: {.class}\n## Heading\n:::`
 - Generic fenced divs (`::: {.custom-class}`) don't parse - [technical details](./docs/generic-fenced-div-limitation.md)
 - Inline attributes: `[text]{.class}` at paragraph start creates cosmetic ERROR nodes - [technical details](./docs/inline-attributes-known-issues.md)
+- Real-world corpus validation: 20% success rate (improving toward 90% target)
 - See [plan.md](./docs/plan.md) for complete list
 
 ## Relationship to Official Quarto Grammars
@@ -164,6 +166,21 @@ tree-sitter-quarto = { git = "https://github.com/ck37/tree-sitter-quarto" }
 ```
 
 See [editor integration guide](./docs/editor-integration.md) for detailed instructions.
+
+## Performance
+
+Benchmarks show excellent performance, exceeding production targets:
+
+- **Throughput:** 14,387 bytes/ms average (2.8x faster than 5000 bytes/ms target)
+- **Parse time:** 0.09-3.57ms for typical documents (sub-millisecond for most files)
+- **Comparison:** Matches the fastest tree-sitter parsers
+- **Details:** See [throughput-investigation-2025-10-18.md](./docs/throughput-investigation-2025-10-18.md)
+
+Run benchmarks:
+```bash
+npm run benchmark:wasm          # Accurate measurements using native binding
+npm run benchmark:wasm:compare  # Compare to baseline with regression detection
+```
 
 ## Documentation
 

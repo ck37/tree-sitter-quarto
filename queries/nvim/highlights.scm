@@ -69,7 +69,11 @@
 ; Emphasis/Strong
 ; ---------------
 
+(emphasis_delimiter) @punctuation.delimiter
+
 (emphasis) @markup.italic
+
+(strong_emphasis_delimiter) @punctuation.delimiter
 
 (strong_emphasis) @markup.bold
 

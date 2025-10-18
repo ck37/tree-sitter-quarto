@@ -88,7 +88,11 @@
 ; Emphasis/Strong
 ; ---------------
 
+(emphasis_delimiter) @punctuation.delimiter
+
 (emphasis) @text.emphasis
+
+(strong_emphasis_delimiter) @punctuation.delimiter
 
 (strong_emphasis) @emphasis.strong
 

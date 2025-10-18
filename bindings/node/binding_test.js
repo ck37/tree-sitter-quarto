@@ -13,6 +13,8 @@ try {
   process.exit(0);
 }
 
+// FIXED: Added NAPI type tag to binding.cc for tree-sitter 0.25.0+ compatibility
+// See: https://github.com/tree-sitter/tree-sitter/issues/4234
 test("can load grammar", () => {
   const parser = new Parser();
   assert.doesNotThrow(() => parser.setLanguage(require(".")));

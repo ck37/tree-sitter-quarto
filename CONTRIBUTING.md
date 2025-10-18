@@ -4,9 +4,17 @@ Thank you for your interest in contributing! This guide will help you get starte
 
 ## Project Status
 
-**Current Phase:** Planning - Not yet functional
+**Current Phase:** Alpha - Production-ready with all core features implemented
 
-We welcome contributions once the foundation is implemented. For now, feedback on the design and planning documents is appreciated.
+All core features are complete and tested. Contributions welcome for bug fixes, performance improvements, documentation, and expanding test coverage against real-world Quarto documents.
+
+### Priority Areas for Contribution
+
+1. **Real-world parsing** - Improve success rate from 20% to 90% target
+2. **Bug fixes** - Address known limitations (see README.md)
+3. **Editor integrations** - Extensions for Neovim, Helix, VSCode
+4. **Documentation** - Improve examples and guides
+5. **Performance** - Optimize parser speed and WASM size
 
 ## Getting Started
 
@@ -150,28 +158,31 @@ This parser extends tree-sitter-pandoc-markdown using the "Copy & Extend" strate
 - Extend with Quarto-specific rules
 - Document source commit hash
 
-### Key Features
+### Implemented Features
 
-1. **Executable Code Cells** - Parse `{python}`, `{r}`, `{julia}` cells
-2. **Chunk Options** - Parse `#| key: value` syntax
-3. **Cross-References** - Distinguish `@fig-plot` from `@citation`
-4. **Inline Code Cells** - Parse `` `{python} expr` ``
-5. **Shortcodes** - Parse `{{< video url >}}`
+1. **Executable Code Cells** - Parses `{python}`, `{r}`, `{julia}` cells with semantic nodes
+2. **Chunk Options** - Structured parsing of `#| key: value` syntax
+3. **Cross-References** - Distinguishes `@fig-plot` from `@citation`
+4. **Inline Code Cells** - Parses `` `{python} expr` `` with language injection
+5. **Shortcodes** - Parses `{{< video url >}}` in block and inline contexts
+6. **Enhanced Divs** - Callouts, tabsets, conditional content
+7. **Inline Attributes** - Pandoc span syntax `[text]{.class}`
+8. **Inline Formatting** - Subscript, superscript, strikethrough, highlight
+9. **Footnotes** - Full Pandoc footnote support
 
-See [docs/plan.md](./docs/plan.md) for detailed architecture.
+See [README.md](./README.md) for complete feature list and [docs/plan.md](./docs/plan.md) for architecture details.
 
 ## External Scanner
 
-The external scanner handles context-sensitive parsing:
+The external scanner (`src/scanner.c`) handles context-sensitive parsing that can't be expressed in the grammar alone. It's fully implemented and rarely needs modification.
 
-**Required tokens:**
-- `CHUNK_OPTION_MARKER` - Detect `#|` at cell start
-- `CELL_BOUNDARY` - Context-aware cell delimiters
+**Current functionality:**
+- Detects `#|` chunk option markers at cell start
+- Handles context-aware cell boundary detection
+- Distinguishes `#| option` from `# comment` based on context
 
-**Why needed:**
-- Distinguish `#| option` from `# comment`
-- Requires looking at cell context
-- Beyond LR(1) parser capability
+**When to modify:**
+Most contributors won't need to touch the scanner. Only modify if adding features that require context-sensitive parsing beyond LR(1) grammar capability.
 
 ## Testing Guidelines
 
@@ -202,22 +213,67 @@ npx tree-sitter test --debug
 3. If needed, update expected AST
 4. Verify parse tree with `npx tree-sitter parse`
 
+### Real-World Validation
+
+We validate against real Quarto documents from the Quarto website. Current success rate is 20%, targeting 90%. To help:
+
+```bash
+# Run validation (requires cloning quarto-web repo)
+npm run validate:corpus
+
+# Validate specific documents
+npm run validate:sample path/to/file.qmd
+```
+
+Contributions that improve real-world parsing success are especially welcome!
+
+### Performance Benchmarking
+
+We track parser performance and WASM size:
+
+```bash
+# Run benchmarks
+npm run benchmark
+
+# Compare against baseline
+npm run benchmark:compare
+
+# Update baseline after intentional changes
+npm run benchmark:baseline
+
+# Check WASM size
+npm run wasm:size
+```
+
+Contributions should not significantly regress performance without good reason.
+
 ## Documentation
 
 ### When to Update Docs
 
-- Adding new features → Update `docs/plan.md` and `README.md`
+- Adding new features → Update `README.md` and relevant docs
 - Changing architecture → Update `docs/plan.md`
-- Adding tests → Update `docs/todo.md` checklist
-- Making decisions → Update `docs/todo.md` Decision Log
+- Fixing bugs or limitations → Update known issues in `README.md`
+- Editor integration changes → Update `docs/editor-integration.md`
 
 ### Documentation Files
 
-- `README.md` - Project overview and quick start
-- `docs/plan.md` - Implementation plan and architecture
-- `docs/todo.md` - Task checklist and decisions
-- `docs/reference-documentation.md` - Technical references
+- `README.md` - Project overview, features, and quick start
+- `docs/plan.md` - Implementation history and architecture
+- `docs/editor-integration.md` - Guide for editor extension developers
+- `docs/comparison.md` - Comparison with other parsers
 - `CONTRIBUTING.md` - This file
+
+## OpenSpec Process
+
+This project uses [OpenSpec](./openspec/AGENTS.md) for managing significant changes. For major features, breaking changes, or architectural shifts:
+
+1. Create a proposal using `/openspec:proposal`
+2. Wait for review and approval
+3. Implement using `/openspec:apply`
+4. Archive when deployed using `/openspec:archive`
+
+For minor changes, bug fixes, and documentation updates, you can skip the OpenSpec process and submit PRs directly.
 
 ## Pull Request Process
 
@@ -226,6 +282,7 @@ npx tree-sitter test --debug
    - Update documentation
    - Add test cases for new features
    - Follow code style guidelines
+   - For major changes, create an OpenSpec proposal first
 
 2. **PR description should include:**
    - What: Brief description of changes
@@ -280,7 +337,9 @@ Fixes #issue-number
 
 ## Related Projects
 
+- [zed-quarto-extension](https://github.com/ck37/zed-quarto-extension) - Zed editor extension using this parser
 - [tree-sitter-pandoc-markdown](https://github.com/ck37/tree-sitter-pandoc-markdown) - Base grammar
+- [quarto-markdown](https://github.com/quarto-dev/quarto-markdown) - Official Quarto grammars (planned 2026)
 - [Quarto](https://quarto.org/) - Publishing system
 - [tree-sitter](https://tree-sitter.github.io/) - Parser framework
 

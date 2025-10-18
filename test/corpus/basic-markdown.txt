@@ -76,7 +76,12 @@ title: "My Document"
 (document
   (yaml_front_matter
     start: (yaml_front_matter_start)
-    (yaml_front_matter_content)
+    (yaml_mapping
+      (yaml_pair
+        key: (yaml_key)
+        value: (yaml_scalar
+          (yaml_string
+            (yaml_string_quoted)))))
     close: (yaml_front_matter_delimiter))
   (atx_heading
     marker: (atx_heading_marker)

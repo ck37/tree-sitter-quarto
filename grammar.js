@@ -192,16 +192,67 @@ module.exports = grammar({
     // This grammar treats it as (invalid) YAML front matter.
     yaml_front_matter: $ => prec(-1, seq(
       field('start', alias(token(seq('---', /\r?\n/)), $.yaml_front_matter_start)),
-      repeat(seq(
-        alias(
-          token(prec(-1, /[ \t]*[^\r\n-][^\r\n]*/)),
-          $.yaml_front_matter_content
-        ),
-        /\r?\n/
-      )),
+      optional($.yaml_mapping),
       field('close', alias(token(prec(1, choice('---', '...'))), $.yaml_front_matter_delimiter)),
       /\r?\n/
     )),
+
+    // YAML Mapping (block-style key-value pairs)
+    yaml_mapping: $ => repeat1(
+      choice(
+        $.yaml_pair,
+        $.blank_line
+      )
+    ),
+
+    // YAML Key-Value Pair
+    yaml_pair: $ => seq(
+      field('key', $.yaml_key),
+      ':',
+      choice(
+        // Inline scalar value: key: value
+        seq(
+          /[ \t]+/,
+          field('value', $.yaml_scalar),
+          /\r?\n/
+        ),
+        // Empty value: key:\n
+        /\r?\n/
+      )
+    ),
+
+    // YAML Key
+    yaml_key: $ => /[a-zA-Z][a-zA-Z0-9_-]*/,
+
+    // YAML Scalar (simple values)
+    yaml_scalar: $ => choice(
+      $.yaml_string,
+      $.yaml_number,
+      $.yaml_boolean,
+      $.yaml_null
+    ),
+
+    // YAML String (unquoted or quoted)
+    yaml_string: $ => choice(
+      $.yaml_string_unquoted,
+      $.yaml_string_quoted
+    ),
+
+    yaml_string_unquoted: $ => token(prec(-1, /[^\r\n:#\[\]{},"'|>]+/)),
+
+    yaml_string_quoted: $ => choice(
+      seq('"', repeat(choice(/[^"\\]/, /\\./)), '"'),
+      seq("'", repeat(choice(/[^']/, "''")), "'")
+    ),
+
+    // YAML Number (integers, floats, scientific notation)
+    yaml_number: $ => /-?[0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)?/,
+
+    // YAML Boolean
+    yaml_boolean: $ => choice('true', 'false', 'yes', 'no', 'True', 'False', 'Yes', 'No', 'TRUE', 'FALSE', 'YES', 'NO'),
+
+    // YAML Null
+    yaml_null: $ => choice('null', '~', 'Null', 'NULL'),
 
     // Percent Metadata (Pandoc extension)
     percent_metadata: $ => repeat1(seq(

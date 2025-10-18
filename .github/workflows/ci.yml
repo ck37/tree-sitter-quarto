@@ -27,6 +27,23 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-${{ runner.os }}-${{ matrix.node-version }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-${{ runner.os }}-${{ matrix.node-version }}-
+            node-${{ runner.os }}-
+
+      - name: Cache build artifacts
+        uses: actions/cache@v4
+        with:
+          path: build/Release
+          key: build-${{ runner.os }}-${{ matrix.node-version }}-${{ hashFiles('src/parser.c', 'src/scanner.c', 'binding.gyp') }}
+          restore-keys: |
+            build-${{ runner.os }}-${{ matrix.node-version }}-
+
       - name: Install tree-sitter CLI only
         run: npm install tree-sitter-cli
 
@@ -153,6 +170,12 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
+      - name: Cache WASM build
+        uses: actions/cache@v4
+        with:
+          path: tree-sitter-quarto.wasm
+          key: wasm-${{ hashFiles('grammar.js', 'src/scanner.c') }}
 
       - name: Validate tree-sitter headers present
         run: |

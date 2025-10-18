@@ -1,0 +1,103 @@
+name: Prebuild Binaries
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  prebuild:
+    name: Prebuild ${{ matrix.platform }}-${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        include:
+          # macOS x64
+          - os: macos-13
+            platform: darwin
+            arch: x64
+          # macOS arm64
+          - os: macos-latest
+            platform: darwin
+            arch: arm64
+          # Linux x64
+          - os: ubuntu-latest
+            platform: linux
+            arch: x64
+          # Linux arm64
+          - os: ubuntu-latest
+            platform: linux
+            arch: arm64
+            setup_qemu: true
+          # Windows x64
+          - os: windows-latest
+            platform: win32
+            arch: x64
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Set up QEMU (for Linux ARM64)
+        if: matrix.setup_qemu
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate parser
+        run: npx tree-sitter generate
+
+      - name: Build prebuild for current platform
+        run: npm run prebuild:ci
+        env:
+          PLATFORM: ${{ matrix.platform }}
+          ARCH: ${{ matrix.arch }}
+
+      - name: Verify prebuild
+        run: npm run test:prebuild
+
+      - name: Upload prebuild artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: prebuild-${{ matrix.platform }}-${{ matrix.arch }}
+          path: prebuilds/${{ matrix.platform }}-${{ matrix.arch }}/**
+          if-no-files-found: error
+
+  release:
+    name: Create Release with Prebuilds
+    needs: prebuild
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all prebuild artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: prebuilds-all
+
+      - name: Restructure prebuilds
+        run: |
+          mkdir -p prebuilds
+          find prebuilds-all -name '*.node' -exec sh -c 'cp "$1" "prebuilds/$(basename $(dirname "$1"))/$(basename "$1")"' _ {} \;
+          ls -R prebuilds
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: prebuilds/**/*.node
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -35,5 +35,9 @@ test/tmp/
 yarn.lock
 pnpm-lock.yaml
 
+# Build monitoring baselines (optional - can be committed for shared CI baselines)
+.build-baseline.json
+.wasm-baseline.json
+
 # Claude Code configuration
 CLAUDE.md

@@ -3,6 +3,9 @@
 ## Purpose
 Core grammar infrastructure that extends tree-sitter-pandoc-markdown with Quarto-specific parsing capabilities.
 
+**Related Specifications:**
+- **parser-build-system** - Build system configuration, parser generation workflow, and version management
+
 ## Requirements
 
 ### Requirement: Grammar Extension Architecture

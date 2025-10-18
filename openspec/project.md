@@ -14,8 +14,8 @@ tree-sitter-quarto is a tree-sitter parser for Quarto Markdown (`.qmd` files), o
 **Gap Being Filled:** This project bridges the gap between tree-sitter-pandoc-markdown (editor-focused but not Quarto-aware) and the Quarto Markdown Parser (rendering-focused, not optimized for pre-execution editor experience). It provides parse-time semantic information for Quarto documents as they're being authored, before execution.
 
 **Current Status:** Alpha - All Core Features Implemented
-- ✅ 145/145 tests passing (100%)
-- ✅ 116/116 requirements implemented (100%) across 9 OpenSpec specifications
+- ✅ 167/167 tests passing (100%)
+- ✅ 102/102 requirements implemented (100%) across 14 OpenSpec specifications
 - ✅ CI/CD pipeline green (Ubuntu + macOS, Node 18.x + 20.x)
 - ✅ All core Quarto features parsed (cells, chunk options, cross-refs, inline cells, shortcodes, enhanced divs)
 - ✅ Enhanced divs fully implemented (callouts, tabsets, conditional content)
@@ -24,7 +24,7 @@ tree-sitter-quarto is a tree-sitter parser for Quarto Markdown (`.qmd` files), o
 - ⚠️ Known limitation: Generic fenced divs (`::: {.custom-class}`) not parsing (base grammar issue)
 - ⏳ Editor integration pending
 
-**Total Specifications:** 9 (all implemented)
+**Total Specifications:** 14 (all implemented)
 
 ## Tech Stack
 

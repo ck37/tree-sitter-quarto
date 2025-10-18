@@ -1,7 +1,7 @@
 # pandoc-links Specification
 
 ## Purpose
-TBD - created by archiving change add-reference-style-links. Update Purpose after archive.
+Implements Pandoc's reference-style link syntax to complement standard Markdown inline links. Supports link reference definitions, explicit references (`[text][ref]`), collapsed references (`[text][]`), and shortcut references (`[text]`). This enables maintainable documentation with centralized URL management and improved readability.
 ## Requirements
 ### Requirement: Link Reference Definitions
 The parser SHALL recognize link reference definitions in block context.

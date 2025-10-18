@@ -1,7 +1,7 @@
 # pandoc-inline-formatting Specification
 
 ## Purpose
-TBD - created by archiving change add-pandoc-inline-formatting. Update Purpose after archive.
+Provides comprehensive Pandoc inline formatting support beyond standard Markdown, including strikethrough (`~~text~~`), highlight (`==text==`), subscript (`~text~`), and superscript (`^text^`) syntax. These formatting types are essential for scientific and technical writing in Quarto documents.
 ## Requirements
 ### Requirement: Strikethrough Formatting
 The parser SHALL recognize strikethrough text delimited by double tildes (`~~`).

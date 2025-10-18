@@ -1,7 +1,7 @@
 # yaml-structure Specification
 
 ## Purpose
-TBD - created by archiving change add-structured-yaml-support. Update Purpose after archive.
+Implements structured YAML parsing for Quarto document front matter, providing semantic nodes for keys, values, mappings, and lists. Supports common YAML types (strings, numbers, booleans, null) and structures (nested mappings, sequences, multi-line values) while maintaining graceful error recovery for edge cases. Enables proper syntax highlighting and language server integration for YAML content.
 ## Requirements
 ### Requirement: Parse simple scalar key-value pairs
 

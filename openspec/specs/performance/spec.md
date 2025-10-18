@@ -1,7 +1,7 @@
 # performance Specification
 
 ## Purpose
-TBD - created by archiving change add-performance-benchmarking. Update Purpose after archive.
+Establishes performance benchmarking and validation infrastructure to ensure parser scalability and real-world usability. Provides automated measurement of parse times, throughput, memory usage, and corpus validation against real Quarto documents from quarto-web. Enables regression detection and continuous performance monitoring through CI/CD integration.
 ## Requirements
 ### Requirement: Real-World Corpus Validation
 

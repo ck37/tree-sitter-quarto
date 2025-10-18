@@ -1,7 +1,7 @@
 # syntax-highlighting Specification
 
 ## Purpose
-TBD - created by archiving change use-zed-compatible-scopes. Update Purpose after archive.
+Provides syntax highlighting query files with wide editor compatibility through a dual-scope approach. Default query file uses legacy Zed-compatible scopes (@text.*) while alternative query files offer modern nvim-treesitter scopes (@markup.*). Ensures out-of-the-box highlighting in Zed editor while preserving modern scope conventions for Neovim users.
 ## Requirements
 ### Requirement: Query File Structure
 The parser SHALL provide syntax highlighting query files organized by editor compatibility.

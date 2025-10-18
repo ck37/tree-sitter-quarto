@@ -10,29 +10,7 @@
 
 Tree-sitter parser for [Quarto Markdown](https://quarto.org/) (`.qmd` files), optimized for editor integration.
 
-Status: Alpha Complete - All core features implemented, ready for editor integration
-
-## What is this?
-
-A [tree-sitter](https://tree-sitter.github.io/) parser that understands Quarto's extended Markdown syntax, enabling rich editor features:
-
-- Semantic syntax highlighting - Distinct colors for chunk options, cross-references, executable cells
-- Jump-to-definition - Navigate from `@fig-plot` to figure definition
-- Autocomplete - Suggest valid chunk option names and values
-- Code folding - Collapse executable cells and divs
-- Document outline - Navigate structure including cells and callouts
-
-## Why?
-
-Existing parsers serve different purposes:
-- [tree-sitter-pandoc-markdown](https://github.com/ck37/tree-sitter-pandoc-markdown) - Great for Pandoc, but not Quarto-aware
-- [Quarto Markdown Parser](https://github.com/quarto-dev/quarto-markdown) - Official tree-sitter grammars exist but not production-ready until early 2026
-
-tree-sitter-quarto fills the gap by providing production-ready semantic parsing optimized for editor tooling as you author Quarto documents.
-
-This parser enables first-class Quarto support in editors like [Zed](https://github.com/zed-industries/zed/issues/12406), Neovim, Helix, and VSCode.
-
-See [detailed comparison](./docs/comparison.md) for more information.
+A production-ready [tree-sitter](https://tree-sitter.github.io/) parser that understands Quarto's extended Markdown syntax, enabling semantic highlighting, jump-to-definition, autocomplete, and code folding for executable cells, chunk options, and cross-references. While [official Quarto grammars](https://github.com/quarto-dev/quarto-markdown) exist, they won't be production-ready until early 2026, so tree-sitter-quarto fills the gap for first-class Quarto support in editors like Zed, Neovim, Helix, and VSCode today.
 
 ## Features
 

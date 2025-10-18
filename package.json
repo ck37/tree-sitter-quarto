@@ -74,6 +74,9 @@
     "benchmark": "node scripts/benchmark-cli.js",
     "benchmark:baseline": "node scripts/benchmark-cli.js --save-baseline",
     "benchmark:compare": "node scripts/benchmark-cli.js --compare",
+    "benchmark:wasm": "node scripts/benchmark-wasm.js",
+    "benchmark:wasm:baseline": "node scripts/benchmark-wasm.js --save-baseline",
+    "benchmark:wasm:compare": "node scripts/benchmark-wasm.js --compare",
     "validate": "bash scripts/validate-corpus.sh",
     "validate:sample": "MAX_SAMPLE=20 bash scripts/validate-corpus.sh"
   }

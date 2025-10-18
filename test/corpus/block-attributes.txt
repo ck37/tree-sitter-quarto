@@ -1,0 +1,159 @@
+==================
+ATX heading with ID attribute
+==================
+
+## Introduction {#intro}
+
+---
+
+(document
+  (atx_heading
+    marker: (atx_heading_marker)
+    (ERROR
+      (citation_key))
+    attributes: (attribute_list
+      id: (attribute_id))))
+
+==================
+ATX heading with class attribute
+==================
+
+# Title {.unnumbered}
+
+---
+
+(document
+  (atx_heading
+    marker: (atx_heading_marker)
+    (ERROR
+      (citation_key))
+    attributes: (attribute_list
+      class: (attribute_class))))
+
+==================
+ATX heading with multiple attributes
+==================
+
+## Slide {#main auto-animate=true}
+
+---
+
+(document
+  (atx_heading
+    marker: (atx_heading_marker)
+    (ERROR
+      (citation_key))
+    attributes: (attribute_list
+      id: (attribute_id)
+      attribute: (key_value_attribute
+        key: (attribute_key)
+        value: (attribute_value)))))
+
+==================
+ATX heading without attributes (backward compatibility)
+==================
+
+## Plain Heading
+
+---
+
+(document
+  (atx_heading
+    marker: (atx_heading_marker)
+    content: (inline
+      (text))))
+
+==================
+Code block with class attribute only
+==================
+
+```{.python}
+print("hello")
+```
+
+---
+
+(document
+  (fenced_code_block
+    open: (code_fence_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class))
+    (code_line)
+    close: (code_fence_delimiter)))
+
+==================
+Code block with filename attribute
+==================
+
+```{.bash filename="Terminal"}
+ls -la
+```
+
+---
+
+(document
+  (fenced_code_block
+    open: (code_fence_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class)
+      attribute: (key_value_attribute
+        key: (attribute_key)
+        value: (attribute_value)))
+    (code_line)
+    close: (code_fence_delimiter)))
+
+==================
+Code block with raw format syntax
+==================
+
+```{=html}
+<div>content</div>
+```
+
+---
+
+(document
+  (fenced_code_block
+    open: (code_fence_delimiter)
+    attributes: (attribute_list
+      attribute: (key_value_attribute
+        key: (attribute_key)))
+    (code_line)
+    close: (code_fence_delimiter)))
+
+==================
+Code block without attributes (backward compatibility)
+==================
+
+```python
+print("hello")
+```
+
+---
+
+(document
+  (fenced_code_block
+    open: (code_fence_delimiter)
+    info: (info_string)
+    (code_line)
+    close: (code_fence_delimiter)))
+
+==================
+Code block with info string and attributes
+==================
+
+```python {.numberLines}
+code
+```
+
+---
+
+(document
+  (fenced_code_block
+    open: (code_fence_delimiter)
+    (ERROR
+      (citation_key))
+    attributes: (attribute_list
+      class: (attribute_class))
+    (code_line)
+    close: (code_fence_delimiter)))

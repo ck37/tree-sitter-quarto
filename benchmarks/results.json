@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-10-18T02:28:30.625Z",
+  "timestamp": "2025-10-18T02:49:46.158Z",
   "node_version": "v24.10.0",
   "platform": "darwin",
   "arch": "arm64",
@@ -10,60 +10,60 @@
       "size": 4171,
       "lines": 282,
       "parse": {
-        "avgTime": 315.1469877,
-        "stdDev": 19.07382914957063,
-        "minTime": 302.0173340000001,
-        "maxTime": 370.1538340000002,
+        "avgTime": 314.8772585,
+        "stdDev": 31.997963545503016,
+        "minTime": 281.6947919999998,
+        "maxTime": 398.0315840000003,
         "iterations": 10
       },
-      "throughput": 13.235093980877672,
-      "hasErrors": false,
-      "warnings": 1
+      "throughput": 13.246431386851015,
+      "hasErrors": true,
+      "warnings": 2
     },
     {
       "file": "large.qmd",
       "size": 51048,
       "lines": 2293,
       "parse": {
-        "avgTime": 315.35093760000007,
-        "stdDev": 12.743944539468517,
-        "minTime": 301.75083300000006,
-        "maxTime": 343.10762499999964,
+        "avgTime": 308.54374149999995,
+        "stdDev": 9.458196850911914,
+        "minTime": 291.4305830000003,
+        "maxTime": 324.9993749999994,
         "iterations": 10
       },
-      "throughput": 161.8767979207682,
-      "hasErrors": false,
-      "warnings": 2
+      "throughput": 165.44817843923116,
+      "hasErrors": true,
+      "warnings": 3
     },
     {
       "file": "medium.qmd",
       "size": 7329,
       "lines": 330,
       "parse": {
-        "avgTime": 301.63880420000044,
-        "stdDev": 11.632916731699776,
-        "minTime": 283.40058300000055,
-        "maxTime": 322.140542000001,
+        "avgTime": 303.06547069999976,
+        "stdDev": 12.105314137137487,
+        "minTime": 285.2883330000004,
+        "maxTime": 330.5206249999992,
         "iterations": 10
       },
-      "throughput": 24.297271763285917,
-      "hasErrors": false,
-      "warnings": 1
+      "throughput": 24.182893495164528,
+      "hasErrors": true,
+      "warnings": 2
     },
     {
       "file": "small.qmd",
       "size": 1340,
       "lines": 105,
       "parse": {
-        "avgTime": 309.70334170000007,
-        "stdDev": 17.760547803326613,
-        "minTime": 279.1732919999995,
-        "maxTime": 343.1905000000006,
+        "avgTime": 292.99016259999973,
+        "stdDev": 5.631786560361119,
+        "minTime": 286.06854099999873,
+        "maxTime": 303.7736669999995,
         "iterations": 10
       },
-      "throughput": 4.326721154006843,
-      "hasErrors": false,
-      "warnings": 1
+      "throughput": 4.573532394769903,
+      "hasErrors": true,
+      "warnings": 2
     }
   ]
 }

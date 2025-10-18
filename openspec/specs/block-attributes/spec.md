@@ -1,7 +1,7 @@
 # block-attributes Specification
 
 ## Purpose
-TBD - created by archiving change add-block-element-attributes. Update Purpose after archive.
+**DEFERRED TO v0.2.0** - Define attribute syntax for block elements (headings, paragraphs). Requires external C++ scanner to resolve ambiguity between content and trailing attributes. See verification.md for deferral rationale and v0.2.0 implementation plan.
 ## Requirements
 ### Requirement: ATX Heading Attributes
 The parser SHALL parse Pandoc attribute syntax on ATX headings.

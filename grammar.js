@@ -303,15 +303,12 @@ module.exports = grammar({
         ),
         optional(field("content", $.inline)),
         optional(
-          prec(
-            2,
-            seq(
-              "{",
-              optional(/[ \t]*/),
-              field("attributes", $.attribute_list),
-              optional(/[ \t]*/),
-              "}",
-            ),
+          seq(
+            "{",
+            optional(/[ \t]*/),
+            field("attributes", $.attribute_list),
+            optional(/[ \t]*/),
+            "}",
           ),
         ),
         /\r?\n/,
@@ -321,15 +318,12 @@ module.exports = grammar({
       seq(
         field("content", $.inline),
         optional(
-          prec(
-            2,
-            seq(
-              "{",
-              optional(/[ \t]*/),
-              field("attributes", $.attribute_list),
-              optional(/[ \t]*/),
-              "}",
-            ),
+          seq(
+            "{",
+            optional(/[ \t]*/),
+            field("attributes", $.attribute_list),
+            optional(/[ \t]*/),
+            "}",
           ),
         ),
         /\r?\n/,
@@ -721,19 +715,10 @@ module.exports = grammar({
         alias("~", $.tilde), // Fallback for isolated tilde when scanner rejects subscript
         alias("^", $.caret), // Fallback for isolated caret when scanner rejects superscript
         alias("$", $.dollar_sign), // Fallback for isolated dollar sign when scanner rejects math
-        $.brace_text, // Text with braces - lower precedence than heading attributes
         $.text, // text last - fallback for anything not matched
       ),
 
-    // Text pattern excludes {} to allow heading attributes like ## Title {.class}
-    // Attribution: Approach inspired by quarto-dev/quarto-markdown (MIT License)
-    // https://github.com/quarto-dev/quarto-markdown
-    text: ($) => /[^\r\n`*_\[@<{^~=$}]+/,
-
-    // Text that includes braces - used in paragraph context where attributes aren't expected
-    // Excludes {. and {# patterns (which are attributes) and {{ patterns (which are shortcodes)
-    // Lower precedence than attribute patterns in headings
-    brace_text: ($) => prec(-1, /\{[^.#{][^}]*\}/),
+    text: ($) => /[^\r\n`*_\[@<{^~=$]+/,
 
     // Single equals sign (for equations like E=mc^2^, not part of ==)
     equals_sign: ($) => "=",

@@ -120,19 +120,3 @@ Heading with inline formatting and attributes
       (text))
     attributes: (attribute_list
       id: (attribute_id))))
-
-==================
-Paragraph with braces (not attributes)
-==================
-
-Use {python} for scripting.
-
----
-
-(document
-  (blank_line)
-  (paragraph
-    content: (inline
-      (text)
-      (brace_text)
-      (text))))

@@ -31,6 +31,12 @@ test-results/
 coverage/
 test/tmp/
 
+# Generated reports and logs
+log.html
+benchmarks/results.json
+benchmarks/validation/results.json
+benchmarks/validation/validation-report.md
+
 # Package manager
 yarn.lock
 pnpm-lock.yaml

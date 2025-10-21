@@ -39,7 +39,7 @@ The parser SHALL correctly parse simple YAML key-value pairs where the value is 
 
 ### Requirement: Parse nested mappings
 
-The parser SHALL correctly parse nested YAML mappings using indentation to indicate structure.
+The parser SHALL correctly parse nested YAML mappings using indentation to indicate structure, allowing mapping values to themselves be mappings.
 
 #### Scenario: One level of nesting
 
@@ -50,23 +50,71 @@ The parser SHALL correctly parse nested YAML mappings using indentation to indic
       toc: true
   ```
 - **WHEN** the parser processes the front matter
-- **THEN** three levels of nesting MUST be created
-- **AND** indentation MUST correctly determine structure
+- **THEN** `format` key MUST have a `yaml_mapping` as its value
+- **AND** that mapping MUST contain `html` key
+- **AND** `html` key MUST have a `yaml_mapping` as its value
+- **AND** `toc` MUST be parsed as scalar value `true`
 - **AND** no ERROR nodes MUST be present
 
-#### Scenario: Multiple nested objects
+#### MODIFIED Scenario: Multiple nested objects
 
-- **GIVEN** YAML with multiple siblings at same indent level
+- **GIVEN** YAML with multiple siblings at same indent level:
+  ```yaml
+  format:
+    html:
+      toc: true
+    pdf:
+      documentclass: article
+  ```
 - **WHEN** the parser processes the front matter
-- **THEN** each nested mapping MUST be distinct
+- **THEN** `format` value MUST be a `yaml_mapping`
+- **AND** that mapping MUST contain both `html` and `pdf` keys as siblings
+- **AND** each nested mapping MUST be distinct
 - **AND** siblings MUST be at same structural level
+- **AND** no ERROR nodes MUST be present
 
-#### Scenario: Deep nesting (4 levels)
+#### MODIFIED Scenario: Deep nesting (4 levels)
 
-- **GIVEN** YAML with 4 levels of nesting
+- **GIVEN** YAML with 4 levels of nesting:
+  ```yaml
+  format:
+    html:
+      theme:
+        light: flatly
+  ```
 - **WHEN** the parser processes the front matter
-- **THEN** all four levels MUST be correctly parsed
+- **THEN** all four levels MUST be correctly parsed as nested `yaml_mapping` nodes
+- **AND** each level MUST have proper parent-child relationship
 - **AND** no confusion about indent levels MUST occur
+- **AND** no ERROR nodes MUST be present
+
+#### ADDED Scenario: Mixed scalar and nested values
+
+- **GIVEN** YAML with both scalar and nested mapping values:
+  ```yaml
+  title: "My Document"
+  format:
+    html:
+      toc: true
+  author: "Jane Doe"
+  ```
+- **WHEN** the parser processes the front matter
+- **THEN** `title` and `author` MUST have scalar values
+- **AND** `format` MUST have nested mapping value
+- **AND** all three top-level keys MUST be parsed correctly
+- **AND** no ERROR nodes MUST be present
+
+#### ADDED Scenario: Empty nested mapping
+
+- **GIVEN** YAML with empty nested mapping:
+  ```yaml
+  format:
+    html:
+  ```
+- **WHEN** the parser processes the front matter
+- **THEN** `html` key MUST be recognized
+- **AND** empty value MUST be accepted
+- **AND** no ERROR nodes MUST be present
 
 ### Requirement: Parse lists (sequences)
 

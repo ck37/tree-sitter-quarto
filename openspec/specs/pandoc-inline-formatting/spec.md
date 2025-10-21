@@ -132,18 +132,19 @@ The parser SHALL provide highlight queries for semantic scoping of inline format
 - **AND** superscript maps to @text.super
 
 ### Requirement: Error Handling
-The parser SHALL handle malformed inline formatting gracefully.
+The parser SHALL handle malformed inline formatting gracefully WITHOUT creating ERROR nodes for isolated delimiters.
 
 #### Scenario: Unmatched delimiters
 - **WHEN** parsing text with unclosed formatting delimiters
 - **THEN** parser continues parsing
-- **AND** unclosed delimiters treated as plain text
+- **AND** unclosed delimiters treated as plain text (via scanner rejection)
 - **AND** subsequent content parsed normally
 
-#### Scenario: Nested delimiter conflicts
+#### MODIFIED Scenario: Nested delimiter conflicts
 - **WHEN** parsing `~~text~with~nested~tildes~~`
-- **THEN** outermost delimiters define span
-- **AND** inner tildes follow subscript rules if applicable
+- **THEN** outermost `~~` delimiters define strikethrough span
+- **AND** inner `~` checked by scanner for subscript validity
+- **AND** scanner prevents subscript inside strikethrough
 - **AND** no parse errors generated
 
 ### Requirement: Performance
@@ -154,4 +155,72 @@ The parser SHALL maintain fast parsing performance with inline formatting.
 - **THEN** parsing completes in <100ms
 - **AND** incremental reparsing remains efficient
 - **AND** memory usage stays reasonable
+
+### Requirement: External Scanner Implementation
+The parser SHALL use external scanner tokens for subscript and superscript delimiters to enable context-aware parsing.
+
+#### Scenario: External token declarations
+- **WHEN** defining subscript/superscript grammar rules
+- **THEN** use external tokens `_subscript_open`, `_subscript_close`
+- **AND** use external tokens `_superscript_open`, `_superscript_close`
+- **AND** do NOT use pure grammar `token()` for delimiters
+
+#### Scenario: Scanner state tracking
+- **WHEN** parsing subscript/superscript
+- **THEN** scanner maintains `inside_subscript` state flag
+- **AND** scanner maintains `inside_superscript` state flag
+- **AND** state persists across incremental parses
+- **AND** state serialization includes subscript/superscript flags
+
+#### Scenario: Valid symbols checking
+- **WHEN** scanner encounters `~` or `^` character
+- **THEN** check `valid_symbols[SUBSCRIPT_OPEN]` before matching
+- **AND** check `valid_symbols[SUBSCRIPT_CLOSE]` before closing
+- **AND** check `valid_symbols[SUPERSCRIPT_OPEN]` before matching
+- **AND** check `valid_symbols[SUPERSCRIPT_CLOSE]` before closing
+- **AND** return false if token not valid in current context
+
+#### Scenario: Delimiter pairing
+- **WHEN** matching opening delimiter
+- **THEN** set scanner state flag (inside_subscript or inside_superscript)
+- **AND** only match closing delimiter when state flag is set
+- **AND** clear state flag when closing delimiter matched
+- **AND** prevent nested subscript/superscript
+
+### Requirement: Scanner Performance
+The parser SHALL maintain efficient scanning performance for subscript/superscript tokens.
+
+#### Scenario: Early exit optimization
+- **WHEN** scanner called but tokens not valid
+- **THEN** check valid_symbols first
+- **AND** return false immediately without advancing lexer
+- **AND** add minimal overhead (<1% of total parse time)
+
+#### Scenario: Minimal lookahead
+- **WHEN** validating delimiter match
+- **THEN** look ahead at most 1 character
+- **AND** check for whitespace after opening delimiter
+- **AND** check for strikethrough (`~~`) or footnote (`^[`) patterns
+- **AND** do NOT scan entire content for closing delimiter
+
+#### Scenario: Sparse invocation
+- **WHEN** parsing documents
+- **THEN** scanner only invoked when encountering `~` or `^`
+- **AND** most text bypasses scanner entirely
+- **AND** maintain overall O(n) linear parsing complexity
+
+### Requirement: Error Recovery
+The parser SHALL handle unclosed or malformed subscript/superscript gracefully.
+
+#### Scenario: Unclosed delimiter
+- **WHEN** parsing `H~2O` (missing closing tilde)
+- **THEN** grammar creates ERROR node or treats as plain text
+- **AND** scanner state resets on error recovery
+- **AND** subsequent content parses normally
+
+#### Scenario: State consistency
+- **WHEN** error recovery occurs
+- **THEN** reset inside_subscript and inside_superscript flags
+- **AND** ensure scanner state matches parse tree state
+- **AND** prevent orphaned state flags
 

@@ -2388,9 +2388,19 @@
     }
   },
   {
-    "type": "yaml_boolean",
+    "type": "yaml_content",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "yaml_line",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "yaml_front_matter",
@@ -2406,6 +2416,16 @@
           }
         ]
       },
+      "content": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "yaml_content",
+            "named": true
+          }
+        ]
+      },
       "start": {
         "multiple": false,
         "required": true,
@@ -2416,130 +2436,10 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "yaml_mapping",
-          "named": true
-        }
-      ]
     }
-  },
-  {
-    "type": "yaml_key",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "yaml_mapping",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "blank_line",
-          "named": true
-        },
-        {
-          "type": "yaml_pair",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "yaml_null",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "yaml_pair",
-    "named": true,
-    "fields": {
-      "key": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "yaml_key",
-            "named": true
-          }
-        ]
-      },
-      "value": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "yaml_scalar",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "yaml_scalar",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "yaml_boolean",
-          "named": true
-        },
-        {
-          "type": "yaml_null",
-          "named": true
-        },
-        {
-          "type": "yaml_number",
-          "named": true
-        },
-        {
-          "type": "yaml_string",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "yaml_string",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "yaml_string_quoted",
-          "named": true
-        },
-        {
-          "type": "yaml_string_unquoted",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "yaml_string_quoted",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "!",
-    "named": false
-  },
-  {
-    "type": "\"",
     "named": false
   },
   {
@@ -2548,14 +2448,6 @@
   },
   {
     "type": "%",
-    "named": false
-  },
-  {
-    "type": "'",
-    "named": false
-  },
-  {
-    "type": "''",
     "named": false
   },
   {
@@ -2580,46 +2472,6 @@
   },
   {
     "type": "@",
-    "named": false
-  },
-  {
-    "type": "FALSE",
-    "named": false
-  },
-  {
-    "type": "False",
-    "named": false
-  },
-  {
-    "type": "NO",
-    "named": false
-  },
-  {
-    "type": "NULL",
-    "named": false
-  },
-  {
-    "type": "No",
-    "named": false
-  },
-  {
-    "type": "Null",
-    "named": false
-  },
-  {
-    "type": "TRUE",
-    "named": false
-  },
-  {
-    "type": "True",
-    "named": false
-  },
-  {
-    "type": "YES",
-    "named": false
-  },
-  {
-    "type": "Yes",
     "named": false
   },
   {
@@ -2711,10 +2563,6 @@
     "named": true
   },
   {
-    "type": "false",
-    "named": false
-  },
-  {
     "type": "fenced_div_delimiter",
     "named": true
   },
@@ -2799,14 +2647,6 @@
     "named": true
   },
   {
-    "type": "no",
-    "named": false
-  },
-  {
-    "type": "null",
-    "named": false
-  },
-  {
     "type": "pipe_table_start",
     "named": true
   },
@@ -2887,10 +2727,6 @@
     "named": true
   },
   {
-    "type": "true",
-    "named": false
-  },
-  {
     "type": "yaml_front_matter_delimiter",
     "named": true
   },
@@ -2899,16 +2735,8 @@
     "named": true
   },
   {
-    "type": "yaml_number",
+    "type": "yaml_line",
     "named": true
-  },
-  {
-    "type": "yaml_string_unquoted",
-    "named": true
-  },
-  {
-    "type": "yes",
-    "named": false
   },
   {
     "type": "{",
@@ -2920,10 +2748,6 @@
   },
   {
     "type": "}",
-    "named": false
-  },
-  {
-    "type": "~",
     "named": false
   }
 ]

@@ -149,7 +149,7 @@ The parser SHALL handle unclosed or malformed subscript/superscript gracefully.
 
 ## MODIFIED Requirements
 
-### Requirement: Error Handling (Modified)
+### Requirement: Error Handling
 The parser SHALL handle malformed inline formatting gracefully WITHOUT creating ERROR nodes for isolated delimiters.
 
 #### Scenario: Unmatched delimiters

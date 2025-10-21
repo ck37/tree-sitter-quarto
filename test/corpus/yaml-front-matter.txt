@@ -11,17 +11,9 @@ author: John Doe
 (document
   (yaml_front_matter
     start: (yaml_front_matter_start)
-    (yaml_mapping
-      (yaml_pair
-        key: (yaml_key)
-        value: (yaml_scalar
-          (yaml_string
-            (yaml_string_unquoted))))
-      (yaml_pair
-        key: (yaml_key)
-        value: (yaml_scalar
-          (yaml_string
-            (yaml_string_unquoted)))))
+    content: (yaml_content
+      (yaml_line)
+      (yaml_line))
     close: (yaml_front_matter_delimiter)))
 
 ==================
@@ -37,17 +29,9 @@ description: 'Single quoted string'
 (document
   (yaml_front_matter
     start: (yaml_front_matter_start)
-    (yaml_mapping
-      (yaml_pair
-        key: (yaml_key)
-        value: (yaml_scalar
-          (yaml_string
-            (yaml_string_quoted))))
-      (yaml_pair
-        key: (yaml_key)
-        value: (yaml_scalar
-          (yaml_string
-            (yaml_string_quoted)))))
+    content: (yaml_content
+      (yaml_line)
+      (yaml_line))
     close: (yaml_front_matter_delimiter)))
 
 ==================
@@ -64,19 +48,10 @@ scientific: 1.5e-10
 (document
   (yaml_front_matter
     start: (yaml_front_matter_start)
-    (yaml_mapping
-      (yaml_pair
-        key: (yaml_key)
-        value: (yaml_scalar
-          (yaml_number)))
-      (yaml_pair
-        key: (yaml_key)
-        value: (yaml_scalar
-          (yaml_number)))
-      (yaml_pair
-        key: (yaml_key)
-        value: (yaml_scalar
-          (yaml_number))))
+    content: (yaml_content
+      (yaml_line)
+      (yaml_line)
+      (yaml_line))
     close: (yaml_front_matter_delimiter)))
 
 ==================
@@ -94,23 +69,11 @@ no_value: no
 (document
   (yaml_front_matter
     start: (yaml_front_matter_start)
-    (yaml_mapping
-      (yaml_pair
-        key: (yaml_key)
-        value: (yaml_scalar
-          (yaml_boolean)))
-      (yaml_pair
-        key: (yaml_key)
-        value: (yaml_scalar
-          (yaml_boolean)))
-      (yaml_pair
-        key: (yaml_key)
-        value: (yaml_scalar
-          (yaml_boolean)))
-      (yaml_pair
-        key: (yaml_key)
-        value: (yaml_scalar
-          (yaml_boolean))))
+    content: (yaml_content
+      (yaml_line)
+      (yaml_line)
+      (yaml_line)
+      (yaml_line))
     close: (yaml_front_matter_delimiter)))
 
 ==================
@@ -126,15 +89,9 @@ empty2: ~
 (document
   (yaml_front_matter
     start: (yaml_front_matter_start)
-    (yaml_mapping
-      (yaml_pair
-        key: (yaml_key)
-        value: (yaml_scalar
-          (yaml_null)))
-      (yaml_pair
-        key: (yaml_key)
-        value: (yaml_scalar
-          (yaml_null))))
+    content: (yaml_content
+      (yaml_line)
+      (yaml_line))
     close: (yaml_front_matter_delimiter)))
 
 ==================
@@ -162,12 +119,8 @@ title: Document
 (document
   (yaml_front_matter
     start: (yaml_front_matter_start)
-    (yaml_mapping
-      (yaml_pair
-        key: (yaml_key)
-        value: (yaml_scalar
-          (yaml_string
-            (yaml_string_unquoted)))))
+    content: (yaml_content
+      (yaml_line))
     close: (yaml_front_matter_delimiter)))
 
 ==================
@@ -183,12 +136,35 @@ author: Name
 (document
   (yaml_front_matter
     start: (yaml_front_matter_start)
-    (yaml_mapping
-      (yaml_pair
-        key: (yaml_key))
-      (yaml_pair
-        key: (yaml_key)
-        value: (yaml_scalar
-          (yaml_string
-            (yaml_string_unquoted)))))
+    content: (yaml_content
+      (yaml_line)
+      (yaml_line))
+    close: (yaml_front_matter_delimiter)))
+
+==================
+Nested YAML mappings (injected to tree-sitter-yaml)
+==================
+---
+format:
+  html:
+    toc: true
+    code-fold: true
+  pdf:
+    geometry:
+      - top=30mm
+---
+
+---
+
+(document
+  (yaml_front_matter
+    start: (yaml_front_matter_start)
+    content: (yaml_content
+      (yaml_line)
+      (yaml_line)
+      (yaml_line)
+      (yaml_line)
+      (yaml_line)
+      (yaml_line)
+      (yaml_line))
     close: (yaml_front_matter_delimiter)))

@@ -5,9 +5,7 @@ Documents the parser build system infrastructure, including parser generation, b
 
 **Related Specifications:**
 - **grammar-foundation** - Grammar definition and external scanner that get compiled by this build system
-
 ## Requirements
-
 ### Requirement: Parser Generation Process
 The project SHALL use tree-sitter CLI to generate parser.c from grammar.js and MUST NOT manually edit generated code.
 
@@ -118,33 +116,28 @@ The project SHALL use node-gyp via binding.gyp to compile C parser for Node.js.
 - **AND** compiled binding is placed in build/Release/
 
 ### Requirement: Build Scripts
-The project SHALL provide npm scripts for all build operations.
+The project SHALL provide npm scripts for all build operations **including pre-built binary generation and performance monitoring**.
 
-#### Scenario: Standard build script
-- **WHEN** `npm run build` is executed
-- **THEN** runs `tree-sitter generate`
-- **AND** runs `node-gyp-build` to compile bindings
-- **AND** parser.c is regenerated before compilation
+#### Scenario: Prebuild script
+- **WHEN** `npm run prebuild` is executed
+- **THEN** runs prebuildify for all target platforms
+- **AND** generates binaries in prebuilds/ directory
+- **AND** verifies each binary is loadable
+- **AND** reports any platform build failures
 
-#### Scenario: WASM build script
-- **WHEN** `npm run build:wasm` is executed
-- **THEN** runs `tree-sitter build --wasm`
-- **AND** requires tree-sitter.json configuration
-- **AND** generates tree-sitter-quarto.wasm file
-- **AND** WASM file is suitable for web playground
+#### Scenario: Prebuild CI script
+- **WHEN** `npm run prebuild:ci` is executed in CI
+- **THEN** builds pre-built binary for current platform only
+- **AND** uses platform-specific GitHub Actions runners
+- **AND** uploads binary as artifact
+- **AND** enables parallel platform builds
 
-#### Scenario: Install script
-- **WHEN** `npm install` is executed
-- **THEN** install script runs node-gyp-build
-- **AND** attempts to load prebuilt binary
-- **AND** compiles from source if no prebuilt available
-
-#### Scenario: Test scripts
-- **WHEN** test scripts are available
-- **THEN** `npm test` runs corpus and binding tests
-- **AND** `test:corpus` runs `tree-sitter test`
-- **AND** `test:bindings` tests Node.js binding loads
-- **AND** `test:wasm` tests WASM build
+#### Scenario: Build monitoring script
+- **WHEN** `npm run build:monitor` is executed
+- **THEN** runs build with time measurements
+- **AND** logs timing for each build phase
+- **AND** compares against baseline times
+- **AND** exits with error if regression detected
 
 ### Requirement: Build Dependencies
 The project SHALL specify correct build dependencies in package.json.
@@ -224,40 +217,30 @@ The project SHALL maintain clear documentation of build processes.
 - **AND** MUST recommend regeneration over manual fixes
 
 ### Requirement: CI/CD Build Verification
-The project SHALL verify builds in CI/CD pipeline.
+The project SHALL verify builds in CI/CD pipeline **with caching and performance monitoring enabled**.
 
-#### Scenario: Grammar validation
+#### Scenario: Cached dependency installation
 - **WHEN** CI runs
-- **THEN** workflow validates grammar.js is parseable
-- **AND** verifies no syntax errors in grammar
-- **AND** verifies grammar generates without errors
+- **THEN** attempts to restore node_modules cache
+- **AND** cache hit reduces npm install time to <5s
+- **AND** cache miss triggers full npm install
+- **AND** new cache is saved for future runs
 
-#### Scenario: Parser regeneration check
-- **WHEN** CI runs
-- **THEN** workflow verifies parser.c matches grammar.js
-- **AND** detects if parser.c is out of sync
-- **AND** fails if manual parser.c edits detected
+#### Scenario: Pre-built binary matrix build
+- **WHEN** CI runs on release workflow
+- **THEN** builds binaries on macOS x64 runner
+- **AND** builds binaries on macOS arm64 runner
+- **AND** builds binaries on Ubuntu x64 runner
+- **AND** builds binaries on Ubuntu arm64 runner
+- **AND** builds binaries on Windows x64 runner
+- **AND** collects all binaries as artifacts
 
-#### Scenario: Node.js binding build
-- **WHEN** CI runs on multiple platforms
-- **THEN** builds bindings on Ubuntu
-- **AND** builds bindings on macOS
-- **AND** verifies bindings load correctly
-- **AND** tests against Node.js 18.x and 20.x
-
-#### Scenario: WASM build verification
-- **WHEN** CI runs
-- **THEN** builds WASM with tree-sitter CLI
-- **AND** verifies tree-sitter.json exists
-- **AND** verifies WASM file is generated
-- **AND** verifies WASM file size is reasonable
-
-#### Scenario: Zed editor compatibility
-- **WHEN** CI runs Zed compatibility check
-- **THEN** verifies TSMapSlice exists in parser.h
-- **AND** verifies abi_version field exists
-- **AND** verifies TSLexerMode type exists
-- **AND** fails if headers don't match CLI 0.25.10
+#### Scenario: Build performance tracking
+- **WHEN** CI completes builds
+- **THEN** build times are logged for all platforms
+- **AND** times are compared to baselines
+- **AND** regressions are reported in PR comments
+- **AND** helps maintain build performance
 
 ### Requirement: Build Performance
 The project SHALL maintain reasonable build times for development workflow.
@@ -303,3 +286,137 @@ The project SHALL ensure builds are reproducible across environments.
 - **AND** uses same npm versions
 - **AND** uses same C compiler flags
 - **AND** produces consistent artifacts
+
+### Requirement: Pre-built Binary Distribution
+The project SHALL provide pre-built binaries for common platforms to enable fast installation without compilation.
+
+#### Scenario: Pre-built binary generation
+- **WHEN** `npm run prebuild` is executed
+- **THEN** prebuildify generates binaries for target platforms
+- **AND** binaries are placed in prebuilds/ directory
+- **AND** binaries include platform/architecture metadata
+- **AND** binaries are committed to git or uploaded to releases
+
+#### Scenario: Target platforms coverage
+- **WHEN** pre-built binaries are generated
+- **THEN** MUST include macOS x64 (darwin-x64)
+- **AND** MUST include macOS arm64 (darwin-arm64)
+- **AND** MUST include Linux x64 (linux-x64)
+- **AND** MUST include Linux arm64 (linux-arm64)
+- **AND** MUST include Windows x64 (win32-x64)
+
+#### Scenario: Installation with pre-built binary
+- **WHEN** user runs `npm install tree-sitter-quarto`
+- **AND** pre-built binary exists for their platform
+- **THEN** node-gyp-build loads pre-built binary
+- **AND** installation completes in <1 second
+- **AND** no compilation occurs
+- **AND** binding is immediately usable
+
+#### Scenario: Fallback to compilation
+- **WHEN** user runs `npm install` on unsupported platform
+- **AND** no pre-built binary exists
+- **THEN** node-gyp-build falls back to compilation
+- **AND** builds from source using binding.gyp
+- **AND** installation succeeds with compilation time ~15-20s
+
+#### Scenario: Binary distribution in package
+- **WHEN** package.json "files" field is read
+- **THEN** MUST include "prebuilds/**"
+- **AND** pre-built binaries are distributed via npm
+- **AND** binaries are platform-specific .node files
+
+### Requirement: CI/CD Build Caching
+The project SHALL use caching in CI/CD to reduce build times and resource usage.
+
+#### Scenario: Node modules caching
+- **WHEN** CI workflow runs
+- **THEN** node_modules is cached using package-lock.json hash
+- **AND** cache is restored on subsequent runs
+- **AND** npm install only runs when dependencies change
+- **AND** reduces CI time by 30-60 seconds
+
+#### Scenario: Build artifacts caching
+- **WHEN** CI builds Node.js bindings
+- **THEN** build/Release/ directory is cached
+- **AND** cache key includes src/parser.c hash
+- **AND** cache key includes src/scanner.c hash
+- **AND** cache key includes binding.gyp hash
+- **AND** binding rebuild only occurs when sources change
+
+#### Scenario: WASM build caching
+- **WHEN** CI builds WASM
+- **THEN** tree-sitter-quarto.wasm is cached
+- **AND** cache key includes grammar.js hash
+- **AND** cache key includes src/scanner.c hash
+- **AND** WASM rebuild only occurs when grammar changes
+
+#### Scenario: Cache invalidation
+- **WHEN** source files change
+- **THEN** relevant caches are invalidated
+- **AND** affected targets are rebuilt
+- **AND** unaffected caches remain valid
+- **AND** prevents stale build issues
+
+### Requirement: Build Performance Monitoring
+The project SHALL track and report build performance metrics to detect regressions.
+
+#### Scenario: Build time tracking
+- **WHEN** builds complete in CI
+- **THEN** parser generation time is recorded
+- **AND** node-gyp compilation time is recorded
+- **AND** WASM build time is recorded
+- **AND** total build time is recorded
+
+#### Scenario: Build time reporting
+- **WHEN** build metrics are collected
+- **THEN** times are logged to CI output
+- **AND** metrics include platform information
+- **AND** metrics include Node.js version
+- **AND** metrics are comparable across runs
+
+#### Scenario: Performance regression detection
+- **WHEN** build time increases >20% from baseline
+- **THEN** CI workflow warns about regression
+- **AND** regression is visible in PR checks
+- **AND** baseline is established from main branch
+- **AND** enables investigation before merge
+
+#### Scenario: Baseline management
+- **WHEN** intentional build changes occur
+- **THEN** baseline can be updated manually
+- **AND** baseline is stored in repository
+- **AND** baseline includes acceptable variance thresholds
+- **AND** prevents false regression alerts
+
+### Requirement: WASM Bundle Size Optimization
+The project SHALL optimize WASM bundle size for faster web loading and better user experience.
+
+#### Scenario: WASM size measurement
+- **WHEN** WASM build completes
+- **THEN** tree-sitter-quarto.wasm size is measured
+- **AND** size is logged to CI output
+- **AND** size is compared to previous baseline
+- **AND** size increase >10% triggers warning
+
+#### Scenario: WASM optimization flags
+- **WHEN** tree-sitter build --wasm runs
+- **THEN** optimization flags are applied
+- **AND** dead code elimination is enabled
+- **AND** aggressive minification is used
+- **AND** debug symbols are stripped in production builds
+
+#### Scenario: WASM size baseline
+- **WHEN** WASM size baseline is established
+- **THEN** current size is <500KB (uncompressed)
+- **AND** gzip compressed size is tracked
+- **AND** baseline is updated when intentional changes occur
+- **AND** prevents unintentional size bloat
+
+#### Scenario: WASM loading performance
+- **WHEN** WASM is loaded in web playground
+- **THEN** load time is measured
+- **AND** load time is <1 second on typical connection
+- **AND** parser initialization is <100ms
+- **AND** provides good user experience
+

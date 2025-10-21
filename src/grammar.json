@@ -540,8 +540,12 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "yaml_mapping"
+                "type": "FIELD",
+                "name": "content",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "yaml_content"
+                }
               },
               {
                 "type": "BLANK"
@@ -557,17 +561,35 @@
                 "type": "TOKEN",
                 "content": {
                   "type": "PREC",
-                  "value": 1,
+                  "value": 2,
                   "content": {
                     "type": "CHOICE",
                     "members": [
                       {
-                        "type": "STRING",
-                        "value": "---"
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "STRING",
+                            "value": "---"
+                          },
+                          {
+                            "type": "PATTERN",
+                            "value": "[ \\t]*\\r?\\n"
+                          }
+                        ]
                       },
                       {
-                        "type": "STRING",
-                        "value": "..."
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "STRING",
+                            "value": "..."
+                          },
+                          {
+                            "type": "PATTERN",
+                            "value": "[ \\t]*\\r?\\n"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -576,68 +598,28 @@
               "named": true,
               "value": "yaml_front_matter_delimiter"
             }
-          },
-          {
-            "type": "PATTERN",
-            "value": "\\r?\\n"
           }
         ]
       }
     },
-    "yaml_mapping": {
+    "yaml_content": {
       "type": "REPEAT1",
       "content": {
-        "type": "CHOICE",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "yaml_pair"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "blank_line"
-          }
-        ]
+        "type": "SYMBOL",
+        "name": "yaml_line"
       }
     },
-    "yaml_pair": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "FIELD",
-          "name": "key",
-          "content": {
-            "type": "SYMBOL",
-            "name": "yaml_key"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": ":"
-        },
-        {
-          "type": "CHOICE",
+    "yaml_line": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": -2,
+        "content": {
+          "type": "SEQ",
           "members": [
             {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "PATTERN",
-                  "value": "[ \\t]+"
-                },
-                {
-                  "type": "FIELD",
-                  "name": "value",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "yaml_scalar"
-                  }
-                },
-                {
-                  "type": "PATTERN",
-                  "value": "\\r?\\n"
-                }
-              ]
+              "type": "PATTERN",
+              "value": "[^\\r\\n]+"
             },
             {
               "type": "PATTERN",
@@ -645,197 +627,7 @@
             }
           ]
         }
-      ]
-    },
-    "yaml_key": {
-      "type": "PATTERN",
-      "value": "[a-zA-Z][a-zA-Z0-9_-]*"
-    },
-    "yaml_scalar": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "yaml_string"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "yaml_number"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "yaml_boolean"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "yaml_null"
-        }
-      ]
-    },
-    "yaml_string": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "yaml_string_unquoted"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "yaml_string_quoted"
-        }
-      ]
-    },
-    "yaml_string_unquoted": {
-      "type": "TOKEN",
-      "content": {
-        "type": "PREC",
-        "value": -1,
-        "content": {
-          "type": "PATTERN",
-          "value": "[^\\r\\n:#\\[\\]{},\"'|>]+"
-        }
       }
-    },
-    "yaml_string_quoted": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "\""
-            },
-            {
-              "type": "REPEAT",
-              "content": {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "PATTERN",
-                    "value": "[^\"\\\\]"
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "\\\\."
-                  }
-                ]
-              }
-            },
-            {
-              "type": "STRING",
-              "value": "\""
-            }
-          ]
-        },
-        {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "'"
-            },
-            {
-              "type": "REPEAT",
-              "content": {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "PATTERN",
-                    "value": "[^']"
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "''"
-                  }
-                ]
-              }
-            },
-            {
-              "type": "STRING",
-              "value": "'"
-            }
-          ]
-        }
-      ]
-    },
-    "yaml_number": {
-      "type": "PATTERN",
-      "value": "-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?"
-    },
-    "yaml_boolean": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "true"
-        },
-        {
-          "type": "STRING",
-          "value": "false"
-        },
-        {
-          "type": "STRING",
-          "value": "yes"
-        },
-        {
-          "type": "STRING",
-          "value": "no"
-        },
-        {
-          "type": "STRING",
-          "value": "True"
-        },
-        {
-          "type": "STRING",
-          "value": "False"
-        },
-        {
-          "type": "STRING",
-          "value": "Yes"
-        },
-        {
-          "type": "STRING",
-          "value": "No"
-        },
-        {
-          "type": "STRING",
-          "value": "TRUE"
-        },
-        {
-          "type": "STRING",
-          "value": "FALSE"
-        },
-        {
-          "type": "STRING",
-          "value": "YES"
-        },
-        {
-          "type": "STRING",
-          "value": "NO"
-        }
-      ]
-    },
-    "yaml_null": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "null"
-        },
-        {
-          "type": "STRING",
-          "value": "~"
-        },
-        {
-          "type": "STRING",
-          "value": "Null"
-        },
-        {
-          "type": "STRING",
-          "value": "NULL"
-        }
-      ]
     },
     "percent_metadata": {
       "type": "REPEAT1",

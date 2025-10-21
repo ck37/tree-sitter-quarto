@@ -112,6 +112,8 @@ Output AST (simplified):
 
 **Other editors:** Compatible with Neovim (nvim-treesitter), Helix, and VSCode. For editor extension developers, add `tree-sitter-quarto = { git = "https://github.com/ck37/tree-sitter-quarto" }` to your dependencies. See [editor integration guide](./docs/editor-integration.md) for detailed instructions.
 
+**YAML Front Matter:** YAML content is parsed via language injection to tree-sitter-yaml. For full YAML syntax highlighting (including nested mappings), your editor needs tree-sitter-yaml installed. Most editors (Neovim, Zed, Helix) include it by default.
+
 ## Documentation
 
 See the [docs/](./docs/) directory for detailed documentation including implementation plan, parser comparisons, editor integration guide, and technical details.

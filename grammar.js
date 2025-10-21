@@ -209,6 +209,9 @@ module.exports = grammar({
     // YAML Front Matter
     // NOTE: Standalone `---` at document start is ambiguous with thematic break.
     // This grammar treats it as (invalid) YAML front matter.
+    //
+    // YAML content is parsed via language injection (see queries/injections.scm)
+    // using tree-sitter-yaml parser for full YAML spec support including nested mappings.
     yaml_front_matter: ($) =>
       prec(
         -1,
@@ -217,74 +220,27 @@ module.exports = grammar({
             "start",
             alias(token(seq("---", /\r?\n/)), $.yaml_front_matter_start),
           ),
-          optional($.yaml_mapping),
+          optional(field("content", $.yaml_content)),
           field(
             "close",
             alias(
-              token(prec(1, choice("---", "..."))),
+              token(
+                prec(
+                  2,
+                  choice(seq("---", /[ \t]*\r?\n/), seq("...", /[ \t]*\r?\n/)),
+                ),
+              ),
               $.yaml_front_matter_delimiter,
             ),
           ),
-          /\r?\n/,
         ),
       ),
 
-    // YAML Mapping (block-style key-value pairs)
-    yaml_mapping: ($) => repeat1(choice($.yaml_pair, $.blank_line)),
+    // YAML Content (raw text between delimiters, injected to tree-sitter-yaml)
+    // Captures all non-empty lines that aren't closing delimiters
+    yaml_content: ($) => repeat1($.yaml_line),
 
-    // YAML Key-Value Pair
-    yaml_pair: ($) =>
-      seq(
-        field("key", $.yaml_key),
-        ":",
-        choice(
-          // Inline scalar value: key: value
-          seq(/[ \t]+/, field("value", $.yaml_scalar), /\r?\n/),
-          // Empty value: key:\n
-          /\r?\n/,
-        ),
-      ),
-
-    // YAML Key
-    yaml_key: ($) => /[a-zA-Z][a-zA-Z0-9_-]*/,
-
-    // YAML Scalar (simple values)
-    yaml_scalar: ($) =>
-      choice($.yaml_string, $.yaml_number, $.yaml_boolean, $.yaml_null),
-
-    // YAML String (unquoted or quoted)
-    yaml_string: ($) => choice($.yaml_string_unquoted, $.yaml_string_quoted),
-
-    yaml_string_unquoted: ($) => token(prec(-1, /[^\r\n:#\[\]{},"'|>]+/)),
-
-    yaml_string_quoted: ($) =>
-      choice(
-        seq('"', repeat(choice(/[^"\\]/, /\\./)), '"'),
-        seq("'", repeat(choice(/[^']/, "''")), "'"),
-      ),
-
-    // YAML Number (integers, floats, scientific notation)
-    yaml_number: ($) => /-?[0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)?/,
-
-    // YAML Boolean
-    yaml_boolean: ($) =>
-      choice(
-        "true",
-        "false",
-        "yes",
-        "no",
-        "True",
-        "False",
-        "Yes",
-        "No",
-        "TRUE",
-        "FALSE",
-        "YES",
-        "NO",
-      ),
-
-    // YAML Null
-    yaml_null: ($) => choice("null", "~", "Null", "NULL"),
+    yaml_line: ($) => token(prec(-2, seq(/[^\r\n]+/, /\r?\n/))),
 
     // Percent Metadata (Pandoc extension)
     percent_metadata: ($) =>

@@ -274,7 +274,12 @@
 
 ; YAML Front Matter
 ; -----------------
-; (YAML is now parsed structurally, no injection needed)
+; Inject tree-sitter-yaml parser for full YAML spec support (nested mappings, lists, etc.)
+
+((yaml_front_matter
+  content: (yaml_content) @injection.content)
+ (#set! injection.language "yaml")
+ (#set! injection.combined))
 
 ; HTML Blocks
 ; -----------

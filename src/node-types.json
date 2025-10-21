@@ -39,6 +39,16 @@
     "type": "atx_heading",
     "named": true,
     "fields": {
+      "attributes": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "attribute_list",
+            "named": true
+          }
+        ]
+      },
       "content": {
         "multiple": false,
         "required": false,
@@ -106,6 +116,11 @@
         ]
       }
     }
+  },
+  {
+    "type": "brace_text",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "callout_block",
@@ -619,6 +634,10 @@
       "required": true,
       "types": [
         {
+          "type": "brace_text",
+          "named": true
+        },
+        {
           "type": "caret",
           "named": true
         },
@@ -1012,6 +1031,10 @@
       "required": true,
       "types": [
         {
+          "type": "brace_text",
+          "named": true
+        },
+        {
           "type": "caret",
           "named": true
         },
@@ -1188,6 +1211,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "brace_text",
+          "named": true
+        },
         {
           "type": "caret",
           "named": true
@@ -1711,6 +1738,16 @@
     "type": "setext_heading",
     "named": true,
     "fields": {
+      "attributes": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "attribute_list",
+            "named": true
+          }
+        ]
+      },
       "content": {
         "multiple": false,
         "required": true,
@@ -1822,6 +1859,10 @@
       "required": true,
       "types": [
         {
+          "type": "brace_text",
+          "named": true
+        },
+        {
           "type": "caret",
           "named": true
         },
@@ -1920,6 +1961,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "brace_text",
+          "named": true
+        },
         {
           "type": "caret",
           "named": true
@@ -2020,6 +2065,10 @@
       "required": true,
       "types": [
         {
+          "type": "brace_text",
+          "named": true
+        },
+        {
           "type": "caret",
           "named": true
         },
@@ -2118,6 +2167,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "brace_text",
+          "named": true
+        },
         {
           "type": "caret",
           "named": true

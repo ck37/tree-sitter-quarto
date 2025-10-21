@@ -1,0 +1,138 @@
+==================
+ATX heading with class attribute
+==================
+
+## Quick Start {.unnumbered}
+
+---
+
+(document
+  (atx_heading
+    marker: (atx_heading_marker)
+    content: (inline
+      (text))
+    attributes: (attribute_list
+      class: (attribute_class))))
+
+==================
+ATX heading with ID attribute
+==================
+
+## Introduction {#intro}
+
+---
+
+(document
+  (atx_heading
+    marker: (atx_heading_marker)
+    content: (inline
+      (text))
+    attributes: (attribute_list
+      id: (attribute_id))))
+
+==================
+ATX heading with multiple attributes
+==================
+
+## Slide {#main .unnumbered key=value}
+
+---
+
+(document
+  (atx_heading
+    marker: (atx_heading_marker)
+    content: (inline
+      (text))
+    attributes: (attribute_list
+      id: (attribute_id)
+      class: (attribute_class)
+      attribute: (key_value_attribute
+        key: (attribute_key)
+        value: (attribute_value)))))
+
+==================
+Setext heading with class attribute
+==================
+
+Title {.unnumbered}
+===================
+
+---
+
+(document
+  (blank_line)
+  (setext_heading
+    content: (inline
+      (text))
+    attributes: (attribute_list
+      class: (attribute_class))
+    underline: (setext_heading_marker)))
+
+==================
+Setext heading with ID and class
+==================
+
+Chapter {#ch1 .special}
+=======================
+
+---
+
+(document
+  (blank_line)
+  (setext_heading
+    content: (inline
+      (text))
+    attributes: (attribute_list
+      id: (attribute_id)
+      class: (attribute_class))
+    underline: (setext_heading_marker)))
+
+==================
+Plain heading without attributes
+==================
+
+## Plain Heading
+
+---
+
+(document
+  (atx_heading
+    marker: (atx_heading_marker)
+    content: (inline
+      (text))))
+
+==================
+Heading with inline formatting and attributes
+==================
+
+## **Bold** Title {#custom}
+
+---
+
+(document
+  (atx_heading
+    marker: (atx_heading_marker)
+    content: (inline
+      (strong_emphasis
+        (strong_emphasis_delimiter)
+        (text)
+        (strong_emphasis_delimiter))
+      (text))
+    attributes: (attribute_list
+      id: (attribute_id))))
+
+==================
+Paragraph with braces (not attributes)
+==================
+
+Use {python} for scripting.
+
+---
+
+(document
+  (blank_line)
+  (paragraph
+    content: (inline
+      (text)
+      (brace_text)
+      (text))))

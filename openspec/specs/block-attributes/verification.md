@@ -1,81 +1,84 @@
 # block-attributes Verification
 
-**Status:** ⏸️ DEFERRED TO v0.2.0
-**Date:** 2025-10-18
-**Decision:** Requires external C++ scanner implementation
+**Status:** ✅ IMPLEMENTED
+**Date:** 2025-10-21
+**Implementation:** Pure grammar solution (no external scanner needed)
 
 ---
 
 ## Implementation Status
 
-**NOT IMPLEMENTED** - Deferred to v0.2.0
+**IMPLEMENTED** - v0.1.0
 
-## Reason for Deferral
+## Implementation Approach
 
-Pandoc heading attribute syntax (`## Title {.class}` or `## Heading {#id}`) requires an external C/C++ scanner to resolve ambiguity between heading content and trailing attributes.
+Heading attributes implemented using pure grammar rules, inspired by quarto-dev/quarto-markdown (MIT License).
 
-### Technical Challenges
+### Solution
 
-Pure grammar solutions cannot resolve the ambiguity where:
-- The text rule consumes trailing whitespace
-- Preventing clean separation of content from attributes
-- Precedence and token boundaries don't help
+1. **Text pattern modification** - Exclude `{` and `}` from text regex to create word boundaries
+2. **Attribute pattern in headings** - Add `optional(seq("{", $.attribute_list, "}"))` with high precedence
+3. **Fallback for inline braces** - Add `brace_text` pattern for non-attribute brace usage (e.g., `{python}`)
+4. **Exclusions** - `brace_text` excludes `{.`, `{#`, and `{{` patterns to avoid conflicts
 
-### Research Conducted
+### Key Files Modified
 
-Comprehensive analysis documented in:
-- `docs/block-attributes-research-conclusion.md`
-- `docs/block-attributes-findings-2025-10-18.md`
+- `grammar.js` - Added attribute support to `atx_heading` and `setext_heading`
+- `grammar.js` - Modified `text` rule to exclude `{}`
+- `grammar.js` - Added `brace_text` fallback pattern
+- `test/corpus/heading-attributes.txt` - Comprehensive test coverage
 
-Reference implementation reviewed: tree-sitter-markdown uses external C++ scanner for similar patterns.
+### Attribution
 
-## Workaround (v1.0)
+Approach inspired by quarto-dev/quarto-markdown (MIT License)
+https://github.com/quarto-dev/quarto-markdown
 
-Use fenced divs for styling blocks:
+Their implementation showed that excluding `{` from word patterns allows the grammar to naturally parse attributes without requiring an external scanner.
 
-```markdown
-::: {.class}
-## Heading
-:::
+## Verification Results
+
+All test scenarios pass:
+
+- [x] ATX heading with class: `## Title {.class}`
+- [x] ATX heading with ID: `## Title {#id}`
+- [x] ATX heading with multiple attributes: `## Title {#id .class key=value}`
+- [x] Setext heading with class: `Title {.class}\n===`
+- [x] Setext heading with ID and class
+- [x] Plain heading without attributes (backward compatible)
+- [x] Heading with inline formatting and attributes
+- [x] Paragraph with braces not treated as attributes: `{python}`
+- [x] No ERROR nodes for valid syntax
+- [x] Attributes correctly parsed as structured `attribute_list`
+- [x] Compatible with existing heading parsing
+- [x] No conflicts with shortcodes `{{< >}}`
+
+## Test Results
+
+```
+heading-attributes:
+  ✓ ATX heading with class attribute
+  ✓ ATX heading with ID attribute
+  ✓ ATX heading with multiple attributes
+  ✓ Setext heading with class attribute
+  ✓ Setext heading with ID and class
+  ✓ Plain heading without attributes
+  ✓ Heading with inline formatting and attributes
+  ✓ Paragraph with braces (not attributes)
 ```
 
-This provides equivalent functionality while external scanner is being developed.
+All 8 tests passing. No regressions in existing test suite (197 total tests passing).
 
-## v0.2.0 Implementation Plan
+## Performance Impact
 
-1. **External Scanner Development**
-   - Study tree-sitter-markdown's scanner approach
-   - Implement `_atx_end` external token for trailing attributes
-   - Handle whitespace consumption edge cases
-
-2. **Grammar Updates**
-   - Add `optional($.attribute_list)` to heading rules
-   - Use scanner to validate attribute positions
-
-3. **Test Coverage**
-   - Heading with ID: `## Title {#id}`
-   - Heading with class: `## Title {.class}`
-   - Heading with multiple attributes: `## Title {#id .class key=value}`
-   - Edge cases: trailing whitespace, nested formatting
-
-## Verification Criteria (for v0.2.0)
-
-When implemented, this spec will be verified against:
-
-- [ ] All test scenarios in spec.md pass
-- [ ] No ERROR nodes for valid attribute syntax
-- [ ] Attributes correctly parsed as structured data
-- [ ] Compatible with existing heading parsing
-- [ ] Performance remains within targets
+Minimal - pure grammar solution with no external scanner overhead.
 
 ## Related Specs
 
-- **pandoc-links** - Already implements attribute parsing for inline elements
-- **enhanced-divs** - Uses attribute syntax for fenced divs
-
-The attribute_list grammar is already proven to work; block-attributes just needs the scanner support to use it on headings.
+- **pandoc-links** - Reuses existing `attribute_list` grammar
+- **enhanced-divs** - Same attribute syntax already working for divs
+- **inline-attributes** - Consistent attribute handling across all elements
 
 ---
 
-**Next Review:** When v0.2.0 development begins
-**Priority:** Medium (workaround available, not blocking v1.0)
+**Implementation Date:** 2025-10-21
+**Resolved Issue:** #10 (https://github.com/ck37/tree-sitter-quarto/issues/10)

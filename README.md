@@ -1,7 +1,7 @@
 # tree-sitter-quarto
 
 [![CI](https://github.com/ck37/tree-sitter-quarto/workflows/CI/badge.svg)](https://github.com/ck37/tree-sitter-quarto/actions)
-[![Tests](https://img.shields.io/badge/tests-195%2F195%20passing-brightgreen)](https://github.com/ck37/tree-sitter-quarto/actions)
+[![Tests](https://img.shields.io/badge/tests-202%2F202%20passing-brightgreen)](https://github.com/ck37/tree-sitter-quarto/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![tree-sitter](https://img.shields.io/badge/tree--sitter-0.25.10-orange)](https://tree-sitter.github.io/)
 [![Node Version](https://img.shields.io/badge/node-%3E%3D16-brightgreen)](https://nodejs.org/)
@@ -20,6 +20,7 @@ Fully implemented:
 - Chunk options - Parse `#| key: value` as structured data
 - Cross-references - Distinguish `@fig-plot` from `@smith2020` citations
 - Inline code cells - `` `{python} expr` `` with language injection
+- Heading attributes - Pandoc heading syntax `## Title {.class}`, `## Title {#id}`, `## Title {.class #id}`
 - Inline attributes - Pandoc span syntax `[text]{.class}`, `[text]{#id .class key="value"}`
 - Inline formatting - Pandoc extensions for scientific/academic writing
   - Strikethrough: `~~deleted text~~`
@@ -42,7 +43,6 @@ Fully implemented:
 
 Known limitations:
 
-- **Block attributes** (e.g., `## Heading {#id}`) - Deferred to v0.2.0, requires external C++ scanner. Use fenced divs as workaround: `::: {.class}\n## Heading\n:::`
 - Generic fenced divs (`::: {.custom-class}`) don't parse - [technical details](./docs/generic-fenced-div-limitation.md)
 - Inline attributes: `[text]{.class}` at paragraph start creates cosmetic ERROR nodes - [technical details](./docs/inline-attributes-known-issues.md)
 - Real-world corpus validation: 20% success rate (improving toward 90% target)
@@ -64,7 +64,7 @@ title: "My Analysis"
 format: html
 ---
 
-## Results
+## Results {#sec-results}
 
 See @fig-plot for details. The chemical formula is H~2~O and the equation $E=mc^2$ shows energy.
 
@@ -87,7 +87,9 @@ Output AST (simplified):
 ```
 (document
   (yaml_front_matter ...)
-  (atx_heading ...)
+  (atx_heading
+    content: "Results"
+    attributes: (attribute_list id:"sec-results"))
   (paragraph
     (cross_reference type:"fig" id:"plot")
     (subscript "2")

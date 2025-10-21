@@ -34,64 +34,68 @@ function thematicLine(char) {
 }
 
 module.exports = grammar({
-  name: 'quarto',
+  name: "quarto",
 
-  extras: $ => [/\s/],
+  extras: ($) => [/\s/],
 
-  externals: $ => [
-    $.pipe_table_start,                // From pandoc-markdown
-    $._chunk_option_marker,            // Quarto: #| at start of cell
-    $._cell_boundary,                  // Quarto: Track cell context
-    $._chunk_option_continuation,      // Quarto: Multi-line chunk option continuation
-    $._subscript_open,                 // Pandoc: Context-aware ~ opening delimiter
-    $._subscript_close,                // Pandoc: Context-aware ~ closing delimiter
-    $._superscript_open,               // Pandoc: Context-aware ^ opening delimiter
-    $._superscript_close,              // Pandoc: Context-aware ^ closing delimiter
+  externals: ($) => [
+    $.pipe_table_start, // From pandoc-markdown
+    $._chunk_option_marker, // Quarto: #| at start of cell
+    $._cell_boundary, // Quarto: Track cell context
+    $._chunk_option_continuation, // Quarto: Multi-line chunk option continuation
+    $._subscript_open, // Pandoc: Context-aware ~ opening delimiter
+    $._subscript_close, // Pandoc: Context-aware ~ closing delimiter
+    $._superscript_open, // Pandoc: Context-aware ^ opening delimiter
+    $._superscript_close, // Pandoc: Context-aware ^ closing delimiter
+    $._inline_math_open, // Pandoc: Context-aware $ opening delimiter
+    $._inline_math_close, // Pandoc: Context-aware $ closing delimiter
   ],
 
-  conflicts: $ => [
+  conflicts: ($) => [
     [$._inline_element, $._link_text_element],
-    [$.executable_code_cell, $.fenced_code_block],  // Quarto: {python} vs python
-    [$.shortcode_block, $.shortcode_inline],        // Shortcode can be block or inline
-    [$.inline_code_cell, $.code_span],              // `r expr` vs `code`
-    [$.callout_block, $.fenced_div],                // Enhanced divs vs generic divs
+    [$.executable_code_cell, $.fenced_code_block], // Quarto: {python} vs python
+    [$.shortcode_block, $.shortcode_inline], // Shortcode can be block or inline
+    [$.inline_code_cell, $.code_span], // `r expr` vs `code`
+    [$.callout_block, $.fenced_div], // Enhanced divs vs generic divs
     [$.tabset_block, $.fenced_div],
     [$.conditional_block, $.fenced_div],
   ],
 
   rules: {
-    document: $ => choice(
-      prec(2, seq($.yaml_front_matter, repeat($._block))),
-      prec(2, seq($.percent_metadata, repeat($._block))),
-      repeat($._block)
-    ),
+    document: ($) =>
+      choice(
+        prec(2, seq($.yaml_front_matter, repeat($._block))),
+        prec(2, seq($.percent_metadata, repeat($._block))),
+        repeat($._block),
+      ),
 
-    _block: $ => choice(
-      // Quarto-specific blocks
-      $.executable_code_cell,
-      // Pandoc Markdown blocks - fenced_div must come before enhanced divs for fallback
-      $.fenced_div,
-      // Enhanced divs (higher precedence via prec.dynamic)
-      $.callout_block,
-      $.tabset_block,
-      $.conditional_block,
-      // Other Pandoc Markdown blocks
-      $.atx_heading,
-      $.setext_heading,
-      $.block_quote,
-      $.footnote_definition,
-      $.link_reference_definition,
-      $.display_math,
-      $.pipe_table,
-      $.shortcode_block,
-      $.raw_block,
-      $.html_block,
-      $.fenced_code_block,
-      $.list,
-      $.thematic_break,
-      $.paragraph,
-      $.blank_line
-    ),
+    _block: ($) =>
+      choice(
+        // Quarto-specific blocks
+        $.executable_code_cell,
+        // Pandoc Markdown blocks - fenced_div must come before enhanced divs for fallback
+        $.fenced_div,
+        // Enhanced divs (higher precedence via prec.dynamic)
+        $.callout_block,
+        $.tabset_block,
+        $.conditional_block,
+        // Other Pandoc Markdown blocks
+        $.atx_heading,
+        $.setext_heading,
+        $.block_quote,
+        $.footnote_definition,
+        $.link_reference_definition,
+        $.display_math,
+        $.pipe_table,
+        $.shortcode_block,
+        $.raw_block,
+        $.html_block,
+        $.fenced_code_block,
+        $.list,
+        $.thematic_break,
+        $.paragraph,
+        $.blank_line,
+      ),
 
     // ============================================================================
     // QUARTO-SPECIFIC RULES
@@ -109,23 +113,33 @@ module.exports = grammar({
      *
      * Spec: openspec/specs/executable-cells/spec.md
      */
-    executable_code_cell: $ => prec(1, seq(
-      field('open_delimiter', alias(token(/```+/), $.code_fence_delimiter)),
-      field('language_specifier', seq(
-        '{',
-        field('language', alias(/[a-zA-Z][a-zA-Z0-9_-]*/, $.language_name)),
-        optional(seq(
-          /[ \t]+/,
-          field('attributes', $.attribute_list)
-        )),
-        '}'
-      )),
-      /\r?\n/,
-      optional(field('chunk_options', $.chunk_options)),
-      optional(field('content', $.cell_content)),
-      field('close_delimiter', alias(token(/```+/), $.code_fence_delimiter)),
-      /\r?\n/
-    )),
+    executable_code_cell: ($) =>
+      prec(
+        1,
+        seq(
+          field("open_delimiter", alias(token(/```+/), $.code_fence_delimiter)),
+          field(
+            "language_specifier",
+            seq(
+              "{",
+              field(
+                "language",
+                alias(/[a-zA-Z][a-zA-Z0-9_-]*/, $.language_name),
+              ),
+              optional(seq(/[ \t]+/, field("attributes", $.attribute_list))),
+              "}",
+            ),
+          ),
+          /\r?\n/,
+          optional(field("chunk_options", $.chunk_options)),
+          optional(field("content", $.cell_content)),
+          field(
+            "close_delimiter",
+            alias(token(/```+/), $.code_fence_delimiter),
+          ),
+          /\r?\n/,
+        ),
+      ),
 
     /**
      * Chunk Options
@@ -141,40 +155,44 @@ module.exports = grammar({
      *
      * Spec: openspec/specs/chunk-options/spec.md
      */
-    chunk_options: $ => repeat1($.chunk_option),
+    chunk_options: ($) => repeat1($.chunk_option),
 
-    chunk_option: $ => choice(
-      // Single-line chunk option
-      seq(
-        token(prec(2, '#|')),
-        optional(/[ \t]*/),
-        field('key', alias(/[a-zA-Z][a-zA-Z0-9-]*/, $.chunk_option_key)),
-        ':',
-        optional(seq(
+    chunk_option: ($) =>
+      choice(
+        // Single-line chunk option
+        seq(
+          token(prec(2, "#|")),
           optional(/[ \t]*/),
-          field('value', alias(/[^\r\n|]+/, $.chunk_option_value))
-        )),
-        /\r?\n/
+          field("key", alias(/[a-zA-Z][a-zA-Z0-9-]*/, $.chunk_option_key)),
+          ":",
+          optional(
+            seq(
+              optional(/[ \t]*/),
+              field("value", alias(/[^\r\n|]+/, $.chunk_option_value)),
+            ),
+          ),
+          /\r?\n/,
+        ),
+        // Multi-line chunk option with pipe continuation
+        seq(
+          token(prec(2, "#|")),
+          optional(/[ \t]*/),
+          field("key", alias(/[a-zA-Z][a-zA-Z0-9-]*/, $.chunk_option_key)),
+          ":",
+          optional(/[ \t]*/),
+          "|",
+          /\r?\n/,
+          repeat1($.chunk_option_continuation),
+        ),
       ),
-      // Multi-line chunk option with pipe continuation
-      seq(
-        token(prec(2, '#|')),
-        optional(/[ \t]*/),
-        field('key', alias(/[a-zA-Z][a-zA-Z0-9-]*/, $.chunk_option_key)),
-        ':',
-        optional(/[ \t]*/),
-        '|',
-        /\r?\n/,
-        repeat1($.chunk_option_continuation)
-      )
-    ),
 
-    chunk_option_continuation: $ => seq(
-      $._chunk_option_continuation,
-      optional(/[ \t]*/),
-      field('value', alias(/[^\r\n]+/, $.chunk_option_value)),
-      /\r?\n/
-    ),
+    chunk_option_continuation: ($) =>
+      seq(
+        $._chunk_option_continuation,
+        optional(/[ \t]*/),
+        field("value", alias(/[^\r\n]+/, $.chunk_option_value)),
+        /\r?\n/,
+      ),
 
     /**
      * Cell Content
@@ -182,10 +200,7 @@ module.exports = grammar({
      * Code content within executable cell, excluding chunk options.
      * Used for language injection.
      */
-    cell_content: $ => repeat1(seq(
-      alias(/[^\r\n]+/, $.code_line),
-      /\r?\n/
-    )),
+    cell_content: ($) => repeat1(seq(alias(/[^\r\n]+/, $.code_line), /\r?\n/)),
 
     // ============================================================================
     // PANDOC MARKDOWN RULES (BASELINE)
@@ -194,170 +209,217 @@ module.exports = grammar({
     // YAML Front Matter
     // NOTE: Standalone `---` at document start is ambiguous with thematic break.
     // This grammar treats it as (invalid) YAML front matter.
-    yaml_front_matter: $ => prec(-1, seq(
-      field('start', alias(token(seq('---', /\r?\n/)), $.yaml_front_matter_start)),
-      optional($.yaml_mapping),
-      field('close', alias(token(prec(1, choice('---', '...'))), $.yaml_front_matter_delimiter)),
-      /\r?\n/
-    )),
+    yaml_front_matter: ($) =>
+      prec(
+        -1,
+        seq(
+          field(
+            "start",
+            alias(token(seq("---", /\r?\n/)), $.yaml_front_matter_start),
+          ),
+          optional($.yaml_mapping),
+          field(
+            "close",
+            alias(
+              token(prec(1, choice("---", "..."))),
+              $.yaml_front_matter_delimiter,
+            ),
+          ),
+          /\r?\n/,
+        ),
+      ),
 
     // YAML Mapping (block-style key-value pairs)
-    yaml_mapping: $ => repeat1(
-      choice(
-        $.yaml_pair,
-        $.blank_line
-      )
-    ),
+    yaml_mapping: ($) => repeat1(choice($.yaml_pair, $.blank_line)),
 
     // YAML Key-Value Pair
-    yaml_pair: $ => seq(
-      field('key', $.yaml_key),
-      ':',
-      choice(
-        // Inline scalar value: key: value
-        seq(
-          /[ \t]+/,
-          field('value', $.yaml_scalar),
-          /\r?\n/
+    yaml_pair: ($) =>
+      seq(
+        field("key", $.yaml_key),
+        ":",
+        choice(
+          // Inline scalar value: key: value
+          seq(/[ \t]+/, field("value", $.yaml_scalar), /\r?\n/),
+          // Empty value: key:\n
+          /\r?\n/,
         ),
-        // Empty value: key:\n
-        /\r?\n/
-      )
-    ),
+      ),
 
     // YAML Key
-    yaml_key: $ => /[a-zA-Z][a-zA-Z0-9_-]*/,
+    yaml_key: ($) => /[a-zA-Z][a-zA-Z0-9_-]*/,
 
     // YAML Scalar (simple values)
-    yaml_scalar: $ => choice(
-      $.yaml_string,
-      $.yaml_number,
-      $.yaml_boolean,
-      $.yaml_null
-    ),
+    yaml_scalar: ($) =>
+      choice($.yaml_string, $.yaml_number, $.yaml_boolean, $.yaml_null),
 
     // YAML String (unquoted or quoted)
-    yaml_string: $ => choice(
-      $.yaml_string_unquoted,
-      $.yaml_string_quoted
-    ),
+    yaml_string: ($) => choice($.yaml_string_unquoted, $.yaml_string_quoted),
 
-    yaml_string_unquoted: $ => token(prec(-1, /[^\r\n:#\[\]{},"'|>]+/)),
+    yaml_string_unquoted: ($) => token(prec(-1, /[^\r\n:#\[\]{},"'|>]+/)),
 
-    yaml_string_quoted: $ => choice(
-      seq('"', repeat(choice(/[^"\\]/, /\\./)), '"'),
-      seq("'", repeat(choice(/[^']/, "''")), "'")
-    ),
+    yaml_string_quoted: ($) =>
+      choice(
+        seq('"', repeat(choice(/[^"\\]/, /\\./)), '"'),
+        seq("'", repeat(choice(/[^']/, "''")), "'"),
+      ),
 
     // YAML Number (integers, floats, scientific notation)
-    yaml_number: $ => /-?[0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)?/,
+    yaml_number: ($) => /-?[0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)?/,
 
     // YAML Boolean
-    yaml_boolean: $ => choice('true', 'false', 'yes', 'no', 'True', 'False', 'Yes', 'No', 'TRUE', 'FALSE', 'YES', 'NO'),
+    yaml_boolean: ($) =>
+      choice(
+        "true",
+        "false",
+        "yes",
+        "no",
+        "True",
+        "False",
+        "Yes",
+        "No",
+        "TRUE",
+        "FALSE",
+        "YES",
+        "NO",
+      ),
 
     // YAML Null
-    yaml_null: $ => choice('null', '~', 'Null', 'NULL'),
+    yaml_null: ($) => choice("null", "~", "Null", "NULL"),
 
     // Percent Metadata (Pandoc extension)
-    percent_metadata: $ => repeat1(seq(
-      token('%'),
-      optional(alias(/[^\r\n]+/, $.metadata_line)),
-      /\r?\n/
-    )),
+    percent_metadata: ($) =>
+      repeat1(
+        seq(token("%"), optional(alias(/[^\r\n]+/, $.metadata_line)), /\r?\n/),
+      ),
 
     // Headings
-    atx_heading: $ => seq(
-      field('marker', alias(token(prec(1, /#{1,6}[ \t]*/)), $.atx_heading_marker)),
-      optional(field('content', $.inline)),
-      /\r?\n/
-    ),
+    atx_heading: ($) =>
+      seq(
+        field(
+          "marker",
+          alias(token(prec(1, /#{1,6}[ \t]*/)), $.atx_heading_marker),
+        ),
+        optional(field("content", $.inline)),
+        /\r?\n/,
+      ),
 
-    setext_heading: $ => seq(
-      field('content', $.inline),
-      /\r?\n/,
-      field('underline', alias(choice(token(/=+/), token(/-+/)), $.setext_heading_marker)),
-      /\r?\n/
-    ),
+    setext_heading: ($) =>
+      seq(
+        field("content", $.inline),
+        /\r?\n/,
+        field(
+          "underline",
+          alias(choice(token(/=+/), token(/-+/)), $.setext_heading_marker),
+        ),
+        /\r?\n/,
+      ),
 
     // Block Quote
-    block_quote: $ => prec.right(seq(
-      $.block_quote_line,
-      repeat($.block_quote_line)
-    )),
+    block_quote: ($) =>
+      prec.right(seq($.block_quote_line, repeat($.block_quote_line))),
 
-    block_quote_line: $ => seq(
-      field('marker', alias(token(prec(1, seq('>', optional(/[ \t]/)))), $.block_quote_marker)),
-      optional(field('content', $.inline)),
-      /\r?\n/
-    ),
+    block_quote_line: ($) =>
+      seq(
+        field(
+          "marker",
+          alias(
+            token(prec(1, seq(">", optional(/[ \t]/)))),
+            $.block_quote_marker,
+          ),
+        ),
+        optional(field("content", $.inline)),
+        /\r?\n/,
+      ),
 
     // Paragraph
-    paragraph: $ => prec.left(-2, seq(
-      field('content', $.inline),
-      /\r?\n/
-    )),
+    paragraph: ($) => prec.left(-2, seq(field("content", $.inline), /\r?\n/)),
 
     // Fenced Div
-    fenced_div: $ => prec.left(1, seq(
-      field('open', alias(/:::+/, $.fenced_div_delimiter)),
-      optional(seq(
-        /[ \t]*/,
-        '{',
-        /[ \t]*/,
-        field('attributes', $.attribute_list),
-        /[ \t]*/,
-        '}'
-      )),
-      /\r?\n/,
-      repeat($._block),
-      field('close', alias(/:::+/, $.fenced_div_delimiter)),
-      /\r?\n/
-    )),
+    fenced_div: ($) =>
+      prec.left(
+        1,
+        seq(
+          field("open", alias(/:::+/, $.fenced_div_delimiter)),
+          optional(
+            seq(
+              /[ \t]*/,
+              "{",
+              /[ \t]*/,
+              field("attributes", $.attribute_list),
+              /[ \t]*/,
+              "}",
+            ),
+          ),
+          /\r?\n/,
+          repeat($._block),
+          field("close", alias(/:::+/, $.fenced_div_delimiter)),
+          /\r?\n/,
+        ),
+      ),
 
     // Fenced Code Block (regular, non-executable)
-    fenced_code_block: $ => prec(-1, seq(
-      field('open', alias(token(/```+/), $.code_fence_delimiter)),
-      optional(field('info', $.info_string)),
-      /\r?\n/,
-      repeat(seq(alias(/[^\r\n]+/, $.code_line), /\r?\n/)),
-      field('close', alias(token(/```+/), $.code_fence_delimiter)),
-      /\r?\n/
-    )),
+    fenced_code_block: ($) =>
+      prec(
+        -1,
+        seq(
+          field("open", alias(token(/```+/), $.code_fence_delimiter)),
+          optional(field("info", $.info_string)),
+          /\r?\n/,
+          repeat(seq(alias(/[^\r\n]+/, $.code_line), /\r?\n/)),
+          field("close", alias(token(/```+/), $.code_fence_delimiter)),
+          /\r?\n/,
+        ),
+      ),
 
-    info_string: $ => /[^\r\n{]+/,
+    info_string: ($) => /[^\r\n{]+/,
 
     // HTML Block
-    html_block: $ => seq(
-      field('open', alias(token(prec(1, /<[^>\s]+[^>]*>/)), $.html_open_tag)),
-      repeat(seq(alias(/[^<\r\n][^\r\n]*/, $.html_block_content), /\r?\n/)),
-      field('close', alias(token(/<\/[A-Za-z][^>]*>/), $.html_close_tag)),
-      /\r?\n/
-    ),
+    html_block: ($) =>
+      seq(
+        field("open", alias(token(prec(1, /<[^>\s]+[^>]*>/)), $.html_open_tag)),
+        repeat(seq(alias(/[^<\r\n][^\r\n]*/, $.html_block_content), /\r?\n/)),
+        field("close", alias(token(/<\/[A-Za-z][^>]*>/), $.html_close_tag)),
+        /\r?\n/,
+      ),
 
     // Raw Block
-    raw_block: $ => seq(
-      field('open', alias(token(prec(1, /```\{=\w+\}/)), $.raw_block_delimiter)),
-      /\r?\n/,
-      repeat(seq(alias(/[^\r\n]+/, $.raw_block_content), /\r?\n/)),
-      field('close', alias(token(/```/), $.raw_block_delimiter)),
-      /\r?\n/
-    ),
+    raw_block: ($) =>
+      seq(
+        field(
+          "open",
+          alias(token(prec(1, /```\{=\w+\}/)), $.raw_block_delimiter),
+        ),
+        /\r?\n/,
+        repeat(seq(alias(/[^\r\n]+/, $.raw_block_content), /\r?\n/)),
+        field("close", alias(token(/```/), $.raw_block_delimiter)),
+        /\r?\n/,
+      ),
 
     // Display Math
-    display_math: $ => seq(
-      field('open', alias(token('$$'), $.math_delimiter)),
-      optional(field('content', alias(/[^$]+/, $.math_content))),
-      field('close', alias(token('$$'), $.math_delimiter)),
-      /\r?\n/
-    ),
+    display_math: ($) =>
+      seq(
+        field("open", alias(token("$$"), $.math_delimiter)),
+        optional(field("content", alias(/[^$]+/, $.math_content))),
+        field("close", alias(token("$$"), $.math_delimiter)),
+        /\r?\n/,
+      ),
 
     // Shortcode Block
-    shortcode_block: $ => prec(1, seq(
-      alias(token(/\{\{<[ \t]*/), $.shortcode_open),
-      field('name', alias(/[a-zA-Z][a-zA-Z0-9_-]*/, $.shortcode_name)),
-      optional(field('arguments', alias(/[ \t]+[^ \t\r\n>][^>\r\n]*/, $.shortcode_arguments))),
-      alias(token(/[ \t]*>\}\}\r?\n/), $.shortcode_close)
-    )),
+    shortcode_block: ($) =>
+      prec(
+        1,
+        seq(
+          alias(token(/\{\{<[ \t]*/), $.shortcode_open),
+          field("name", alias(/[a-zA-Z][a-zA-Z0-9_-]*/, $.shortcode_name)),
+          optional(
+            field(
+              "arguments",
+              alias(/[ \t]+[^ \t\r\n>][^>\r\n]*/, $.shortcode_arguments),
+            ),
+          ),
+          alias(token(/[ \t]*>\}\}\r?\n/), $.shortcode_close),
+        ),
+      ),
 
     /**
      * Callout Block
@@ -368,21 +430,33 @@ module.exports = grammar({
      *
      * Spec: openspec/specs/enhanced-divs/spec.md
      */
-    callout_block: $ => prec.dynamic(3, seq(
-      alias(token(seq(
-        /:::+/,
-        /[ \t]*/,
-        '{',
-        /[ \t]*/,
-        /\.callout-(note|warning|important|tip|caution)/,
-        /[^}\r\n]*/,
-        '}'
-      )), $.callout_open),
-      /\r?\n/,
-      field('content', repeat($._block)),
-      field('close', alias(token(prec(10, /:::+/)), $.fenced_div_delimiter)),
-      /\r?\n/
-    )),
+    callout_block: ($) =>
+      prec.dynamic(
+        3,
+        seq(
+          alias(
+            token(
+              seq(
+                /:::+/,
+                /[ \t]*/,
+                "{",
+                /[ \t]*/,
+                /\.callout-(note|warning|important|tip|caution)/,
+                /[^}\r\n]*/,
+                "}",
+              ),
+            ),
+            $.callout_open,
+          ),
+          /\r?\n/,
+          field("content", repeat($._block)),
+          field(
+            "close",
+            alias(token(prec(10, /:::+/)), $.fenced_div_delimiter),
+          ),
+          /\r?\n/,
+        ),
+      ),
 
     /**
      * Tabset Block
@@ -394,21 +468,33 @@ module.exports = grammar({
      *
      * Spec: openspec/specs/enhanced-divs/spec.md
      */
-    tabset_block: $ => prec.dynamic(3, seq(
-      alias(token(seq(
-        /:::+/,
-        /[ \t]*/,
-        '{',
-        /[ \t]*/,
-        /\.panel-tabset/,
-        /[^}\r\n]*/,
-        '}'
-      )), $.tabset_open),
-      /\r?\n/,
-      field('content', repeat($._block)),
-      field('close', alias(token(prec(10, /:::+/)), $.fenced_div_delimiter)),
-      /\r?\n/
-    )),
+    tabset_block: ($) =>
+      prec.dynamic(
+        3,
+        seq(
+          alias(
+            token(
+              seq(
+                /:::+/,
+                /[ \t]*/,
+                "{",
+                /[ \t]*/,
+                /\.panel-tabset/,
+                /[^}\r\n]*/,
+                "}",
+              ),
+            ),
+            $.tabset_open,
+          ),
+          /\r?\n/,
+          field("content", repeat($._block)),
+          field(
+            "close",
+            alias(token(prec(10, /:::+/)), $.fenced_div_delimiter),
+          ),
+          /\r?\n/,
+        ),
+      ),
 
     /**
      * Conditional Content Block
@@ -419,214 +505,255 @@ module.exports = grammar({
      *
      * Spec: openspec/specs/enhanced-divs/spec.md
      */
-    conditional_block: $ => prec.dynamic(3, seq(
-      alias(token(seq(
-        /:::+/,
-        /[ \t]*/,
-        '{',
-        /[ \t]*/,
-        /\.content-(visible|hidden)/,
-        /[^}\r\n]*/,
-        '}'
-      )), $.conditional_open),
-      /\r?\n/,
-      field('content', repeat($._block)),
-      field('close', alias(token(prec(10, /:::+/)), $.fenced_div_delimiter)),
-      /\r?\n/
-    )),
+    conditional_block: ($) =>
+      prec.dynamic(
+        3,
+        seq(
+          alias(
+            token(
+              seq(
+                /:::+/,
+                /[ \t]*/,
+                "{",
+                /[ \t]*/,
+                /\.content-(visible|hidden)/,
+                /[^}\r\n]*/,
+                "}",
+              ),
+            ),
+            $.conditional_open,
+          ),
+          /\r?\n/,
+          field("content", repeat($._block)),
+          field(
+            "close",
+            alias(token(prec(10, /:::+/)), $.fenced_div_delimiter),
+          ),
+          /\r?\n/,
+        ),
+      ),
 
     // Lists
-    list: $ => choice(
-      $.ordered_list,
-      $.unordered_list
-    ),
+    list: ($) => choice($.ordered_list, $.unordered_list),
 
-    ordered_list: $ => prec.right(repeat1($.ordered_list_item)),
-    unordered_list: $ => prec.right(repeat1($.unordered_list_item)),
+    ordered_list: ($) => prec.right(repeat1($.ordered_list_item)),
+    unordered_list: ($) => prec.right(repeat1($.unordered_list_item)),
 
-    ordered_list_item: $ => seq(
-      field('marker', alias(token(/\d+[.)]/), $.list_marker)),
-      /[ \t]+/,
-      optional(field('content', $.inline)),
-      /\r?\n/
-    ),
+    ordered_list_item: ($) =>
+      seq(
+        field("marker", alias(token(/\d+[.)]/), $.list_marker)),
+        /[ \t]+/,
+        optional(field("content", $.inline)),
+        /\r?\n/,
+      ),
 
-    unordered_list_item: $ => seq(
-      field('marker', alias(token(/[-*+]/), $.list_marker)),
-      /[ \t]+/,
-      optional(field('content', $.inline)),
-      /\r?\n/
-    ),
+    unordered_list_item: ($) =>
+      seq(
+        field("marker", alias(token(/[-*+]/), $.list_marker)),
+        /[ \t]+/,
+        optional(field("content", $.inline)),
+        /\r?\n/,
+      ),
 
     // Thematic Break
-    thematic_break: $ => choice(
-      thematicLine('\\-'),
-      thematicLine('\\*'),
-      thematicLine('_')
-    ),
+    thematic_break: ($) =>
+      choice(thematicLine("\\-"), thematicLine("\\*"), thematicLine("_")),
 
     // Blank Line
-    blank_line: $ => /\r?\n/,
+    blank_line: ($) => /\r?\n/,
 
     // Footnote Definition
-    footnote_definition: $ => seq(
-      field('marker', alias(token(/\[\^[^\]]+\]:/), $.footnote_marker)),
-      /[ \t]+/,
-      field('content', $.inline),
-      /\r?\n/
-    ),
+    footnote_definition: ($) =>
+      seq(
+        field("marker", alias(token(/\[\^[^\]]+\]:/), $.footnote_marker)),
+        /[ \t]+/,
+        field("content", $.inline),
+        /\r?\n/,
+      ),
 
     // Link Reference Definition
-    link_reference_definition: $ => seq(
-      field('label', seq('[', alias(/[^\]]+/, $.reference_label), ']:')),
-      /[ \t]+/,
-      field('destination', alias(/\S+/, $.link_destination)),
-      optional(seq(
+    link_reference_definition: ($) =>
+      seq(
+        field("label", seq("[", alias(/[^\]]+/, $.reference_label), "]:")),
         /[ \t]+/,
-        field('title', alias(/"[^"]*"/, $.link_title))
-      )),
-      /\r?\n/
-    ),
+        field("destination", alias(/\S+/, $.link_destination)),
+        optional(seq(/[ \t]+/, field("title", alias(/"[^"]*"/, $.link_title)))),
+        /\r?\n/,
+      ),
 
     // Pipe Table (header + delimiter + zero or more rows)
-    pipe_table: $ => prec.dynamic(2, prec.right(seq(
-      $.pipe_table_start,
-      $.pipe_table_header,
-      $.pipe_table_delimiter,
-      repeat($.pipe_table_row)
-    ))),
+    pipe_table: ($) =>
+      prec.dynamic(
+        2,
+        prec.right(
+          seq(
+            $.pipe_table_start,
+            $.pipe_table_header,
+            $.pipe_table_delimiter,
+            repeat($.pipe_table_row),
+          ),
+        ),
+      ),
 
-    pipe_table_header: $ => seq(
-      token('|'),
-      repeat1(seq(
-        field('content', alias(/[^|\r\n]+/, $.table_cell)),
-        token('|')
-      )),
-      /\r?\n/
-    ),
+    pipe_table_header: ($) =>
+      seq(
+        token("|"),
+        repeat1(
+          seq(field("content", alias(/[^|\r\n]+/, $.table_cell)), token("|")),
+        ),
+        /\r?\n/,
+      ),
 
-    pipe_table_delimiter: $ => seq(
-      token('|'),
-      repeat1(seq(
-        alias(/[ \t]*:?-+:?[ \t]*/, $.table_delimiter_cell),
-        token('|')
-      )),
-      /\r?\n/
-    ),
+    pipe_table_delimiter: ($) =>
+      seq(
+        token("|"),
+        repeat1(
+          seq(alias(/[ \t]*:?-+:?[ \t]*/, $.table_delimiter_cell), token("|")),
+        ),
+        /\r?\n/,
+      ),
 
     // Note: pipe_table_row is wrapped in token() to ensure it's recognized as part
     // of the table rather than starting a new paragraph. This means individual cells
     // are not exposed as separate AST nodes, but the full row text is available.
-    pipe_table_row: $ => prec.dynamic(1, token(seq(
-      '|',
-      repeat1(seq(
-        /[^|\r\n]+/,
-        '|'
-      )),
-      /\r?\n/
-    ))),
+    pipe_table_row: ($) =>
+      prec.dynamic(1, token(seq("|", repeat1(seq(/[^|\r\n]+/, "|")), /\r?\n/))),
 
     // Attribute List (for divs, cells, links/spans, headings, etc.)
-    attribute_list: $ => choice(
-      seq(
-        field('id', alias(/#[a-zA-Z][a-zA-Z0-9_-]*/, $.attribute_id)),
-        repeat(seq(
-          /[ \t]+/,
-          field('class', alias(/\.[a-zA-Z][a-zA-Z0-9_-]*/, $.attribute_class))
-        )),
-        repeat(seq(
-          /[ \t]+/,
-          field('attribute', $.key_value_attribute)
-        ))
+    attribute_list: ($) =>
+      choice(
+        seq(
+          field("id", alias(/#[a-zA-Z][a-zA-Z0-9_-]*/, $.attribute_id)),
+          repeat(
+            seq(
+              /[ \t]+/,
+              field(
+                "class",
+                alias(/\.[a-zA-Z][a-zA-Z0-9_-]*/, $.attribute_class),
+              ),
+            ),
+          ),
+          repeat(seq(/[ \t]+/, field("attribute", $.key_value_attribute))),
+        ),
+        seq(
+          field("class", alias(/\.[a-zA-Z][a-zA-Z0-9_-]*/, $.attribute_class)),
+          repeat(
+            seq(
+              /[ \t]+/,
+              field(
+                "class",
+                alias(/\.[a-zA-Z][a-zA-Z0-9_-]*/, $.attribute_class),
+              ),
+            ),
+          ),
+          repeat(seq(/[ \t]+/, field("attribute", $.key_value_attribute))),
+        ),
+        repeat1(
+          seq(optional(/[ \t]+/), field("attribute", $.key_value_attribute)),
+        ),
       ),
-      seq(
-        field('class', alias(/\.[a-zA-Z][a-zA-Z0-9_-]*/, $.attribute_class)),
-        repeat(seq(
-          /[ \t]+/,
-          field('class', alias(/\.[a-zA-Z][a-zA-Z0-9_-]*/, $.attribute_class))
-        )),
-        repeat(seq(
-          /[ \t]+/,
-          field('attribute', $.key_value_attribute)
-        ))
-      ),
-      repeat1(seq(
-        optional(/[ \t]+/),
-        field('attribute', $.key_value_attribute)
-      ))
-    ),
 
-    key_value_attribute: $ => seq(
-      field('key', alias(/[a-zA-Z][a-zA-Z0-9_-]*/, $.attribute_key)),
-      '=',
-      field('value', choice(
-        alias(/"[^"]*"/, $.attribute_value),
-        alias(/'[^']*'/, $.attribute_value),
-        alias(/[^\s}]+/, $.attribute_value)
-      ))
-    ),
+    key_value_attribute: ($) =>
+      seq(
+        field("key", alias(/[a-zA-Z][a-zA-Z0-9_-]*/, $.attribute_key)),
+        "=",
+        field(
+          "value",
+          choice(
+            alias(/"[^"]*"/, $.attribute_value),
+            alias(/'[^']*'/, $.attribute_value),
+            alias(/[^\s}]+/, $.attribute_value),
+          ),
+        ),
+      ),
 
     // ============================================================================
     // INLINE RULES
     // ============================================================================
 
-    inline: $ => repeat1($._inline_element),
+    inline: ($) => repeat1($._inline_element),
 
-    _inline_element: $ => choice(
-      $.inline_footnote,        // Pandoc: ^[note] - must come before text
-      $.footnote_reference,     // Pandoc: [^1] - must come before link
-      $.inline_code_cell,       // Quarto: `{python} expr` - check before code_span
-      $.code_span,
-      $.inline_math,
-      $.emphasis,
-      $.strong_emphasis,
-      $.strikethrough,          // Pandoc: ~~text~~
-      $.highlight,              // Pandoc: ==text== - must come before equals_sign
-      $.subscript,              // Pandoc: H~2~O
-      $.superscript,            // Pandoc: x^2^
-      $.link,
-      $.image,
-      $.citation,
-      $.cross_reference,        // Quarto: @fig-plot
-      $.shortcode_inline,
-      $.equals_sign,            // Single = in equations (not part of ==)
-      alias('~', $.tilde),      // Fallback for isolated tilde when scanner rejects subscript
-      alias('^', $.caret),      // Fallback for isolated caret when scanner rejects superscript
-      $.text                    // text last - fallback for anything not matched
-    ),
+    _inline_element: ($) =>
+      choice(
+        $.inline_footnote, // Pandoc: ^[note] - must come before text
+        $.footnote_reference, // Pandoc: [^1] - must come before link
+        $.inline_code_cell, // Quarto: `{python} expr` - check before code_span
+        $.code_span,
+        $.inline_math,
+        $.emphasis,
+        $.strong_emphasis,
+        $.strikethrough, // Pandoc: ~~text~~
+        $.highlight, // Pandoc: ==text== - must come before equals_sign
+        $.subscript, // Pandoc: H~2~O
+        $.superscript, // Pandoc: x^2^
+        $.link,
+        $.image,
+        $.citation,
+        $.cross_reference, // Quarto: @fig-plot
+        $.shortcode_inline,
+        $.equals_sign, // Single = in equations (not part of ==)
+        alias("~", $.tilde), // Fallback for isolated tilde when scanner rejects subscript
+        alias("^", $.caret), // Fallback for isolated caret when scanner rejects superscript
+        alias("$", $.dollar_sign), // Fallback for isolated dollar sign when scanner rejects math
+        $.text, // text last - fallback for anything not matched
+      ),
 
-    text: $ => /[^\r\n`*_\[@<${^~=]+/,
+    text: ($) => /[^\r\n`*_\[@<{^~=$]+/,
 
     // Single equals sign (for equations like E=mc^2^, not part of ==)
-    equals_sign: $ => '=',
+    equals_sign: ($) => "=",
 
     // Text inside link brackets - excludes ] to allow proper link parsing
-    link_text: $ => /[^\r\n`*_\[@<${\]^~=]+/,
+    link_text: ($) => /[^\r\n`*_\[@<${\]^~=]+/,
 
     // Text inside inline footnotes - excludes ] and ^ and [ to allow proper footnote parsing
-    footnote_text: $ => /[^\r\n`*_\[@<${\[\]^~=]+/,
+    footnote_text: ($) => /[^\r\n`*_\[@<${\[\]^~=]+/,
 
-    code_span: $ => seq(
-      alias(token('`'), $.code_span_delimiter),
-      alias(/[^`]+/, $.code_span_content),
-      alias(token('`'), $.code_span_delimiter)
-    ),
+    code_span: ($) =>
+      seq(
+        alias(token("`"), $.code_span_delimiter),
+        alias(/[^`]+/, $.code_span_content),
+        alias(token("`"), $.code_span_delimiter),
+      ),
 
-    inline_math: $ => seq(
-      alias(token('$'), $.math_delimiter),
-      alias(/[^$]+/, $.math_content),
-      alias(token('$'), $.math_delimiter)
-    ),
+    inline_math: ($) =>
+      seq(
+        alias($._inline_math_open, $.math_delimiter),
+        alias(/[^$]+/, $.math_content),
+        alias($._inline_math_close, $.math_delimiter),
+      ),
 
-    emphasis: $ => prec.left(choice(
-      seq(alias(token('*'), $.emphasis_delimiter), repeat1($._inline_element), alias(token('*'), $.emphasis_delimiter)),
-      seq(alias(token('_'), $.emphasis_delimiter), repeat1($._inline_element), alias(token('_'), $.emphasis_delimiter))
-    )),
+    emphasis: ($) =>
+      prec.left(
+        choice(
+          seq(
+            alias(token("*"), $.emphasis_delimiter),
+            repeat1($._inline_element),
+            alias(token("*"), $.emphasis_delimiter),
+          ),
+          seq(
+            alias(token("_"), $.emphasis_delimiter),
+            repeat1($._inline_element),
+            alias(token("_"), $.emphasis_delimiter),
+          ),
+        ),
+      ),
 
-    strong_emphasis: $ => prec.left(choice(
-      seq(alias(token('**'), $.strong_emphasis_delimiter), repeat1($._inline_element), alias(token('**'), $.strong_emphasis_delimiter)),
-      seq(alias(token('__'), $.strong_emphasis_delimiter), repeat1($._inline_element), alias(token('__'), $.strong_emphasis_delimiter))
-    )),
+    strong_emphasis: ($) =>
+      prec.left(
+        choice(
+          seq(
+            alias(token("**"), $.strong_emphasis_delimiter),
+            repeat1($._inline_element),
+            alias(token("**"), $.strong_emphasis_delimiter),
+          ),
+          seq(
+            alias(token("__"), $.strong_emphasis_delimiter),
+            repeat1($._inline_element),
+            alias(token("__"), $.strong_emphasis_delimiter),
+          ),
+        ),
+      ),
 
     /**
      * Strikethrough (Pandoc extension)
@@ -635,11 +762,14 @@ module.exports = grammar({
      *
      * Spec: openspec/specs/pandoc-inline-formatting/spec.md
      */
-    strikethrough: $ => prec.left(seq(
-      alias(token('~~'), $.strikethrough_delimiter),
-      repeat1($._inline_element),
-      alias(token('~~'), $.strikethrough_delimiter)
-    )),
+    strikethrough: ($) =>
+      prec.left(
+        seq(
+          alias(token("~~"), $.strikethrough_delimiter),
+          repeat1($._inline_element),
+          alias(token("~~"), $.strikethrough_delimiter),
+        ),
+      ),
 
     /**
      * Highlight/Mark (Pandoc extension)
@@ -648,11 +778,14 @@ module.exports = grammar({
      *
      * Spec: openspec/specs/pandoc-inline-formatting/spec.md
      */
-    highlight: $ => prec.left(seq(
-      alias(token('=='), $.highlight_delimiter),
-      repeat1($._inline_element),
-      alias(token('=='), $.highlight_delimiter)
-    )),
+    highlight: ($) =>
+      prec.left(
+        seq(
+          alias(token("=="), $.highlight_delimiter),
+          repeat1($._inline_element),
+          alias(token("=="), $.highlight_delimiter),
+        ),
+      ),
 
     /**
      * Subscript (Pandoc extension)
@@ -663,11 +796,12 @@ module.exports = grammar({
      * Scanner validates context and ensures proper delimiter pairing.
      * Spec: openspec/specs/pandoc-inline-formatting/spec.md
      */
-    subscript: $ => seq(
-      alias($._subscript_open, $.subscript_delimiter),
-      repeat1($._inline_element),
-      alias($._subscript_close, $.subscript_delimiter)
-    ),
+    subscript: ($) =>
+      seq(
+        alias($._subscript_open, $.subscript_delimiter),
+        repeat1($._inline_element),
+        alias($._subscript_close, $.subscript_delimiter),
+      ),
 
     /**
      * Superscript (Pandoc extension)
@@ -678,52 +812,60 @@ module.exports = grammar({
      * Scanner validates context, ensures proper delimiter pairing, and disambiguates from footnotes (^[).
      * Spec: openspec/specs/pandoc-inline-formatting/spec.md
      */
-    superscript: $ => seq(
-      alias($._superscript_open, $.superscript_delimiter),
-      repeat1($._inline_element),
-      alias($._superscript_close, $.superscript_delimiter)
-    ),
+    superscript: ($) =>
+      seq(
+        alias($._superscript_open, $.superscript_delimiter),
+        repeat1($._inline_element),
+        alias($._superscript_close, $.superscript_delimiter),
+      ),
 
-    link: $ => prec.right(seq(
-      field('text', seq('[', repeat($._link_text_element), ']')),
-      choice(
-        // Traditional link: [text](url)
-        field('destination', seq('(', alias(/[^)]+/, $.link_destination), ')')),
-        // Explicit reference: [text][ref]
-        field('reference', seq('[', alias(/[^\]]+/, $.reference_label), ']')),
-        // Collapsed reference: [text][]
-        field('reference', alias(token('[]'), $.reference_label)),
-        // Attributed span: [text]{attrs} - Pandoc inline attributes
+    link: ($) =>
+      prec.right(
         seq(
-          '{',
-          optional(/[ \t]*/),
-          field('attributes', $.attribute_list),
-          optional(/[ \t]*/),
-          '}'
-        )
-      )
-    )),
+          field("text", seq("[", repeat($._link_text_element), "]")),
+          choice(
+            // Traditional link: [text](url)
+            field(
+              "destination",
+              seq("(", alias(/[^)]+/, $.link_destination), ")"),
+            ),
+            // Explicit reference: [text][ref]
+            field(
+              "reference",
+              seq("[", alias(/[^\]]+/, $.reference_label), "]"),
+            ),
+            // Collapsed reference: [text][]
+            field("reference", alias(token("[]"), $.reference_label)),
+            // Attributed span: [text]{attrs} - Pandoc inline attributes
+            seq(
+              "{",
+              optional(/[ \t]*/),
+              field("attributes", $.attribute_list),
+              optional(/[ \t]*/),
+              "}",
+            ),
+          ),
+        ),
+      ),
 
-    _link_text_element: $ => choice(
-      $.link_text,
-      $.code_span,
-      $.emphasis,
-      $.strong_emphasis
-    ),
+    _link_text_element: ($) =>
+      choice($.link_text, $.code_span, $.emphasis, $.strong_emphasis),
 
-    _inline_footnote_element: $ => choice(
-      $.footnote_text,
-      $.code_span,
-      $.emphasis,
-      $.strong_emphasis,
-      $.inline_footnote  // Allow nested inline footnotes
-    ),
+    _inline_footnote_element: ($) =>
+      choice(
+        $.footnote_text,
+        $.code_span,
+        $.emphasis,
+        $.strong_emphasis,
+        $.inline_footnote, // Allow nested inline footnotes
+      ),
 
-    image: $ => seq(
-      token('!'),
-      field('alt', seq('[', alias(/[^\]]*/, $.image_alt), ']')),
-      field('source', seq('(', alias(/[^)]+/, $.image_source), ')'))
-    ),
+    image: ($) =>
+      seq(
+        token("!"),
+        field("alt", seq("[", alias(/[^\]]*/, $.image_alt), "]")),
+        field("source", seq("(", alias(/[^)]+/, $.image_source), ")")),
+      ),
 
     /**
      * Inline Footnote
@@ -733,11 +875,8 @@ module.exports = grammar({
      * Pandoc-style inline footnote. Content can include other inline elements including
      * emphasis, strong emphasis, code spans, and nested inline footnotes.
      */
-    inline_footnote: $ => prec(2, seq(
-      token('^['),
-      repeat1($._inline_footnote_element),
-      ']'
-    )),
+    inline_footnote: ($) =>
+      prec(2, seq(token("^["), repeat1($._inline_footnote_element), "]")),
 
     /**
      * Footnote Reference
@@ -746,10 +885,8 @@ module.exports = grammar({
      *
      * Reference to a footnote definition.
      */
-    footnote_reference: $ => alias(
-      token(/\[\^[^\]]+\]/),
-      $.footnote_reference_marker
-    ),
+    footnote_reference: ($) =>
+      alias(token(/\[\^[^\]]+\]/), $.footnote_reference_marker),
 
     /**
      * Citation
@@ -758,10 +895,11 @@ module.exports = grammar({
      *
      * Distinguished from cross-reference by lack of type prefix.
      */
-    citation: $ => seq(
-      token('@'),
-      field('key', alias(/[a-zA-Z][a-zA-Z0-9_]*/, $.citation_key))
-    ),
+    citation: ($) =>
+      seq(
+        token("@"),
+        field("key", alias(/[a-zA-Z][a-zA-Z0-9_]*/, $.citation_key)),
+      ),
 
     /**
      * Cross-Reference (Quarto-specific)
@@ -770,12 +908,16 @@ module.exports = grammar({
      *
      * Spec: openspec/specs/cross-references/spec.md
      */
-    cross_reference: $ => seq(
-      token('@'),
-      field('type', alias(choice('fig', 'tbl', 'eq', 'sec', 'lst'), $.reference_type)),
-      token('-'),
-      field('id', alias(/[a-zA-Z0-9_-]+/, $.reference_id))
-    ),
+    cross_reference: ($) =>
+      seq(
+        token("@"),
+        field(
+          "type",
+          alias(choice("fig", "tbl", "eq", "sec", "lst"), $.reference_type),
+        ),
+        token("-"),
+        field("id", alias(/[a-zA-Z0-9_-]+/, $.reference_id)),
+      ),
 
     /**
      * Inline Code Cell (Quarto-specific)
@@ -785,34 +927,44 @@ module.exports = grammar({
      *
      * Spec: openspec/specs/inline-code-cells/spec.md
      */
-    inline_code_cell: $ => prec.dynamic(1, choice(
-      // Curly brace syntax: `{python} expr`
-      seq(
-        alias(token('`{'), $.inline_cell_delimiter),
-        field('language', alias(/[a-zA-Z][a-zA-Z0-9_-]*/, $.language_name)),
-        alias(token('}'), $.inline_cell_brace),
-        optional(/[ \t]+/),
-        field('content', alias(/[^`]*/, $.cell_content)),
-        alias(token('`'), $.inline_cell_delimiter)
+    inline_code_cell: ($) =>
+      prec.dynamic(
+        1,
+        choice(
+          // Curly brace syntax: `{python} expr`
+          seq(
+            alias(token("`{"), $.inline_cell_delimiter),
+            field("language", alias(/[a-zA-Z][a-zA-Z0-9_-]*/, $.language_name)),
+            alias(token("}"), $.inline_cell_brace),
+            optional(/[ \t]+/),
+            field("content", alias(/[^`]*/, $.cell_content)),
+            alias(token("`"), $.inline_cell_delimiter),
+          ),
+          // Shorthand syntax: `r expr`
+          seq(
+            alias(token(seq("`r", /[ \t]+/)), $.inline_cell_delimiter),
+            field("content", alias(/[^`]*/, $.cell_content)),
+            alias(token("`"), $.inline_cell_delimiter),
+          ),
+        ),
       ),
-      // Shorthand syntax: `r expr`
-      seq(
-        alias(token(seq('`r', /[ \t]+/)), $.inline_cell_delimiter),
-        field('content', alias(/[^`]*/, $.cell_content)),
-        alias(token('`'), $.inline_cell_delimiter)
-      )
-    )),
 
     /**
      * Inline Shortcode
      *
      * {{< video url >}}
      */
-    shortcode_inline: $ => seq(
-      alias(token(/\{\{<[ \t]*/), $.shortcode_open),
-      field('name', alias(/[a-zA-Z][a-zA-Z0-9_-]*/, $.shortcode_name)),
-      optional(field('arguments', alias(/[ \t]+[^ \t\r\n>][^>]*/, $.shortcode_arguments))),
-      alias(token(/[ \t]*>\}\}/), $.shortcode_close)
-    ),
-  }
+    shortcode_inline: ($) =>
+      seq(
+        alias(token(/\{\{<[ \t]*/), $.shortcode_open),
+        field("name", alias(/[a-zA-Z][a-zA-Z0-9_-]*/, $.shortcode_name)),
+        optional(
+          field(
+            "arguments",
+            alias(/[ \t]+[^ \t\r\n>][^>]*/, $.shortcode_arguments),
+          ),
+        ),
+        alias(token(/[ \t]*>\}\}/), $.shortcode_close),
+      ),
+  },
 });

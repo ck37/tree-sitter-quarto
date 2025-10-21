@@ -2523,6 +2523,15 @@
           "value": "caret"
         },
         {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "$"
+          },
+          "named": true,
+          "value": "dollar_sign"
+        },
+        {
           "type": "SYMBOL",
           "name": "text"
         }
@@ -2530,7 +2539,7 @@
     },
     "text": {
       "type": "PATTERN",
-      "value": "[^\\r\\n`*_\\[@<${^~=]+"
+      "value": "[^\\r\\n`*_\\[@<{^~=$]+"
     },
     "equals_sign": {
       "type": "STRING",
@@ -2588,11 +2597,8 @@
         {
           "type": "ALIAS",
           "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "STRING",
-              "value": "$"
-            }
+            "type": "SYMBOL",
+            "name": "_inline_math_open"
           },
           "named": true,
           "value": "math_delimiter"
@@ -2609,11 +2615,8 @@
         {
           "type": "ALIAS",
           "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "STRING",
-              "value": "$"
-            }
+            "type": "SYMBOL",
+            "name": "_inline_math_close"
           },
           "named": true,
           "value": "math_delimiter"
@@ -3585,6 +3588,14 @@
     {
       "type": "SYMBOL",
       "name": "_superscript_close"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_inline_math_open"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_inline_math_close"
     }
   ],
   "inline": [],

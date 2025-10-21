@@ -8,6 +8,7 @@
  * 4. _chunk_option_continuation - Detect multi-line chunk option continuations
  * 5. _subscript_open/_subscript_close - Context-aware subscript delimiters (~)
  * 6. _superscript_open/_superscript_close - Context-aware superscript delimiters (^)
+ * 7. _inline_math_open/_inline_math_close - Context-aware inline math delimiters ($)
  *
  * Spec: openspec/specs/grammar-foundation/spec.md
  *       openspec/specs/chunk-options/spec.md
@@ -28,6 +29,8 @@ enum TokenType {
   SUBSCRIPT_CLOSE,
   SUPERSCRIPT_OPEN,
   SUPERSCRIPT_CLOSE,
+  INLINE_MATH_OPEN,
+  INLINE_MATH_CLOSE,
 };
 
 // Scanner state
@@ -37,6 +40,7 @@ typedef struct {
   uint32_t fence_length;        // Track the opening fence length
   uint8_t inside_subscript;     // Track if we're inside subscript (0=false, 1=true)
   uint8_t inside_superscript;   // Track if we're inside superscript (0=false, 1=true)
+  uint8_t inside_inline_math;   // Track if we're inside inline math (0=false, 1=true)
 } Scanner;
 
 // Initialize scanner
@@ -47,6 +51,7 @@ void *tree_sitter_quarto_external_scanner_create() {
   scanner->fence_length = 0;
   scanner->inside_subscript = 0;
   scanner->inside_superscript = 0;
+  scanner->inside_inline_math = 0;
   return scanner;
 }
 
@@ -65,30 +70,41 @@ unsigned tree_sitter_quarto_external_scanner_serialize(void *payload, char *buff
   buffer[3] = (char)((scanner->fence_length >> 8) & 0xFF);
   buffer[4] = scanner->inside_subscript;
   buffer[5] = scanner->inside_superscript;
-  return 6;
+  buffer[6] = scanner->inside_inline_math;
+  return 7;
 }
 
 // Deserialize scanner state
 void tree_sitter_quarto_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {
   Scanner *scanner = (Scanner *)payload;
-  if (length >= 6) {
+  if (length >= 7) {
     scanner->in_executable_cell = buffer[0] != 0;
     scanner->at_cell_start = buffer[1] != 0;
     scanner->fence_length = ((uint32_t)buffer[2] & 0xFF) | (((uint32_t)buffer[3] & 0xFF) << 8);
     scanner->inside_subscript = buffer[4];
     scanner->inside_superscript = buffer[5];
+    scanner->inside_inline_math = buffer[6];
+  } else if (length >= 6) {
+    scanner->in_executable_cell = buffer[0] != 0;
+    scanner->at_cell_start = buffer[1] != 0;
+    scanner->fence_length = ((uint32_t)buffer[2] & 0xFF) | (((uint32_t)buffer[3] & 0xFF) << 8);
+    scanner->inside_subscript = buffer[4];
+    scanner->inside_superscript = buffer[5];
+    scanner->inside_inline_math = 0;
   } else if (length >= 4) {
     scanner->in_executable_cell = buffer[0] != 0;
     scanner->at_cell_start = buffer[1] != 0;
     scanner->fence_length = ((uint32_t)buffer[2] & 0xFF) | (((uint32_t)buffer[3] & 0xFF) << 8);
     scanner->inside_subscript = 0;
     scanner->inside_superscript = 0;
+    scanner->inside_inline_math = 0;
   } else {
     scanner->in_executable_cell = false;
     scanner->at_cell_start = false;
     scanner->fence_length = 0;
     scanner->inside_subscript = 0;
     scanner->inside_superscript = 0;
+    scanner->inside_inline_math = 0;
   }
 }
 
@@ -372,6 +388,112 @@ static bool scan_caret(Scanner *scanner, TSLexer *lexer, const bool *valid_symbo
   return false;
 }
 
+/**
+ * Scan dollar sign ($) for inline math formatting
+ *
+ * Pandoc inline math syntax: $x^2 + y^2 = z^2$
+ * - Single $ delimiters ($$  is display math)
+ * - Opening $ must have non-space character immediately to its right
+ * - Closing $ must have non-space character immediately to its left
+ * - Closing $ must NOT be followed immediately by a digit (protects currency: $20,000)
+ * - Context-aware via valid_symbols to prevent false positives
+ *
+ * Currency protection examples that should NOT parse as math:
+ * - $50 ($ followed by digit)
+ * - $160 ($ followed by digits)
+ * - $25-30 ($ followed by digit)
+ *
+ * Returns true if inline math delimiter matched, false otherwise
+ */
+static bool scan_dollar_sign(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
+  // Early exit if dollar sign tokens not valid in current context
+  if (!valid_symbols[INLINE_MATH_OPEN] && !valid_symbols[INLINE_MATH_CLOSE]) {
+    return false;
+  }
+
+  // Must be on a dollar sign
+  if (lexer->lookahead != '$') {
+    return false;
+  }
+
+  // Advance to peek at next character
+  lexer->advance(lexer, false);
+
+  // Check for $$ (display math, not inline)
+  if (lexer->lookahead == '$') {
+    // This is $$, let display_math rule handle it
+    return false;
+  }
+
+  // Check if we're closing an inline math expression
+  if (scanner->inside_inline_math > 0 && valid_symbols[INLINE_MATH_CLOSE]) {
+    // Pandoc rule: closing $ must NOT be followed immediately by a digit
+    // This protects currency amounts like "$20,000 and $30,000"
+    if (lexer->lookahead >= '0' && lexer->lookahead <= '9') {
+      // This looks like it might be currency, reject as math closing
+      return false;
+    }
+
+    // Closing delimiter found - mark end at current position (after the $)
+    lexer->mark_end(lexer);
+    scanner->inside_inline_math = 0;
+    lexer->result_symbol = INLINE_MATH_CLOSE;
+    return true;
+  }
+
+  // Check if we can open an inline math expression
+  if (valid_symbols[INLINE_MATH_OPEN]) {
+    // Pandoc rule: opening $ must have non-space character immediately to its right
+    // AND must NOT be followed by a digit (protects currency: $50, $160)
+    if (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
+        lexer->lookahead == '\n' || lexer->lookahead == '\r' ||
+        (lexer->lookahead >= '0' && lexer->lookahead <= '9')) {
+      // Either whitespace or digit after $, reject as math opening
+      return false;
+    }
+
+    // Mark end here (after the opening $, before lookahead)
+    lexer->mark_end(lexer);
+
+    // Lookahead to verify there's a closing $ somewhere ahead
+    // This prevents false positives on isolated dollar signs
+    bool has_closing = false;
+    int lookahead_count = 0;
+    const int MAX_LOOKAHEAD = 200; // Reasonable limit for inline math length
+
+    while (lookahead_count < MAX_LOOKAHEAD && lexer->lookahead != 0 &&
+           lexer->lookahead != '\n' && lexer->lookahead != '\r') {
+      if (lexer->lookahead == '$') {
+        // Check if next character after this potential closing $ is a digit
+        lexer->advance(lexer, false);
+        if (lexer->lookahead >= '0' && lexer->lookahead <= '9') {
+          // Not a valid closing delimiter ($ followed by digit), keep looking
+          lexer->advance(lexer, false);
+          lookahead_count += 2;
+          continue;
+        }
+        // Found valid closing delimiter
+        has_closing = true;
+        break;
+      }
+      lexer->advance(lexer, false);
+      lookahead_count++;
+    }
+
+    if (!has_closing) {
+      // No closing delimiter found, reject this as inline math opening
+      return false;
+    }
+
+    // Opening delimiter valid
+    scanner->inside_inline_math = 1;
+    lexer->result_symbol = INLINE_MATH_OPEN;
+    return true;
+  }
+
+  return false;
+}
+
 // Check if current position is a cell boundary (fence delimiter)
 static bool scan_cell_boundary(Scanner *scanner, TSLexer *lexer) {
   // Count backticks
@@ -421,7 +543,7 @@ bool tree_sitter_quarto_external_scanner_scan(
 ) {
   Scanner *scanner = (Scanner *)payload;
 
-  // Try subscript/superscript first (before whitespace skipping)
+  // Try subscript/superscript/inline_math first (before whitespace skipping)
   // These need to check character position precisely
   if (lexer->lookahead == '~') {
     if (scan_tilde(scanner, lexer, valid_symbols)) {
@@ -431,6 +553,12 @@ bool tree_sitter_quarto_external_scanner_scan(
 
   if (lexer->lookahead == '^') {
     if (scan_caret(scanner, lexer, valid_symbols)) {
+      return true;
+    }
+  }
+
+  if (lexer->lookahead == '$') {
+    if (scan_dollar_sign(scanner, lexer, valid_symbols)) {
       return true;
     }
   }

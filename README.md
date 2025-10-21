@@ -1,7 +1,7 @@
 # tree-sitter-quarto
 
 [![CI](https://github.com/ck37/tree-sitter-quarto/workflows/CI/badge.svg)](https://github.com/ck37/tree-sitter-quarto/actions)
-[![Tests](https://img.shields.io/badge/tests-167%2F167%20passing-brightgreen)](https://github.com/ck37/tree-sitter-quarto/actions)
+[![Tests](https://img.shields.io/badge/tests-195%2F195%20passing-brightgreen)](https://github.com/ck37/tree-sitter-quarto/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![tree-sitter](https://img.shields.io/badge/tree--sitter-0.25.10-orange)](https://tree-sitter.github.io/)
 [![Node Version](https://img.shields.io/badge/node-%3E%3D16-brightgreen)](https://nodejs.org/)
@@ -26,6 +26,7 @@ Fully implemented:
   - Highlight: `==important text==`
   - Subscript: `H~2~O`, `C~6~H~12~O~6~`
   - Superscript: `x^2^`, `E=mc^2^`
+  - Inline math: `$x^2 + y^2 = z^2$` - Context-aware parsing that correctly distinguishes LaTeX math from currency amounts (`$50`, `$160`)
 - Shortcodes - `{{< video url >}}` in block and inline contexts
 - Enhanced divs - Callouts, tabsets, conditional content
   - `::: {.callout-note}` - 5 types: note, warning, important, tip, caution
@@ -65,7 +66,7 @@ format: html
 
 ## Results
 
-See @fig-plot for details. The chemical formula is H~2~O and the area is x^2^.
+See @fig-plot for details. The chemical formula is H~2~O and the equation $E=mc^2$ shows energy.
 
 ```{python}
 #| label: fig-plot
@@ -90,7 +91,7 @@ Output AST (simplified):
   (paragraph
     (cross_reference type:"fig" id:"plot")
     (subscript "2")
-    (superscript "2"))
+    (inline_math ...))
   (executable_code_cell
     language: "python"
     (chunk_options

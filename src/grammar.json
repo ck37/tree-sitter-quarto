@@ -1959,32 +1959,32 @@
       "type": "PREC_DYNAMIC",
       "value": 2,
       "content": {
-        "type": "PREC_RIGHT",
-        "value": 0,
-        "content": {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "pipe_table_start"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "pipe_table_header"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "pipe_table_delimiter"
-            },
-            {
-              "type": "REPEAT",
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "pipe_table_start"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "pipe_table_header"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "pipe_table_delimiter"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "PREC_DYNAMIC",
+              "value": 10,
               "content": {
                 "type": "SYMBOL",
                 "name": "pipe_table_row"
               }
             }
-          ]
-        }
+          }
+        ]
       }
     },
     "pipe_table_header": {
@@ -2072,40 +2072,59 @@
       ]
     },
     "pipe_table_row": {
-      "type": "PREC_DYNAMIC",
-      "value": 1,
-      "content": {
-        "type": "TOKEN",
-        "content": {
-          "type": "SEQ",
-          "members": [
-            {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PREC",
+            "value": 100,
+            "content": {
               "type": "STRING",
               "value": "|"
-            },
-            {
-              "type": "REPEAT1",
-              "content": {
-                "type": "SEQ",
-                "members": [
-                  {
+            }
+          }
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "content",
+                "content": {
+                  "type": "ALIAS",
+                  "content": {
                     "type": "PATTERN",
                     "value": "[^|\\r\\n]+"
                   },
-                  {
-                    "type": "STRING",
-                    "value": "|"
-                  }
-                ]
+                  "named": true,
+                  "value": "table_cell"
+                }
+              },
+              {
+                "type": "TOKEN",
+                "content": {
+                  "type": "STRING",
+                  "value": "|"
+                }
               }
-            },
-            {
+            ]
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PREC",
+            "value": 100,
+            "content": {
               "type": "PATTERN",
               "value": "\\r?\\n"
             }
-          ]
+          }
         }
-      }
+      ]
     },
     "attribute_list": {
       "type": "CHOICE",

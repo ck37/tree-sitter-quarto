@@ -1679,7 +1679,18 @@
   {
     "type": "pipe_table_row",
     "named": true,
-    "fields": {}
+    "fields": {
+      "content": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "table_cell",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "raw_block",

@@ -561,13 +561,11 @@ module.exports = grammar({
     pipe_table: ($) =>
       prec.dynamic(
         2,
-        prec.right(
-          seq(
-            $.pipe_table_start,
-            $.pipe_table_header,
-            $.pipe_table_delimiter,
-            repeat($.pipe_table_row),
-          ),
+        seq(
+          $.pipe_table_start,
+          $.pipe_table_header,
+          $.pipe_table_delimiter,
+          repeat(prec.dynamic(10, $.pipe_table_row)),
         ),
       ),
 
@@ -589,11 +587,17 @@ module.exports = grammar({
         /\r?\n/,
       ),
 
-    // Note: pipe_table_row is wrapped in token() to ensure it's recognized as part
-    // of the table rather than starting a new paragraph. This means individual cells
-    // are not exposed as separate AST nodes, but the full row text is available.
+    // Pipe table data row - exposes individual cells as AST nodes
+    // Matches pipe_table_header structure for consistency
+    // Uses prec on leading pipe and newline to ensure row is recognized atomically
     pipe_table_row: ($) =>
-      prec.dynamic(1, token(seq("|", repeat1(seq(/[^|\r\n]+/, "|")), /\r?\n/))),
+      seq(
+        token(prec(100, "|")),
+        repeat1(
+          seq(field("content", alias(/[^|\r\n]+/, $.table_cell)), token("|")),
+        ),
+        token(prec(100, /\r?\n/)),
+      ),
 
     // Attribute List (for divs, cells, links/spans, headings, etc.)
     attribute_list: ($) =>

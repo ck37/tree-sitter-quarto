@@ -18,7 +18,9 @@ Basic pipe table
     (pipe_table_delimiter
       (table_delimiter_cell)
       (table_delimiter_cell))
-    (pipe_table_row)))
+    (pipe_table_row
+      content: (table_cell)
+      content: (table_cell))))
 
 ==================
 Pipe table with multiple rows
@@ -42,9 +44,15 @@ Pipe table with multiple rows
     (pipe_table_delimiter
       (table_delimiter_cell)
       (table_delimiter_cell))
-    (pipe_table_row)
-    (pipe_table_row)
-    (pipe_table_row)))
+    (pipe_table_row
+      content: (table_cell)
+      content: (table_cell))
+    (pipe_table_row
+      content: (table_cell)
+      content: (table_cell))
+    (pipe_table_row
+      content: (table_cell)
+      content: (table_cell))))
 
 ==================
 Pipe table with left alignment
@@ -64,7 +72,8 @@ Pipe table with left alignment
       content: (table_cell))
     (pipe_table_delimiter
       (table_delimiter_cell))
-    (pipe_table_row)))
+    (pipe_table_row
+      content: (table_cell))))
 
 ==================
 Pipe table with center alignment
@@ -84,7 +93,8 @@ Pipe table with center alignment
       content: (table_cell))
     (pipe_table_delimiter
       (table_delimiter_cell))
-    (pipe_table_row)))
+    (pipe_table_row
+      content: (table_cell))))
 
 ==================
 Pipe table with right alignment
@@ -104,7 +114,8 @@ Pipe table with right alignment
       content: (table_cell))
     (pipe_table_delimiter
       (table_delimiter_cell))
-    (pipe_table_row)))
+    (pipe_table_row
+      content: (table_cell))))
 
 ==================
 Pipe table with mixed alignment
@@ -128,7 +139,10 @@ Pipe table with mixed alignment
       (table_delimiter_cell)
       (table_delimiter_cell)
       (table_delimiter_cell))
-    (pipe_table_row)))
+    (pipe_table_row
+      content: (table_cell)
+      content: (table_cell)
+      content: (table_cell))))
 
 ==================
 Pipe table with empty cells
@@ -151,8 +165,12 @@ Pipe table with empty cells
     (pipe_table_delimiter
       (table_delimiter_cell)
       (table_delimiter_cell))
-    (pipe_table_row)
-    (pipe_table_row)))
+    (pipe_table_row
+      content: (table_cell)
+      content: (table_cell))
+    (pipe_table_row
+      content: (table_cell)
+      content: (table_cell))))
 
 ==================
 Pipe table without rows
@@ -173,3 +191,59 @@ Pipe table without rows
     (pipe_table_delimiter
       (table_delimiter_cell)
       (table_delimiter_cell))))
+
+==================
+Pipe table with inline formatting in cells
+==================
+
+| Style | Example |
+|-------|---------|
+| **bold** | *italic* |
+| ~~strike~~ | `code` |
+
+---
+
+(document
+  (blank_line)
+  (pipe_table
+    (pipe_table_start)
+    (pipe_table_header
+      content: (table_cell)
+      content: (table_cell))
+    (pipe_table_delimiter
+      (table_delimiter_cell)
+      (table_delimiter_cell))
+    (pipe_table_row
+      content: (table_cell)
+      content: (table_cell))
+    (pipe_table_row
+      content: (table_cell)
+      content: (table_cell))))
+
+==================
+Pipe table with mixed content in cells
+==================
+
+| Column 1 | Column 2 |
+|----------|----------|
+| **bold** and `code` | normal text |
+| $x^2$ | H~2~O |
+
+---
+
+(document
+  (blank_line)
+  (pipe_table
+    (pipe_table_start)
+    (pipe_table_header
+      content: (table_cell)
+      content: (table_cell))
+    (pipe_table_delimiter
+      (table_delimiter_cell)
+      (table_delimiter_cell))
+    (pipe_table_row
+      content: (table_cell)
+      content: (table_cell))
+    (pipe_table_row
+      content: (table_cell)
+      content: (table_cell))))

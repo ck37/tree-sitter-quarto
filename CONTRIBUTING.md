@@ -256,13 +256,39 @@ Contributions should not significantly regress performance without good reason.
 - Fixing bugs or limitations → Update known issues in `README.md`
 - Editor integration changes → Update `docs/editor-integration.md`
 
-### Documentation Files
+### Documentation Structure
 
+The `docs/` directory is organized into current and historical documentation:
+
+**Current Documentation (docs/ root):**
+- `README.md` - Documentation overview and organization
+- `plan.md` - Implementation history and architecture
+- `todo.md` - Implementation checklist
+- `validation.md` - Corpus validation methodology and results
+- `benchmarks.md` - Performance characteristics
+- `editor-integration.md` - Guide for editor extension developers
+- `comparison.md` - Parser ecosystem comparison
+- `visual-comparison.md` - AST output examples
+- `reference-documentation.md` - Quick reference
+- Known limitations docs (generic-fenced-div-limitation.md, inline-attributes-known-issues.md, zed-compatibility-resolution.md)
+
+**Historical Documentation (docs/archive/):**
+The `archive/` directory contains point-in-time snapshots, session notes, and completed research organized by category:
+- `sessions/` - Development session records
+- `validation/` - Historical corpus validation results
+- `performance/` - Performance investigation snapshots
+- `features/` - Completed feature research
+- `releases/` - Historical release planning
+- `comparisons/` - Parser comparison research
+- `design-notes/` - Design decisions and lessons learned
+- `wasm/` - WASM build setup and test results
+
+Update current documentation when making changes. Historical documents are preserved for context but not actively maintained.
+
+**Project-Level Documentation:**
 - `README.md` - Project overview, features, and quick start
-- `docs/plan.md` - Implementation history and architecture
-- `docs/editor-integration.md` - Guide for editor extension developers
-- `docs/comparison.md` - Comparison with other parsers
 - `CONTRIBUTING.md` - This file
+- `CLAUDE.md` - Guidance for AI assistants
 
 ## OpenSpec Process
 

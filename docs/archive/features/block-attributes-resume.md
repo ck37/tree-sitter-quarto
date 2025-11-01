@@ -414,8 +414,8 @@ Mark this work complete when:
 
 For questions, refer to:
 - `openspec/changes/add-block-element-attributes/design.md` - Technical decisions
-- `docs/validation-findings-2025-10-17.md` - Original validation analysis
-- `docs/v0.1.0-release-readiness.md` - Release context
+- `docs/archive/validation/validation-findings-2025-10-17.md` - Original validation analysis
+- `docs/archive/releases/v0.1.0-release-readiness.md` - Release context
 
 ---
 

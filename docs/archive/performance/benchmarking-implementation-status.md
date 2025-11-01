@@ -137,8 +137,8 @@ As defined in the OpenSpec proposal:
 
 ### Documentation
 
-- `docs/missing-features-analysis.md` - Feature gap analysis
-- `docs/benchmarking-implementation-status.md` (this file)
+- `docs/archive/features/missing-features-analysis.md` - Feature gap analysis
+- `docs/archive/performance/benchmarking-implementation-status.md` (this file)
 - `openspec/changes/add-performance-benchmarking/` - Full spec
 
 ---

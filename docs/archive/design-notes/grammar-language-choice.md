@@ -170,5 +170,5 @@ The official quarto-markdown Rust grammars serve a different use case (Rust tool
 
 ## See Also
 
-- [docs/comparison.md](./comparison.md) - Full comparison with other Quarto parsers
-- [CLAUDE.md](../CLAUDE.md) - Project overview and architecture decisions
+- [docs/comparison.md](../../comparison.md) - Full comparison with other Quarto parsers
+- [CLAUDE.md](../../../CLAUDE.md) - Project overview and architecture decisions

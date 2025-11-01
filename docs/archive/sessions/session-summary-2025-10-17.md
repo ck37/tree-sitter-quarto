@@ -33,7 +33,7 @@ Three major tasks completed:
 
 ## 2. Missing Features Analysis ✅
 
-**Location:** `docs/missing-features-analysis.md`
+**Location:** `docs/archive/features/missing-features-analysis.md`
 
 ### Key Findings
 
@@ -104,9 +104,9 @@ Three major tasks completed:
 
 #### Documentation (3 files)
 
-- ✅ `docs/missing-features-analysis.md` (~500 lines)
-- ✅ `docs/benchmarking-implementation-status.md` (~200 lines)
-- ✅ `docs/session-summary-2025-10-17.md` (this file)
+- ✅ `docs/archive/features/missing-features-analysis.md` (~500 lines)
+- ✅ `docs/archive/performance/benchmarking-implementation-status.md` (~200 lines)
+- ✅ `docs/archive/sessions/session-summary-2025-10-17.md` (this file)
 
 ### Performance Targets Defined
 
@@ -175,7 +175,7 @@ npm install --save-dev tree-sitter
 
 - `package.json` - Added 5 benchmark/validation scripts
 - `scripts/benchmark.js` - Fixed language loading (module.language)
-- `docs/benchmarking-implementation-status.md` - Updated with ABI issue
+- `docs/archive/performance/benchmarking-implementation-status.md` - Updated with ABI issue
 
 ---
 
@@ -212,7 +212,7 @@ npm install --save-dev tree-sitter
 - Test corpus (159/159) doesn't reflect real-world complexity
 - Core features work, but missing critical Pandoc syntax
 
-**Detailed Report:** `docs/validation-findings-2025-10-17.md`
+**Detailed Report:** `docs/archive/validation/validation-findings-2025-10-17.md`
 
 ---
 
@@ -332,11 +332,11 @@ All requested tasks completed successfully PLUS critical validation:
 
 ### Planning & Specifications
 - OpenSpec Proposal: `openspec/changes/add-performance-benchmarking/`
-- Feature Analysis: `docs/missing-features-analysis.md`
-- Implementation Status: `docs/benchmarking-implementation-status.md`
+- Feature Analysis: `docs/archive/features/missing-features-analysis.md`
+- Implementation Status: `docs/archive/performance/benchmarking-implementation-status.md`
 
 ### Validation & Analysis
-- **Validation Findings:** `docs/validation-findings-2025-10-17.md` ⭐ **NEW**
+- **Validation Findings:** `docs/archive/validation/validation-findings-2025-10-17.md` ⭐ **NEW**
 - Validation Report: `benchmarks/validation/validation-report.md`
 - Validation Results (JSON): `benchmarks/validation/results.json`
 

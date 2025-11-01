@@ -15,10 +15,10 @@ description: Tasks related to documentation organization, updates, maintenance, 
 <!-- Medium priority documentation tasks -->
 
 ### Low Priority
-- `l-docs-organize-historical-docs.md` - Reorganize docs/ directory by archiving 23 historical documents into logical subdirectories
+<!-- Low priority documentation tasks -->
 
 ### Investigate
 <!-- Documentation investigations -->
 
 ## Completed Tasks
-<!-- Move tasks here when completed, maintaining the format -->
+- `l-docs-organize-historical-docs.md` - Reorganize docs/ directory by archiving 23 historical documents into logical subdirectories

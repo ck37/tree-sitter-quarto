@@ -10,6 +10,7 @@ description: Tasks related to tree-sitter grammar rules, parser behavior, extern
 
 ### High Priority
 - `h-fix-ambiguous-triple-asterisks.md` - Fix ERROR node consuming subsequent content when parsing `*italic***bold***italic*`
+- `h-refactor-import-tree-sitter-markdown.md` - Refactor from "Copy & Extend" to "Import & Extend" strategy to include tree-sitter-markdown external scanner
 
 ### Medium Priority
 <!-- Medium priority parser/grammar tasks -->

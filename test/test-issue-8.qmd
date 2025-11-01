@@ -1,0 +1,5 @@
+Before this line, highlighting works fine.
+
+*italic***bold***italic*
+
+After this line with **bold** and *italic*.

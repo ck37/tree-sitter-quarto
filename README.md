@@ -116,15 +116,7 @@ Output AST (simplified):
 
 ## Documentation
 
-See the [docs/](./docs/) directory for detailed documentation:
-- [docs/README.md](./docs/README.md) - Documentation overview and organization
-- [docs/plan.md](./docs/plan.md) - Implementation plan and architecture
-- [docs/editor-integration.md](./docs/editor-integration.md) - Editor integration guide
-- [docs/comparison.md](./docs/comparison.md) - Parser ecosystem comparison
-- [docs/validation.md](./docs/validation.md) - Corpus validation methodology
-- [docs/benchmarks.md](./docs/benchmarks.md) - Performance characteristics
-
-Historical documentation (session notes, completed research, point-in-time snapshots) is preserved in [docs/archive/](./docs/archive/).
+See the [docs/](./docs/) directory for detailed documentation.
 
 ## Contributing
 

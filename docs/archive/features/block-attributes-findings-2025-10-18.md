@@ -1,7 +1,7 @@
 # Block Attributes Implementation Findings
 
 **Date:** 2025-10-18
-**Session Focus:** Resume block attributes work from docs/block-attributes-resume.md
+**Session Focus:** Resume block attributes work from docs/archive/features/block-attributes-resume.md
 **Status:** BLOCKED - Fundamental parsing issue discovered
 **Result:** Implementation not viable with current approach
 
@@ -162,7 +162,7 @@ The `/[ \t]*/` pattern before `{` creates ambiguity:
 
 ## Why Resume Document Was Misleading
 
-The `docs/block-attributes-resume.md` said:
+The `docs/archive/features/block-attributes-resume.md` said:
 > "attributes ARE being recognized"
 > "ERROR nodes are acceptable IF attributes are recognized"
 
@@ -264,7 +264,7 @@ Look for precedence/associativity tricks that might work.
 - `test/corpus/block-attributes.txt` - 9 tests (some passing, some failing)
 
 ### Documentation
-- `docs/block-attributes-resume.md` - Previous session summary
+- `docs/archive/features/block-attributes-resume.md` - Previous session summary
 - `openspec/changes/add-block-element-attributes/` - Full proposal (not implemented)
 
 ---
@@ -312,7 +312,7 @@ Look for precedence/associativity tricks that might work.
 
 ## Session Time
 
-- **Start:** Reviewing docs/block-attributes-resume.md
+- **Start:** Reviewing docs/archive/features/block-attributes-resume.md
 - **Attempts:** Heading inline approach, simplified approach, precedence tuning
 - **Debugging:** Baseline testing, diff analysis, parse tree comparison
 - **Outcome:** Documented findings; implementation not viable with current knowledge
@@ -324,7 +324,7 @@ Look for precedence/associativity tricks that might work.
 
 - **OpenSpec Proposal:** `openspec/changes/add-block-element-attributes/proposal.md`
 - **Design Doc:** `openspec/changes/add-block-element-attributes/design.md`
-- **Previous Resume:** `docs/block-attributes-resume.md`
+- **Previous Resume:** `docs/archive/features/block-attributes-resume.md`
 - **Validation Report:** `benchmarks/validation/validation-report.md`
 
 For future attempts, consult:

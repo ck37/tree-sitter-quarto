@@ -280,8 +280,8 @@ List "Planned Features" including block attributes.
 
 ## Related Files
 
-- **Initial Analysis:** `docs/block-attributes-findings-2025-10-18.md`
-- **Resume Document:** `docs/block-attributes-resume.md`
+- **Initial Analysis:** `docs/archive/features/block-attributes-findings-2025-10-18.md`
+- **Resume Document:** `docs/archive/features/block-attributes-resume.md`
 - **OpenSpec Proposal:** `openspec/changes/add-block-element-attributes/`
 - **Test Cases:** `test/corpus/block-attributes.txt` (some tests pass with current approach)
 

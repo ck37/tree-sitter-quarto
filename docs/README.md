@@ -17,9 +17,9 @@ The files in this directory represent current, authoritative documentation for t
 
 **Known Limitations:**
 
-- **generic-fenced-div-limitation.md** - Technical explanation of accepted architectural constraint
-- **inline-attributes-known-issues.md** - Known cosmetic ERROR node issue
+- **inline-attributes-known-issues.md** - Known cosmetic ERROR node issue at paragraph start
 - **zed-compatibility-resolution.md** - Tree-sitter CLI version management and troubleshooting
+- **generic-fenced-div-limitation.md** - Historical reference (limitation resolved 2025-11-02)
 
 ## Historical Documentation
 

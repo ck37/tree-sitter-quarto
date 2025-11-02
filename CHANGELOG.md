@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- All 7 test suite failures resolved by removing colon from text exclusion pattern ([#18](https://github.com/ck37/tree-sitter-quarto/issues/18))
+  - Previously: Colons in regular text were parsed as separate `(colon)` tokens, causing test failures
+  - Now: Colons are included in text tokens, matching expected parse tree structure
+  - **Result**: Test suite now passes at 100% (224/224 tests passing, up from 217/224 or 96.9%)
+  - **Root cause**: Colon exclusion from text pattern was added for fenced div detection but was unnecessary since external scanner handles div detection independently
+  - **Technical details**: Removed `:` from text regex pattern and removed `alias(":", $.colon)` fallback nodes
+
 ### Changed
 
 - **BREAKING**: `pipe_table_row` AST structure now exposes individual `table_cell` nodes ([#11](https://github.com/ck37/tree-sitter-quarto/issues/11))

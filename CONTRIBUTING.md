@@ -10,7 +10,7 @@ All core features are complete and tested. Contributions welcome for bug fixes, 
 
 ### Priority Areas for Contribution
 
-1. **Real-world parsing** - Improve success rate from 20% to 90% target
+1. **Real-world parsing** - Improve success rate from 30% to 90% target
 2. **Bug fixes** - Address known limitations (see README.md)
 3. **Editor integrations** - Extensions for Neovim, Helix, VSCode
 4. **Documentation** - Improve examples and guides
@@ -215,7 +215,7 @@ npx tree-sitter test --debug
 
 ### Real-World Validation
 
-We validate against real Quarto documents from the Quarto website. Current success rate is 20%, targeting 90%. To help:
+We validate against real Quarto documents from the Quarto website. Current success rate is 30%, targeting 90%. To help:
 
 ```bash
 # Run validation (requires cloning quarto-web repo)

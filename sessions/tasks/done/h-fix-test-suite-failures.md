@@ -297,31 +297,29 @@ Related documentation at `/Users/ck432/Partners HealthCare Dropbox/Chris Kennedy
 
 The colon issue is similar in nature - a token that needs different treatment depending on context (line start for fenced divs vs. inline for text).
 
-### Success Criteria Reminder
-
-To complete this task, all 7 failing tests must pass without breaking any currently passing tests:
-
-- [ ] Test #94: JavaScript inline code cell
-- [ ] Test #97: R shorthand with function call
-- [ ] Test #99: Empty inline code cell
-- [ ] Test #126: Currency: Dollar followed by digit
-- [ ] Test #128: Currency: Range with dash
-- [ ] Test #129: Currency: Thousands separator
-- [ ] Test #205: Bracketed citation
-
-**Critical**: Changes must not introduce new failures in the 217 currently passing tests.
-
 ## User Notes
 <!-- Any specific notes or requirements from the developer -->
 
 ## Work Log
-<!-- Updated as work progresses -->
-- [2025-11-02] Started task, creating branch and verifying test failures
-- [2025-11-02] Verified all 7 failures caused by colon exclusion in text pattern
-- [2025-11-02] Implemented fix: Added colon back to text pattern (grammar.js:671)
-- [2025-11-02] Removed colon alias from all inline element choice blocks (lines 611, 638, 666)
-- [2025-11-02] Regenerated parser with `npx tree-sitter generate`
-- [2025-11-02] All tests now pass: 224/224 (100% success rate, up from 96.9%)
+
+### 2025-11-02
+
+#### Completed
+- Fixed all 7 test failures by removing colon from text exclusion pattern
+- Updated grammar.js: removed `:` from text regex (line 671)
+- Removed colon alias from three inline element choice blocks (lines 611, 638, 666)
+- Regenerated parser with tree-sitter CLI 0.25.10
+- Verified test suite: 224/224 tests passing (100%, up from 96.9%)
+
+#### Decisions
+- Chose Option 2 (add colon back to text pattern) over Option 1 (context-aware scanner)
+- External scanner already handles fenced div detection at line start, so colon exclusion was unnecessary
+- Simpler solution than implementing scanner function for context-aware colons
+
+#### Discovered
+- All 7 failures had same root cause: colons in inline text parsed as separate tokens
+- External scanner has priority over grammar rules, enabling safe removal of colon exclusion
+- Fenced divs require `:::` (3+ colons), so single colons in text don't interfere with div detection
 
 ## Resolution Summary
 

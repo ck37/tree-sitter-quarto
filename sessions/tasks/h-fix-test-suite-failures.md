@@ -1,7 +1,7 @@
 ---
 name: h-fix-test-suite-failures
 branch: fix/h-fix-test-suite-failures
-status: pending
+status: completed
 created: 2025-11-02
 ---
 
@@ -11,9 +11,9 @@ created: 2025-11-02
 The test suite currently has 7 failing tests (217/224 passing = 96.9%). These failures need to be resolved to ensure the parser is working correctly and to unblock releases.
 
 ## Success Criteria
-- [ ] All tests in the test suite pass (224/224)
-- [ ] No new test failures introduced
-- [ ] Root causes of failures documented in work log
+- [x] All tests in the test suite pass (224/224)
+- [x] No new test failures introduced
+- [x] Root causes of failures documented in work log
 
 ## Context Manifest
 <!-- Added by context-gathering agent -->
@@ -316,4 +316,22 @@ To complete this task, all 7 failing tests must pass without breaking any curren
 
 ## Work Log
 <!-- Updated as work progresses -->
-- [YYYY-MM-DD] Started task, initial research
+- [2025-11-02] Started task, creating branch and verifying test failures
+- [2025-11-02] Verified all 7 failures caused by colon exclusion in text pattern
+- [2025-11-02] Implemented fix: Added colon back to text pattern (grammar.js:671)
+- [2025-11-02] Removed colon alias from all inline element choice blocks (lines 611, 638, 666)
+- [2025-11-02] Regenerated parser with `npx tree-sitter generate`
+- [2025-11-02] All tests now pass: 224/224 (100% success rate, up from 96.9%)
+
+## Resolution Summary
+
+**Root Cause:** Colons were excluded from the text regex pattern (`/[^\r\n`*_\[@<{^~=$:]+/`) to enable fenced div detection, causing colons in regular text to be parsed as separate `(colon)` tokens.
+
+**Solution:** Removed colon from the text exclusion list and removed the colon alias fallback. The external scanner already handles fenced div detection correctly at line start, so the exclusion was unnecessary.
+
+**Changes Made:**
+1. Updated text pattern in grammar.js (line 671): Removed `:` from exclusion list
+2. Removed `alias(":", $.colon)` from three inline element choice blocks
+3. Regenerated parser with tree-sitter CLI 0.25.10
+
+**Result:** All 7 failing tests now pass without breaking any existing tests. Parser now correctly treats colons as part of text tokens in inline contexts while still detecting fenced divs (`::: {...}`) at line start.

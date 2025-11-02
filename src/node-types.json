@@ -405,10 +405,6 @@
           "named": true
         },
         {
-          "type": "colon",
-          "named": true
-        },
-        {
           "type": "cross_reference",
           "named": true
         },
@@ -800,10 +796,6 @@
           "named": true
         },
         {
-          "type": "colon",
-          "named": true
-        },
-        {
           "type": "cross_reference",
           "named": true
         },
@@ -978,10 +970,6 @@
         },
         {
           "type": "code_span",
-          "named": true
-        },
-        {
-          "type": "colon",
           "named": true
         },
         {
@@ -1639,10 +1627,6 @@
           "named": true
         },
         {
-          "type": "colon",
-          "named": true
-        },
-        {
           "type": "cross_reference",
           "named": true
         },
@@ -1739,10 +1723,6 @@
         },
         {
           "type": "code_span",
-          "named": true
-        },
-        {
-          "type": "colon",
           "named": true
         },
         {
@@ -1845,10 +1825,6 @@
           "named": true
         },
         {
-          "type": "colon",
-          "named": true
-        },
-        {
           "type": "cross_reference",
           "named": true
         },
@@ -1945,10 +1921,6 @@
         },
         {
           "type": "code_span",
-          "named": true
-        },
-        {
-          "type": "colon",
           "named": true
         },
         {
@@ -2233,10 +2205,6 @@
   },
   {
     "type": "code_span_delimiter",
-    "named": true
-  },
-  {
-    "type": "colon",
     "named": true
   },
   {

@@ -608,7 +608,6 @@ module.exports = grammar({
         alias("~", $.tilde), // Fallback for isolated tilde when scanner rejects subscript
         alias("^", $.caret), // Fallback for isolated caret when scanner rejects superscript
         alias("$", $.dollar_sign), // Fallback for isolated dollar sign when scanner rejects math
-        alias(":", $.colon), // Single colon (excluded from text to allow fenced div detection)
         $.text, // text last - fallback for anything not matched
       ),
 
@@ -636,7 +635,6 @@ module.exports = grammar({
         alias("~", $.tilde),
         alias("^", $.caret),
         alias("$", $.dollar_sign),
-        alias(":", $.colon),
         $.text,
       ),
 
@@ -664,11 +662,10 @@ module.exports = grammar({
         alias("~", $.tilde),
         alias("^", $.caret),
         alias("$", $.dollar_sign),
-        alias(":", $.colon),
         $.text,
       ),
 
-    text: ($) => /[^\r\n`*_\[@<{^~=$:]+/,
+    text: ($) => /[^\r\n`*_\[@<{^~=$]+/,
 
     // Single equals sign (for equations like E=mc^2^, not part of ==)
     equals_sign: ($) => "=",

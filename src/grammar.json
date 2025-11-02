@@ -2291,15 +2291,6 @@
           "value": "dollar_sign"
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "STRING",
-            "value": ":"
-          },
-          "named": true,
-          "value": "colon"
-        },
-        {
           "type": "SYMBOL",
           "name": "text"
         }
@@ -2420,15 +2411,6 @@
           },
           "named": true,
           "value": "dollar_sign"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "STRING",
-            "value": ":"
-          },
-          "named": true,
-          "value": "colon"
         },
         {
           "type": "SYMBOL",
@@ -2553,15 +2535,6 @@
           "value": "dollar_sign"
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "STRING",
-            "value": ":"
-          },
-          "named": true,
-          "value": "colon"
-        },
-        {
           "type": "SYMBOL",
           "name": "text"
         }
@@ -2569,7 +2542,7 @@
     },
     "text": {
       "type": "PATTERN",
-      "value": "[^\\r\\n`*_\\[@<{^~=$:]+"
+      "value": "[^\\r\\n`*_\\[@<{^~=$]+"
     },
     "equals_sign": {
       "type": "STRING",

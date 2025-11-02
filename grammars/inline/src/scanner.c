@@ -20,6 +20,9 @@
 #include <stdbool.h>
 #include <string.h>
 
+// Safety limit: Prevent runaway CODE_BLOCK_LINE emission (max 1000 consecutive lines)
+#define MAX_CODE_BLOCK_LINES 1000
+
 enum TokenType {
   PIPE_TABLE_START,
   CHUNK_OPTION_MARKER,
@@ -39,6 +42,9 @@ enum TokenType {
   LAST_TOKEN_PUNCTUATION,
   FENCED_DIV_OPEN,
   FENCED_DIV_CLOSE,
+  CODE_BLOCK_START,
+  CODE_BLOCK_LINE,
+  CODE_BLOCK_END,
 };
 
 // Scanner state
@@ -54,10 +60,15 @@ typedef struct {
   uint8_t num_emphasis_delimiters_left; // Number of characters remaining in current delimiter run
   // Fenced div state
   uint8_t fenced_div_depth;     // Track nesting depth of fenced divs (0 = not in any div)
+  // Code block state (scanner-controlled fence detection)
+  bool in_code_block;           // Track if we're inside a fenced code block
+  uint16_t code_block_fence_length; // Track opening fence length for validation
+  // Safety limit for code block lines (prevents runaway emission)
+  uint16_t code_block_line_count; // Count consecutive CODE_BLOCK_LINE emissions (max 1000)
 } Scanner;
 
 // Initialize scanner
-void *tree_sitter_quarto_external_scanner_create() {
+void *tree_sitter_quarto_inline_external_scanner_create() {
   Scanner *scanner = (Scanner *)calloc(1, sizeof(Scanner));
   scanner->in_executable_cell = false;
   scanner->at_cell_start = false;
@@ -68,17 +79,20 @@ void *tree_sitter_quarto_external_scanner_create() {
   scanner->state = 0;
   scanner->num_emphasis_delimiters_left = 0;
   scanner->fenced_div_depth = 0;
+  scanner->in_code_block = false;
+  scanner->code_block_fence_length = 0;
+  scanner->code_block_line_count = 0;
   return scanner;
 }
 
 // Destroy scanner
-void tree_sitter_quarto_external_scanner_destroy(void *payload) {
+void tree_sitter_quarto_inline_external_scanner_destroy(void *payload) {
   Scanner *scanner = (Scanner *)payload;
   free(scanner);
 }
 
 // Serialize scanner state
-unsigned tree_sitter_quarto_external_scanner_serialize(void *payload, char *buffer) {
+unsigned tree_sitter_quarto_inline_external_scanner_serialize(void *payload, char *buffer) {
   Scanner *scanner = (Scanner *)payload;
   // Defensive validation: ensure counts fit in uint8_t range
   if (scanner->inside_subscript > 255) scanner->inside_subscript = 255;
@@ -96,13 +110,18 @@ unsigned tree_sitter_quarto_external_scanner_serialize(void *payload, char *buff
   buffer[7] = scanner->state;
   buffer[8] = scanner->num_emphasis_delimiters_left;
   buffer[9] = scanner->fenced_div_depth;
-  return 10;
+  buffer[10] = scanner->in_code_block ? 1 : 0;
+  buffer[11] = (char)(scanner->code_block_fence_length & 0xFF);
+  buffer[12] = (char)((scanner->code_block_fence_length >> 8) & 0xFF);
+  buffer[13] = (char)(scanner->code_block_line_count & 0xFF);
+  buffer[14] = (char)((scanner->code_block_line_count >> 8) & 0xFF);
+  return 15;
 }
 
 // Deserialize scanner state
-void tree_sitter_quarto_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {
+void tree_sitter_quarto_inline_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {
   Scanner *scanner = (Scanner *)payload;
-  if (length >= 10) {
+  if (length >= 15) {
     scanner->in_executable_cell = buffer[0] != 0;
     scanner->at_cell_start = buffer[1] != 0;
     scanner->fence_length = ((uint32_t)buffer[2] & 0xFF) | (((uint32_t)buffer[3] & 0xFF) << 8);
@@ -112,6 +131,35 @@ void tree_sitter_quarto_external_scanner_deserialize(void *payload, const char *
     scanner->state = buffer[7];
     scanner->num_emphasis_delimiters_left = buffer[8];
     scanner->fenced_div_depth = buffer[9];
+    scanner->in_code_block = buffer[10] != 0;
+    scanner->code_block_fence_length = ((uint16_t)buffer[11] & 0xFF) | (((uint16_t)buffer[12] & 0xFF) << 8);
+    scanner->code_block_line_count = ((uint16_t)buffer[13] & 0xFF) | (((uint16_t)buffer[14] & 0xFF) << 8);
+  } else if (length >= 12) {
+    scanner->in_executable_cell = buffer[0] != 0;
+    scanner->at_cell_start = buffer[1] != 0;
+    scanner->fence_length = ((uint32_t)buffer[2] & 0xFF) | (((uint32_t)buffer[3] & 0xFF) << 8);
+    scanner->inside_subscript = buffer[4];
+    scanner->inside_superscript = buffer[5];
+    scanner->inside_inline_math = buffer[6];
+    scanner->state = buffer[7];
+    scanner->num_emphasis_delimiters_left = buffer[8];
+    scanner->fenced_div_depth = buffer[9];
+    scanner->in_code_block = false;
+    scanner->code_block_fence_length = 0;
+    scanner->code_block_line_count = ((uint16_t)buffer[10] & 0xFF) | (((uint16_t)buffer[11] & 0xFF) << 8);
+  } else if (length >= 10) {
+    scanner->in_executable_cell = buffer[0] != 0;
+    scanner->at_cell_start = buffer[1] != 0;
+    scanner->fence_length = ((uint32_t)buffer[2] & 0xFF) | (((uint32_t)buffer[3] & 0xFF) << 8);
+    scanner->inside_subscript = buffer[4];
+    scanner->inside_superscript = buffer[5];
+    scanner->inside_inline_math = buffer[6];
+    scanner->state = buffer[7];
+    scanner->num_emphasis_delimiters_left = buffer[8];
+    scanner->fenced_div_depth = buffer[9];
+    scanner->in_code_block = false;
+    scanner->code_block_fence_length = 0;
+    scanner->code_block_line_count = 0;
   } else if (length >= 9) {
     scanner->in_executable_cell = buffer[0] != 0;
     scanner->at_cell_start = buffer[1] != 0;
@@ -122,6 +170,9 @@ void tree_sitter_quarto_external_scanner_deserialize(void *payload, const char *
     scanner->state = buffer[7];
     scanner->num_emphasis_delimiters_left = buffer[8];
     scanner->fenced_div_depth = 0;
+    scanner->in_code_block = false;
+    scanner->code_block_fence_length = 0;
+    scanner->code_block_line_count = 0;
   } else if (length >= 7) {
     scanner->in_executable_cell = buffer[0] != 0;
     scanner->at_cell_start = buffer[1] != 0;
@@ -132,6 +183,9 @@ void tree_sitter_quarto_external_scanner_deserialize(void *payload, const char *
     scanner->state = 0;
     scanner->num_emphasis_delimiters_left = 0;
     scanner->fenced_div_depth = 0;
+    scanner->in_code_block = false;
+    scanner->code_block_fence_length = 0;
+    scanner->code_block_line_count = 0;
   } else if (length >= 6) {
     scanner->in_executable_cell = buffer[0] != 0;
     scanner->at_cell_start = buffer[1] != 0;
@@ -142,6 +196,9 @@ void tree_sitter_quarto_external_scanner_deserialize(void *payload, const char *
     scanner->state = 0;
     scanner->num_emphasis_delimiters_left = 0;
     scanner->fenced_div_depth = 0;
+    scanner->in_code_block = false;
+    scanner->code_block_fence_length = 0;
+    scanner->code_block_line_count = 0;
   } else if (length >= 4) {
     scanner->in_executable_cell = buffer[0] != 0;
     scanner->at_cell_start = buffer[1] != 0;
@@ -152,6 +209,9 @@ void tree_sitter_quarto_external_scanner_deserialize(void *payload, const char *
     scanner->state = 0;
     scanner->num_emphasis_delimiters_left = 0;
     scanner->fenced_div_depth = 0;
+    scanner->in_code_block = false;
+    scanner->code_block_fence_length = 0;
+    scanner->code_block_line_count = 0;
   } else {
     scanner->in_executable_cell = false;
     scanner->at_cell_start = false;
@@ -162,6 +222,9 @@ void tree_sitter_quarto_external_scanner_deserialize(void *payload, const char *
     scanner->state = 0;
     scanner->num_emphasis_delimiters_left = 0;
     scanner->fenced_div_depth = 0;
+    scanner->in_code_block = false;
+    scanner->code_block_fence_length = 0;
+    scanner->code_block_line_count = 0;
   }
 }
 
@@ -800,30 +863,192 @@ static bool scan_fenced_div_marker(Scanner *scanner, TSLexer *lexer, const bool 
   return false;
 }
 
+/**
+ * Scan for CODE_BLOCK_START token
+ *
+ * Detects opening fence (3+ backticks at start of line).
+ * Sets in_code_block flag and stores fence length.
+ * Returns true if found and consumed, false otherwise.
+ */
+static bool scan_code_block_start(Scanner *scanner, TSLexer *lexer) {
+  // Must be at start of line
+  if (lexer->get_column(lexer) != 0) {
+    return false;
+  }
+
+  // Must start with backtick
+  if (lexer->lookahead != '`') {
+    return false;
+  }
+
+  // Count and consume backticks
+  uint32_t count = 0;
+  while (lexer->lookahead == '`') {
+    count++;
+    lexer->advance(lexer, false);
+  }
+
+  // Must have at least 3 backticks
+  if (count < 3) {
+    return false;
+  }
+
+  // Store fence length and set state
+  scanner->code_block_fence_length = count;
+  scanner->in_code_block = true;
+
+  // Return true - don't consume info string, let grammar handle it
+  return true;
+}
+
+/**
+ * Scan for CODE_BLOCK_END token
+ *
+ * Detects closing fence (3+ backticks at start of line).
+ * Validates fence length against opening fence.
+ * Clears in_code_block state on successful match.
+ * Returns true if found and consumed, false otherwise.
+ */
+static bool scan_code_block_end(Scanner *scanner, TSLexer *lexer) {
+  // Must be at start of line
+  if (lexer->get_column(lexer) != 0) {
+    return false;
+  }
+
+  // Must start with backtick
+  if (lexer->lookahead != '`') {
+    return false;
+  }
+
+  // Count and consume backticks
+  uint32_t count = 0;
+  while (lexer->lookahead == '`') {
+    count++;
+    lexer->advance(lexer, false);
+  }
+
+  // Must have at least 3 backticks
+  if (count < 3) {
+    return false;
+  }
+
+  // Must match or exceed opening fence length
+  if (count < scanner->code_block_fence_length) {
+    return false;
+  }
+
+  // Skip optional trailing whitespace
+  while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+    lexer->advance(lexer, false);
+  }
+
+  // Must be followed by newline or EOF (not info string content)
+  if (lexer->lookahead != '\n' && lexer->lookahead != '\r' && !lexer->eof(lexer)) {
+    return false;
+  }
+
+  // Consume the newline if present
+  if (lexer->lookahead == '\r') {
+    lexer->advance(lexer, false);
+    if (lexer->lookahead == '\n') {
+      lexer->advance(lexer, false);
+    }
+  } else if (lexer->lookahead == '\n') {
+    lexer->advance(lexer, false);
+  }
+
+  // Clear code block state
+  scanner->in_code_block = false;
+  scanner->code_block_fence_length = 0;
+
+  return true;
+}
+
+/**
+ * Scan for CODE_BLOCK_LINE token
+ *
+ * Consumes entire line including newline when inside code block.
+ * Returns true if consumed, false otherwise.
+ */
+static bool scan_code_block_line(TSLexer *lexer) {
+  // Don't emit if already at EOF
+  if (lexer->eof(lexer)) {
+    return false;
+  }
+
+  // Consume all characters until newline or EOF
+  while (lexer->lookahead != '\n' && lexer->lookahead != '\r' && !lexer->eof(lexer)) {
+    lexer->advance(lexer, false);
+  }
+
+  // Consume the newline
+  if (lexer->lookahead == '\r') {
+    lexer->advance(lexer, false);
+    if (lexer->lookahead == '\n') {
+      lexer->advance(lexer, false);
+    }
+  } else if (lexer->lookahead == '\n') {
+    lexer->advance(lexer, false);
+  }
+
+  // Return true - we consumed at least up to newline or EOF
+  return true;
+}
+
 // Main scan function
-bool tree_sitter_quarto_external_scanner_scan(
+bool tree_sitter_quarto_inline_external_scanner_scan(
   void *payload,
   TSLexer *lexer,
   const bool *valid_symbols
 ) {
   Scanner *scanner = (Scanner *)payload;
 
+  // Handle code block opening fence (scanner-controlled detection)
+  if (valid_symbols[CODE_BLOCK_START] && scan_code_block_start(scanner, lexer)) {
+    lexer->result_symbol = CODE_BLOCK_START;
+    return true;
+  }
+
+  // Handle code block tokens (scanner-controlled with state tracking)
+  // Only emit CODE_BLOCK_LINE when we're confirmed to be inside a code block
+  if (valid_symbols[CODE_BLOCK_LINE] || valid_symbols[CODE_BLOCK_END]) {
+    // Check if current line is a closing fence
+    if (valid_symbols[CODE_BLOCK_END] && scan_code_block_end(scanner, lexer)) {
+      scanner->code_block_line_count = 0;  // Reset counter on close
+      lexer->result_symbol = CODE_BLOCK_END;
+      return true;
+    }
+
+    // Otherwise, emit a code line (only if we're confirmed to be in a code block)
+    if (valid_symbols[CODE_BLOCK_LINE] &&
+        scanner->in_code_block &&  // CRITICAL: Only emit when scanner confirmed we're in code block
+        scanner->code_block_line_count < MAX_CODE_BLOCK_LINES &&
+        scan_code_block_line(lexer)) {
+      scanner->code_block_line_count++;  // Increment counter
+      lexer->result_symbol = CODE_BLOCK_LINE;
+      return true;
+    }
+  }
+
   // Try subscript/superscript/inline_math first (before whitespace skipping)
   // These need to check character position precisely
   if (lexer->lookahead == '~') {
     if (scan_tilde(scanner, lexer, valid_symbols)) {
+      scanner->code_block_line_count = 0;  // Reset counter on other tokens
       return true;
     }
   }
 
   if (lexer->lookahead == '^') {
     if (scan_caret(scanner, lexer, valid_symbols)) {
+      scanner->code_block_line_count = 0;  // Reset counter on other tokens
       return true;
     }
   }
 
   if (lexer->lookahead == '$') {
     if (scan_dollar_sign(scanner, lexer, valid_symbols)) {
+      scanner->code_block_line_count = 0;  // Reset counter on other tokens
       return true;
     }
   }
@@ -832,12 +1057,14 @@ bool tree_sitter_quarto_external_scanner_scan(
   // These need to check character position and context precisely
   if (lexer->lookahead == '*') {
     if (parse_star(scanner, lexer, valid_symbols)) {
+      scanner->code_block_line_count = 0;  // Reset counter on other tokens
       return true;
     }
   }
 
   if (lexer->lookahead == '_') {
     if (parse_underscore(scanner, lexer, valid_symbols)) {
+      scanner->code_block_line_count = 0;  // Reset counter on other tokens
       return true;
     }
   }
@@ -847,6 +1074,7 @@ bool tree_sitter_quarto_external_scanner_scan(
   if (lexer->lookahead == ':') {
     if (valid_symbols[FENCED_DIV_CLOSE] || valid_symbols[FENCED_DIV_OPEN]) {
       if (scan_fenced_div_marker(scanner, lexer, valid_symbols)) {
+        scanner->code_block_line_count = 0;  // Reset counter on other tokens
         return true;
       }
     }
@@ -863,6 +1091,7 @@ bool tree_sitter_quarto_external_scanner_scan(
 
   if (valid_symbols[PIPE_TABLE_START]) {
     if (scan_pipe_table_start(lexer)) {
+      scanner->code_block_line_count = 0;  // Reset counter on other tokens
       lexer->result_symbol = PIPE_TABLE_START;
       return true;
     }
@@ -871,6 +1100,7 @@ bool tree_sitter_quarto_external_scanner_scan(
   // Check for continuation first if expecting it
   if (valid_symbols[CHUNK_OPTION_CONTINUATION]) {
     if (scan_chunk_option_continuation(scanner, lexer)) {
+      scanner->code_block_line_count = 0;  // Reset counter on other tokens
       lexer->result_symbol = CHUNK_OPTION_CONTINUATION;
       // Still expecting more continuations potentially
       return true;
@@ -879,6 +1109,7 @@ bool tree_sitter_quarto_external_scanner_scan(
 
   if (valid_symbols[CHUNK_OPTION_MARKER]) {
     if (scan_chunk_option_marker(scanner, lexer)) {
+      scanner->code_block_line_count = 0;  // Reset counter on other tokens
       lexer->result_symbol = CHUNK_OPTION_MARKER;
       // After chunk option, still at cell start for next option
       return true;
@@ -890,6 +1121,7 @@ bool tree_sitter_quarto_external_scanner_scan(
 
   if (valid_symbols[CELL_BOUNDARY]) {
     if (scan_cell_boundary(scanner, lexer)) {
+      scanner->code_block_line_count = 0;  // Reset counter on other tokens
       lexer->result_symbol = CELL_BOUNDARY;
       return true;
     }

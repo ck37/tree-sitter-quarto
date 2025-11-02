@@ -2,7 +2,7 @@
 
 **Created:** 2025-10-13
 **Updated:** 2025-11-02
-**Status:** ✅ Production Ready - All Features Implemented (224/224 tests passing 100%, 11/11 specs, WASM available)
+**Status:** 🔧 Development - Dual-Grammar Architecture Complete (Integrated dual-grammar at 57.5% validation)
 **Goal:** Create a Quarto Markdown parser optimized for editor integration and tooling
 
 ## Project Vision
@@ -36,38 +36,55 @@ Build a tree-sitter parser for Quarto Markdown (`.qmd` files) that combines the 
 
 ## Architecture
 
-### Relationship to tree-sitter-pandoc-markdown
+### Dual-Grammar Architecture
 
-**Note:** While tree-sitter-pandoc-markdown uses a dual-grammar architecture (separate block and inline grammars), tree-sitter-quarto uses a **unified grammar** that merges both approaches into a single grammar file for simpler deployment.
+tree-sitter-quarto uses a **dual-grammar architecture** with separate block and inline parsers, matching tree-sitter-pandoc-markdown's design. This architecture solves fundamental lexer precedence conflicts that prevented scanner-controlled fence detection in the unified grammar approach.
 
 ```
 tree-sitter-quarto/
-├── grammar.js                    # Unified grammar (593 lines)
-│                                 # Combines block + inline rules
-│                                 # Adds: executable cells, chunk options,
-│                                 #       cross-references, inline cells,
-│                                 #       shortcodes, enhanced divs
-├── src/
-│   ├── parser.c                  # Generated parser (committed for editors)
-│   └── scanner.c                 # External scanner for context-sensitive parsing
-├── queries/
-│   ├── highlights.scm            # Syntax highlighting for all features
-│   ├── injections.scm            # Language injection for code cells
-│   ├── folds.scm                 # Folding for cells and divs
-│   └── indents.scm               # Indentation rules
-└── common/
-    └── (empty - reserved for future shared utilities)
+├── grammars/
+│   ├── block/                    # Block-level grammar
+│   │   ├── grammar.js            # 437 lines, block rules only
+│   │   ├── src/
+│   │   │   ├── parser.c          # Generated block parser
+│   │   │   └── scanner.c         # 299 lines (streamlined)
+│   │   ├── queries/              # Block-specific queries
+│   │   ├── test/                 # Block grammar tests
+│   │   ├── package.json
+│   │   └── tree-sitter.json
+│   └── inline/                   # Inline-level grammar
+│       ├── grammar.js            # 395 lines, inline rules
+│       ├── src/
+│       │   ├── parser.c          # Generated inline parser
+│       │   └── scanner.c         # Inline scanner
+│       ├── queries/              # Inline-specific queries
+│       ├── test/                 # Inline grammar tests
+│       ├── package.json
+│       └── tree-sitter.json
+└── (legacy unified grammar files at root for compatibility)
 ```
 
-**Unified vs Dual Grammar:**
-- **tree-sitter-pandoc-markdown**: 2 grammars (437 + 280 lines = 717 total)
-  - `pandoc_markdown` (block) + `pandoc_markdown_inline` (inline)
-  - Two-phase parsing strategy
-  - Requires two .so files / WASM modules
-- **tree-sitter-quarto**: 1 grammar (593 lines)
-  - Merges both block and inline rules
+**Architecture Evolution:**
+- **Previous:** Unified grammar (single grammar.js, 593 lines)
   - Single-phase parsing
-  - Simpler editor integration (one .so / WASM)
+  - Lexer precedence conflicts prevented scanner-controlled fence detection
+  - Issue #17: YAML in code blocks created ERROR nodes
+- **Current:** Dual grammar (block 437 lines + inline 395 lines)
+  - Two-phase parsing strategy
+  - Scanner-controlled fence detection in block grammar
+  - Eliminates lexer precedence conflicts
+  - Issue #17 resolved with 57.5% validation success
+
+**Block Grammar (Production-Ready):**
+- Scanner-controlled fence detection (CODE_BLOCK_START tokens)
+- No grammar rule interference with code block content
+- Inline content injection via language injection queries
+- 57.5% corpus validation (23/40 files, 2.9x improvement over baseline)
+
+**Inline Grammar (Integrated):**
+- Complete inline content parsing (emphasis, links, citations, cross-references)
+- Context-aware delimiter handling (subscript, superscript, inline math)
+- Integrated via block grammar's injection queries
 
 ### Design Philosophy
 
@@ -510,6 +527,20 @@ Based on comprehensive spec verification (see `openspec/specs/*/verification.md`
   **Attribution:** Inspired by quarto-dev/quarto-markdown
   **Impact:** Fixes ~40% of corpus validation issues
   **Tests:** 11 new generic div tests passing (100%)
+
+### Code Block Parsing
+- ✅ **RESOLVED (2025-11-02):** YAML and structured content in code blocks now parse correctly (GitHub issue #17):
+  ```markdown
+  ```yaml
+  nested:
+    - item
+  ```
+  ```
+  **Root Cause:** Lexer precedence conflicts in unified grammar prevented scanner from controlling fence detection
+  **Solution:** Dual-grammar architecture with scanner-controlled fence detection in block grammar
+  **Implementation:** CODE_BLOCK_START, CODE_BLOCK_LINE, CODE_BLOCK_END external tokens
+  **Impact:** Resolves #2 corpus validation blocker (~25% of failures)
+  **Validation:** 57.5% success rate (23/40 files), exceeding 35% target by 64%, 2.9x improvement over 20% baseline
 
 ### Implementation Status
 

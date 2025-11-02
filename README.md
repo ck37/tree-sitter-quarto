@@ -10,7 +10,7 @@
 
 Tree-sitter parser for [Quarto Markdown](https://quarto.org/) (`.qmd` files), optimized for editor integration.
 
-A production-ready [tree-sitter](https://tree-sitter.github.io/) parser that understands Quarto's extended Markdown syntax, enabling semantic highlighting, jump-to-definition, autocomplete, and code folding for executable cells, chunk options, and cross-references. While [official Quarto grammars](https://github.com/quarto-dev/quarto-markdown) exist, they won't be production-ready until early 2026, so tree-sitter-quarto fills the gap for first-class Quarto support in editors like [Zed](https://github.com/ck37/zed-quarto-extension), Neovim, Helix, and VSCode today.
+A [tree-sitter](https://tree-sitter.github.io/) parser in active development that understands Quarto's extended Markdown syntax, enabling semantic highlighting, jump-to-definition, autocomplete, and code folding for executable cells, chunk options, and cross-references. While [official Quarto grammars](https://github.com/quarto-dev/quarto-markdown) exist, they won't be production-ready until early 2026, so tree-sitter-quarto fills the gap for first-class Quarto support in editors like [Zed](https://github.com/ck37/zed-quarto-extension), Neovim, Helix, and VSCode today.
 
 ## Features
 
@@ -50,7 +50,6 @@ Fully implemented:
 Known limitations:
 
 - Inline attributes: `[text]{.class}` at paragraph start creates cosmetic ERROR nodes - [technical details](./docs/inline-attributes-known-issues.md)
-- Real-world corpus validation: 30% success rate (improving toward 90% target)
 - See [plan.md](./docs/plan.md) for complete list
 
 ## Relationship to Official Quarto Grammars

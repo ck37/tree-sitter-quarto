@@ -11,7 +11,6 @@ description: Tasks related to tree-sitter grammar rules, parser behavior, extern
 ### High Priority
 - `h-fix-ambiguous-triple-asterisks.md` - Fix ERROR node consuming subsequent content when parsing `*italic***bold***italic*`
 - `h-fix-fenced-code-block-attributes.md` - Add support for Pandoc fenced code block attributes (e.g., `` ```{.bash} ``) to improve corpus validation from 25% to 40-50%+
-- `h-fix-yaml-parsing-in-code-blocks.md` - Fix YAML/structured content being parsed as Markdown inside fenced code blocks, improving corpus validation from 30% to 35%+ (affects ~25% of failures)
 - `h-implement-generic-fenced-divs/` - Add support for generic fenced divs (`::: {.custom-class}`) to improve corpus validation from 25% to 35%+ (affects ~40% of current failures)
 - `h-refactor-import-tree-sitter-markdown.md` - Refactor from "Copy & Extend" to "Import & Extend" strategy to include tree-sitter-markdown external scanner
 
@@ -26,3 +25,4 @@ description: Tasks related to tree-sitter grammar rules, parser behavior, extern
 
 ## Completed Tasks
 - `h-fix-test-suite-failures.md` - Fixed all 7 test failures (96.9% → 100%) by removing colon from text exclusion pattern
+- `h-fix-yaml-parsing-in-code-blocks.md` - Implemented dual-grammar architecture with scanner-controlled fence detection, resolving issue #17 (57.5% corpus validation, 2.9x improvement)

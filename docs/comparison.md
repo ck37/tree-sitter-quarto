@@ -26,7 +26,7 @@ The Quarto ecosystem benefits from **two complementary tree-sitter grammar imple
 - **Future (2026+):** Plan to migrate to official quarto-markdown grammars when they reach production status
 
 **Both efforts serve the community:**
-- tree-sitter-quarto provides production-ready support today (unified grammar, comprehensive queries)
+- tree-sitter-quarto provides production-ready support today (dual-grammar architecture, comprehensive queries)
 - Official grammars offer long-term official support (dual grammar architecture, deep Quarto integration)
 - The Quarto team (@cscheid) is supportive of community efforts and welcomes collaboration
 - Both implementations share the same goal: excellent Quarto Markdown editing experiences
@@ -41,11 +41,11 @@ The Quarto ecosystem benefits from **two complementary tree-sitter grammar imple
 | **Callout semantic parsing** | ✅ Specific node types | ✅ Specific node types | ⚠️ Generic divs | ⚠️ Generic divs |
 | **Zed-compatible scopes** | ✅ Yes (5 query files) | ✅ Yes (highlights/injections only) | N/A | ⚠️ Traditional scopes |
 | **Primary use case** | **Editor integration** | **Editor integration** | **Document rendering** | **Pandoc editing** |
-| **Grammar type** | Unified | Dual (block + inline) | Pulldown-cmark | Dual (block + inline) |
+| **Grammar type** | Dual (block + inline) | Dual (block + inline) | Pulldown-cmark | Dual (block + inline) |
 | **Output format** | tree-sitter AST | tree-sitter AST | Pandoc AST | tree-sitter AST |
 | **Language** | JavaScript + C | Rust + C | Rust | JavaScript + C |
-| **Status** | Alpha (functional) | Experimental (pre-production) | Experimental | Production |
-| **Production-ready** | ✅ Yes (2025) | ⏳ Planned (early 2026) | ⏳ In development | ✅ Yes |
+| **Status** | Alpha (block production-ready) | Experimental (pre-production) | Experimental | Production |
+| **Production-ready** | ✅ Block grammar (2025) | ⏳ Planned (early 2026) | ⏳ In development | ✅ Yes |
 
 ## Detailed Comparison
 
@@ -63,7 +63,6 @@ The Quarto ecosystem benefits from **two complementary tree-sitter grammar imple
 
 **Limitations:**
 - ⚠️ Not designed for rendering (use Quarto Parser for that)
-- ⚠️ Generic fenced divs limitation (see [technical analysis](./generic-fenced-div-limitation.md))
 - ⚠️ No validation (requires language server)
 
 **Best for:**
@@ -179,7 +178,7 @@ The Quarto team is thoughtfully developing these grammars as part of a larger ec
 - ✅ Building autocomplete/navigation features
 - ✅ Creating linters or formatters
 - ✅ Can't wait until 2026 for official tree-sitter support
-- ✅ Prefer unified grammar architecture (simpler)
+- ✅ Need production-ready code block parsing now (57.5% validation)
 - ✅ Want comprehensive query files included
 
 ### Choose quarto-markdown tree-sitter grammars when:
@@ -417,7 +416,7 @@ Both tree-sitter implementations serve the same purpose (editor integration) at 
 **tree-sitter-quarto's role:**
 - **Community bridge solution** meeting immediate editor integration needs (2025)
 - Provides production-ready support today while official grammars undergo careful development
-- Uses unified grammar architecture (different architectural approach)
+- Uses dual-grammar architecture (matching official design, independently implemented)
 - Includes comprehensive query files for immediate editor use
 - Community-maintained with complementary design choices
 

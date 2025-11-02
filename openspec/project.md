@@ -24,7 +24,7 @@ tree-sitter-quarto is a tree-sitter parser for Quarto Markdown (`.qmd` files), o
 - ✅ Comprehensive test coverage (footnotes, inline attributes, pipe tables, inline formatting, fenced code attributes, generic divs)
 - ✅ Generic fenced divs now working (2025-11-02) via unified external scanner
 - ✅ All test suite failures resolved (2025-11-02) - colon parsing fixed
-- ✅ Corpus validation: 30% (up from 25%, improving toward 90% target)
+- ✅ Corpus validation: 57.5% (up from 20% baseline, improving toward 90% target)
 - ⏳ Editor integration pending
 
 **Total Specifications:** 11 (all implemented)
@@ -35,7 +35,7 @@ tree-sitter-quarto is a tree-sitter parser for Quarto Markdown (`.qmd` files), o
 - ✅ Added depth tracking for nested divs at arbitrary levels
 - ✅ Added 11 new generic div tests (all passing)
 - ✅ Updated 15 enhanced div tests to unified structure
-- ✅ Corpus validation improved from 25% to 30%
+- ✅ Corpus validation improved from 20% baseline to 57.5% with dual-grammar architecture
 - ✅ Added fenced code block attributes support (Pandoc syntax)
 - ✅ Extended grammar with three-pattern choice structure
 - ✅ Added language injection for 11 languages with attribute-based syntax
@@ -160,7 +160,7 @@ Input markdown here
 - ✅ All test cases passing (224/224 tests, 100%)
 - ✅ 11 OpenSpec specifications verified (116/117 requirements, 99%)
 - ✅ CI/CD pipeline passing on Ubuntu and macOS
-- ✅ Real-world corpus validation: 30% success rate (improving toward 90% target)
+- ✅ Real-world corpus validation: 57.5% success rate (improving toward 90% target)
 - ✅ Performance: ~13,000 bytes/ms average parse speed
 - ⏳ Editor integration validated in 3+ editors (pending)
 

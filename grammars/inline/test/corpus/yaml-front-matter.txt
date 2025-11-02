@@ -1,0 +1,170 @@
+==================
+Simple string key-value pair (unquoted)
+==================
+---
+title: My Document
+author: John Doe
+---
+
+---
+
+(document
+  (yaml_front_matter
+    start: (yaml_front_matter_start)
+    content: (yaml_content
+      (yaml_line)
+      (yaml_line))
+    close: (yaml_front_matter_delimiter)))
+
+==================
+Quoted string values
+==================
+---
+title: "Document with: special chars"
+description: 'Single quoted string'
+---
+
+---
+
+(document
+  (yaml_front_matter
+    start: (yaml_front_matter_start)
+    content: (yaml_content
+      (yaml_line)
+      (yaml_line))
+    close: (yaml_front_matter_delimiter)))
+
+==================
+Numeric values
+==================
+---
+version: 1.2
+count: 42
+scientific: 1.5e-10
+---
+
+---
+
+(document
+  (yaml_front_matter
+    start: (yaml_front_matter_start)
+    content: (yaml_content
+      (yaml_line)
+      (yaml_line)
+      (yaml_line))
+    close: (yaml_front_matter_delimiter)))
+
+==================
+Boolean values
+==================
+---
+enabled: true
+disabled: false
+yes_value: yes
+no_value: no
+---
+
+---
+
+(document
+  (yaml_front_matter
+    start: (yaml_front_matter_start)
+    content: (yaml_content
+      (yaml_line)
+      (yaml_line)
+      (yaml_line)
+      (yaml_line))
+    close: (yaml_front_matter_delimiter)))
+
+==================
+Null values
+==================
+---
+empty1: null
+empty2: ~
+---
+
+---
+
+(document
+  (yaml_front_matter
+    start: (yaml_front_matter_start)
+    content: (yaml_content
+      (yaml_line)
+      (yaml_line))
+    close: (yaml_front_matter_delimiter)))
+
+==================
+Empty YAML front matter
+==================
+---
+---
+
+---
+
+(document
+  (yaml_front_matter
+    start: (yaml_front_matter_start)
+    close: (yaml_front_matter_delimiter)))
+
+==================
+YAML with ... delimiter
+==================
+---
+title: Document
+...
+
+---
+
+(document
+  (yaml_front_matter
+    start: (yaml_front_matter_start)
+    content: (yaml_content
+      (yaml_line))
+    close: (yaml_front_matter_delimiter)))
+
+==================
+Empty value (key with no value)
+==================
+---
+title:
+author: Name
+---
+
+---
+
+(document
+  (yaml_front_matter
+    start: (yaml_front_matter_start)
+    content: (yaml_content
+      (yaml_line)
+      (yaml_line))
+    close: (yaml_front_matter_delimiter)))
+
+==================
+Nested YAML mappings (injected to tree-sitter-yaml)
+==================
+---
+format:
+  html:
+    toc: true
+    code-fold: true
+  pdf:
+    geometry:
+      - top=30mm
+---
+
+---
+
+(document
+  (yaml_front_matter
+    start: (yaml_front_matter_start)
+    content: (yaml_content
+      (yaml_line)
+      (yaml_line)
+      (yaml_line)
+      (yaml_line)
+      (yaml_line)
+      (yaml_line)
+      (yaml_line))
+    close: (yaml_front_matter_delimiter)))

@@ -1,0 +1,308 @@
+==================
+Link reference definition
+==================
+
+[1]: https://example.com
+
+---
+
+(document
+  (blank_line)
+  (link_reference_definition
+    label: (reference_label)
+    destination: (link_destination)))
+
+==================
+Link reference definition with title
+==================
+
+[ref]: https://example.com "Example Site"
+
+---
+
+(document
+  (blank_line)
+  (link_reference_definition
+    label: (reference_label)
+    destination: (link_destination)
+    title: (link_title)))
+
+==================
+Inline link
+==================
+
+This is a [link](https://example.com) in text.
+
+---
+
+(document
+  (blank_line)
+  (paragraph
+    content: (inline
+      (text)
+      (link
+        text: (link_text)
+        destination: (link_destination))
+      (text))))
+
+==================
+Explicit reference - numeric
+==================
+
+Here is [a link][1].
+
+[1]: https://example.com
+
+---
+
+(document
+  (blank_line)
+  (paragraph
+    content: (inline
+      (text)
+      (link
+        text: (link_text)
+        reference: (reference_label))
+      (text)))
+  (link_reference_definition
+    label: (reference_label)
+    destination: (link_destination)))
+
+==================
+Explicit reference - named
+==================
+
+Another [link text][ref-name].
+
+[ref-name]: https://example.com "Optional Title"
+
+---
+
+(document
+  (blank_line)
+  (paragraph
+    content: (inline
+      (text)
+      (link
+        text: (link_text)
+        reference: (reference_label))
+      (text)))
+  (link_reference_definition
+    label: (reference_label)
+    destination: (link_destination)
+    title: (link_title)))
+
+==================
+Collapsed reference
+==================
+
+Shortcut [Example][].
+
+[Example]: https://example.com
+
+---
+
+(document
+  (blank_line)
+  (paragraph
+    content: (inline
+      (text)
+      (link
+        text: (link_text)
+        reference: (reference_label))
+      (text)))
+  (link_reference_definition
+    label: (reference_label)
+    destination: (link_destination)))
+
+==================
+Multiple references in paragraph
+==================
+
+First [link][1] and second [link][2].
+
+[1]: https://first.com
+[2]: https://second.com
+
+---
+
+(document
+  (blank_line)
+  (paragraph
+    content: (inline
+      (text)
+      (link
+        text: (link_text)
+        reference: (reference_label))
+      (text)
+      (link
+        text: (link_text)
+        reference: (reference_label))
+      (text)))
+  (link_reference_definition
+    label: (reference_label)
+    destination: (link_destination))
+  (link_reference_definition
+    label: (reference_label)
+    destination: (link_destination)))
+
+==================
+Reference with formatted text
+==================
+
+This is [**bold**][ref] and [plain][ref2].
+
+[ref]: https://example.com
+[ref2]: https://example2.com
+
+---
+
+(document
+  (blank_line)
+  (paragraph
+    content: (inline
+      (text)
+      (link
+        text: (strong_emphasis
+          (emphasis_delimiter)
+          (emphasis_delimiter)
+          (text)
+          (emphasis_delimiter)
+          (emphasis_delimiter))
+        reference: (reference_label))
+      (text)
+      (link
+        text: (link_text)
+        reference: (reference_label))
+      (text)))
+  (link_reference_definition
+    label: (reference_label)
+    destination: (link_destination))
+  (link_reference_definition
+    label: (reference_label)
+    destination: (link_destination)))
+
+==================
+Mix of inline and reference links
+==================
+
+An [inline](url) and [reference][ref] link.
+
+[ref]: https://example.com
+
+---
+
+(document
+  (blank_line)
+  (paragraph
+    content: (inline
+      (text)
+      (link
+        text: (link_text)
+        destination: (link_destination))
+      (text)
+      (link
+        text: (link_text)
+        reference: (reference_label))
+      (text)))
+  (link_reference_definition
+    label: (reference_label)
+    destination: (link_destination)))
+
+==================
+Attributed span still works
+==================
+
+This is [text]{.class} not a link.
+
+---
+
+(document
+  (blank_line)
+  (paragraph
+    content: (inline
+      (text)
+      (link
+        text: (link_text)
+        attributes: (attribute_list
+          class: (attribute_class)))
+      (text))))
+
+==================
+Link with code span in text
+==================
+
+Click [`code`][ref].
+
+[ref]: https://example.com
+
+---
+
+(document
+  (blank_line)
+  (paragraph
+    content: (inline
+      (text)
+      (link
+        text: (code_span
+          (code_span_delimiter)
+          (code_span_content)
+          (code_span_delimiter))
+        reference: (reference_label))
+      (text)))
+  (link_reference_definition
+    label: (reference_label)
+    destination: (link_destination)))
+
+==================
+Case preservation in reference labels
+==================
+
+See [Text][REF] for details.
+
+[REF]: https://example.com
+
+---
+
+(document
+  (blank_line)
+  (paragraph
+    content: (inline
+      (text)
+      (link
+        text: (link_text)
+        reference: (reference_label))
+      (text)))
+  (link_reference_definition
+    label: (reference_label)
+    destination: (link_destination)))
+
+==================
+Adjacent reference links
+==================
+
+See [first][1][second][2].
+
+[1]: https://first.com
+[2]: https://second.com
+
+---
+
+(document
+  (blank_line)
+  (paragraph
+    content: (inline
+      (text)
+      (link
+        text: (link_text)
+        reference: (reference_label))
+      (link
+        text: (link_text)
+        reference: (reference_label))
+      (text)))
+  (link_reference_definition
+    label: (reference_label)
+    destination: (link_destination))
+  (link_reference_definition
+    label: (reference_label)
+    destination: (link_destination)))

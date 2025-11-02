@@ -30,10 +30,10 @@ if ! command -v tree-sitter &> /dev/null; then
     exit 1
 fi
 
-# Check if parser is built
-if [ ! -f "src/parser.c" ]; then
-    echo -e "${RED}Error: Parser not generated${NC}"
-    echo "Run: npx tree-sitter generate"
+# Check if block grammar parser is built
+if [ ! -f "grammars/block/src/parser.c" ]; then
+    echo -e "${RED}Error: Block grammar parser not generated${NC}"
+    echo "Run: cd grammars/block && npx tree-sitter generate"
     exit 1
 fi
 
@@ -100,8 +100,8 @@ while IFS= read -r file; do
         LAST_PERCENT=$PERCENT
     fi
 
-    # Parse file and capture output
-    if OUTPUT=$(npx tree-sitter parse "$file" 2>&1); then
+    # Parse file and capture output (using block grammar)
+    if OUTPUT=$(cd grammars/block && npx tree-sitter parse "$file" 2>&1); then
         # Check for ERROR nodes in output
         if echo "$OUTPUT" | grep -q "ERROR"; then
             FAILED=$((FAILED + 1))

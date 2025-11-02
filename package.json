@@ -42,16 +42,23 @@
         "qmd"
       ],
       "injection-regex": "quarto|qmd"
+    },
+    {
+      "scope": "source.quarto.inline",
+      "injection-regex": "quarto_inline"
     }
   ],
   "files": [
-    "grammar.js",
     "binding.gyp",
     "prebuilds/**",
     "bindings/**",
     "queries/**",
-    "src/**",
-    "tree-sitter-quarto.wasm"
+    "tree-sitter-quarto.wasm",
+    "grammars/*/grammar.js",
+    "grammars/*/src/**",
+    "grammars/*/queries/**",
+    "grammars/*/package.json",
+    "grammars/*/tree-sitter.json"
   ],
   "scripts": {
     "install": "node-gyp-build",
@@ -78,6 +85,12 @@
     "benchmark:wasm:baseline": "node scripts/benchmark-wasm.js --save-baseline",
     "benchmark:wasm:compare": "node scripts/benchmark-wasm.js --compare",
     "validate": "bash scripts/validate-corpus.sh",
-    "validate:sample": "MAX_SAMPLE=20 bash scripts/validate-corpus.sh"
+    "validate:sample": "MAX_SAMPLE=20 bash scripts/validate-corpus.sh",
+    "build:block": "cd grammars/block && npm run build",
+    "build:inline": "cd grammars/inline && npm run build",
+    "build:all": "npm run build:block && npm run build:inline",
+    "test:block": "cd grammars/block && npm test",
+    "test:inline": "cd grammars/inline && npm test",
+    "test:grammars": "npm run test:block && npm run test:inline"
   }
 }

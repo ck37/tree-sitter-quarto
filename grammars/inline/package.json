@@ -1,0 +1,42 @@
+{
+  "name": "tree-sitter-quarto-inline",
+  "version": "0.0.1",
+  "description": "Tree-sitter inline grammar for Quarto Markdown (.qmd files)",
+  "main": "bindings/node",
+  "types": "bindings/node",
+  "keywords": [
+    "tree-sitter",
+    "parser",
+    "quarto",
+    "markdown",
+    "qmd",
+    "inline"
+  ],
+  "author": "Chris Kennedy",
+  "license": "MIT",
+  "dependencies": {
+    "node-addon-api": "^8.0.0",
+    "node-gyp-build": "^4.8.0"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "^0.25.10"
+  },
+  "peerDependenciesMeta": {
+    "tree-sitter": {
+      "optional": true
+    }
+  },
+  "tree-sitter": [
+    {
+      "scope": "source.quarto.inline",
+      "file-types": [
+        "qmd"
+      ]
+    }
+  ],
+  "scripts": {
+    "build": "tree-sitter generate",
+    "build:wasm": "tree-sitter build --wasm",
+    "test": "tree-sitter test"
+  }
+}

@@ -1,0 +1,277 @@
+==================
+Generic div with single class
+==================
+
+::: {.my-class}
+Content inside div
+:::
+
+---
+
+(document
+  (blank_line)
+  (fenced_div
+    open: (fenced_div_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class))
+    content: (paragraph
+      content: (inline
+        (text)))
+    close: (fenced_div_delimiter)))
+
+==================
+Generic div with multiple classes
+==================
+
+::: {.class1 .class2 .class3}
+Content
+:::
+
+---
+
+(document
+  (blank_line)
+  (fenced_div
+    open: (fenced_div_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class)
+      class: (attribute_class)
+      class: (attribute_class))
+    content: (paragraph
+      content: (inline
+        (text)))
+    close: (fenced_div_delimiter)))
+
+==================
+Generic div with ID and classes
+==================
+
+::: {#myid .class1 .class2}
+Content with ID
+:::
+
+---
+
+(document
+  (blank_line)
+  (fenced_div
+    open: (fenced_div_delimiter)
+    attributes: (attribute_list
+      id: (attribute_id)
+      class: (attribute_class)
+      class: (attribute_class))
+    content: (paragraph
+      content: (inline
+        (text)))
+    close: (fenced_div_delimiter)))
+
+==================
+Generic div with key-value attributes
+==================
+
+::: {.my-class attr="value"}
+Content with attributes
+:::
+
+---
+
+(document
+  (blank_line)
+  (fenced_div
+    open: (fenced_div_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class)
+      attribute: (key_value_attribute
+        key: (attribute_key)
+        value: (attribute_value)))
+    content: (paragraph
+      content: (inline
+        (text)))
+    close: (fenced_div_delimiter)))
+
+==================
+Generic div with layout class
+==================
+
+::: {.column-margin}
+Margin content
+:::
+
+---
+
+(document
+  (blank_line)
+  (fenced_div
+    open: (fenced_div_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class))
+    content: (paragraph
+      content: (inline
+        (text)))
+    close: (fenced_div_delimiter)))
+
+==================
+Generic div with semantic class
+==================
+
+::: {.aside}
+Aside content
+:::
+
+---
+
+(document
+  (blank_line)
+  (fenced_div
+    open: (fenced_div_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class))
+    content: (paragraph
+      content: (inline
+        (text)))
+    close: (fenced_div_delimiter)))
+
+==================
+Nested generic divs
+==================
+
+::: {.outer}
+Outer content
+
+::: {.inner}
+Inner content
+:::
+
+More outer content
+:::
+
+---
+
+(document
+  (blank_line)
+  (fenced_div
+    open: (fenced_div_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class))
+    content: (paragraph
+      content: (inline
+        (text)))
+    content: (fenced_div
+      open: (fenced_div_delimiter)
+      attributes: (attribute_list
+        class: (attribute_class))
+      content: (paragraph
+        content: (inline
+          (text)))
+      close: (fenced_div_delimiter))
+    content: (paragraph
+      content: (inline
+        (text)))
+    close: (fenced_div_delimiter)))
+
+==================
+Generic div with four colons
+==================
+
+:::: {.wide}
+Wide content
+::::
+
+---
+
+(document
+  (blank_line)
+  (fenced_div
+    open: (fenced_div_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class))
+    content: (paragraph
+      content: (inline
+        (text)))
+    close: (fenced_div_delimiter)))
+
+==================
+Generic div with six colons
+==================
+
+:::::: {.container}
+Container content
+::::::
+
+---
+
+(document
+  (blank_line)
+  (fenced_div
+    open: (fenced_div_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class))
+    content: (paragraph
+      content: (inline
+        (text)))
+    close: (fenced_div_delimiter)))
+
+==================
+Generic div followed by enhanced div
+==================
+
+::: {.my-custom}
+Custom div
+:::
+
+::: {.callout-note}
+Callout div
+:::
+
+---
+
+(document
+  (blank_line)
+  (fenced_div
+    open: (fenced_div_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class))
+    content: (paragraph
+      content: (inline
+        (text)))
+    close: (fenced_div_delimiter))
+  (fenced_div
+    open: (fenced_div_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class))
+    content: (paragraph
+      content: (inline
+        (text)))
+    close: (fenced_div_delimiter)))
+
+==================
+Generic div with complex attributes
+==================
+
+::: {#id .class1 .class2 key1="value1" key2='value2' key3=unquoted}
+Complex attributes
+:::
+
+---
+
+(document
+  (blank_line)
+  (fenced_div
+    open: (fenced_div_delimiter)
+    attributes: (attribute_list
+      id: (attribute_id)
+      class: (attribute_class)
+      class: (attribute_class)
+      attribute: (key_value_attribute
+        key: (attribute_key)
+        value: (attribute_value))
+      attribute: (key_value_attribute
+        key: (attribute_key)
+        value: (attribute_value))
+      attribute: (key_value_attribute
+        key: (attribute_key)
+        value: (attribute_value)))
+    content: (paragraph
+      content: (inline
+        (text)))
+    close: (fenced_div_delimiter)))

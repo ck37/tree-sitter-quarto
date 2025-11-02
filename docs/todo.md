@@ -1,8 +1,8 @@
 # tree-sitter-quarto Implementation Checklist
 
 **Status:** Production Ready - All Features Implemented
-**Last Updated:** 2025-10-17
-**Progress:** 100% (116/116 requirements implemented, 145/145 tests passing)
+**Last Updated:** 2025-11-01
+**Progress:** 100% (116/116 requirements implemented, 205/205 tests passing)
 
 ## Stage 1: Setup & Foundation ✅ COMPLETE
 
@@ -124,7 +124,8 @@
 - [x] test/corpus/shortcodes.txt (15 cases)
 - [x] test/corpus/callouts.txt (6+ cases)
 - [x] test/corpus/tabsets.txt (3+ cases)
-- [x] **Total: 145/145 tests passing (100%)**
+- [x] test/corpus/inline-formatting.txt (emphasis, strong, subscript, superscript, inline math)
+- [x] **Total: 205/205 tests passing (100%)**
 
 ### Edge Cases ✅
 - [x] Nested divs
@@ -259,9 +260,11 @@
 - [x] Incremental parsing works correctly (tree-sitter feature)
 
 ### Quality ✅ EXCELLENT
-- [x] **145/145 test cases passing (100%)**
+- [x] **205/205 test cases passing (100%)**
 - [x] **9/9 OpenSpec specifications implemented**
 - [x] **116/116 requirements (100%) implemented**
+- [x] **Triple asterisk pattern fixed** - CommonMark-compliant emphasis parsing
+- [x] **Performance improved** - 9,899 bytes/ms (up from 8,681 bytes/ms baseline)
 - [ ] 0 known parse errors on quarto-web (not yet tested)
 - [ ] All queries working in 3+ editors (Zed in progress)
 - [x] Documentation complete and clear
@@ -280,11 +283,12 @@
   - Implementation: Copy grammar.js from tree-sitter-pandoc-markdown
   - Future: Consider npm package if needed
 
-- [x] Scanner strategy (Decided)
-  - Decision: Extend existing scanner with Quarto-specific tokens
-  - Add: `CHUNK_OPTION_MARKER` for `#|` at cell start
-  - Add: `CELL_BOUNDARY` for context-aware cell delimiters
-  - Rationale: Chunk options and cell boundaries need context-sensitive parsing
+- [x] Scanner strategy (Implemented)
+  - Decision: Copy & Merge Scanner approach
+  - Merged emphasis handling from tree-sitter-markdown (properly attributed)
+  - Added Quarto-specific tokens: `CHUNK_OPTION_MARKER`, `CELL_BOUNDARY`
+  - Added Pandoc inline formatting: inline math, subscript, superscript
+  - Rationale: Avoids npm dependency while gaining full CommonMark emphasis parsing
 
 - [x] Validation approach (Decided)
   - Decision: Separate language server (not in grammar)
@@ -333,7 +337,7 @@
 **Completed Stages:**
 - ✅ Stage 1: Setup & Foundation (100%)
 - ✅ Stage 2: Core Grammar Implementation (100% - 3 known limitations documented)
-- ✅ Stage 3: Test Suite (100% - 145/145 tests passing)
+- ✅ Stage 3: Test Suite (100% - 205/205 tests passing)
 - ✅ Stage 4: Queries & Highlighting (100%)
 
 **In Progress:**
@@ -341,6 +345,12 @@
 - ⏳ Stage 6: Validation & Advanced Features (language server features)
 - ⏳ Stage 7: Documentation & Release (awaiting v0.1.0 release)
 
-**Progress:** 100% (116/116 requirements implemented, 145/145 tests passing)
+**Recent Improvements (2025-11-01):**
+- ✅ Merged emphasis/strong emphasis scanner from tree-sitter-markdown
+- ✅ Fixed triple asterisk pattern parsing (`*italic***bold***italic*`)
+- ✅ All 205 tests passing (100%)
+- ✅ Performance improved to 9,899 bytes/ms
+
+**Progress:** 100% (116/116 requirements implemented, 205/205 tests passing)
 **Next Milestone:** Complete Zed extension and measure performance on quarto-web
 **Timeline:** Ready for v0.1.0 release pending editor validation

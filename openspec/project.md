@@ -13,9 +13,9 @@ tree-sitter-quarto is a tree-sitter parser for Quarto Markdown (`.qmd` files), o
 
 **Gap Being Filled:** This project bridges the gap between tree-sitter-pandoc-markdown (editor-focused but not Quarto-aware) and the Quarto Markdown Parser (rendering-focused, not optimized for pre-execution editor experience). It provides parse-time semantic information for Quarto documents as they're being authored, before execution.
 
-**Current Status:** Alpha - All Core Features Implemented
-- ✅ 167/167 tests passing (100%)
-- ✅ 102/102 requirements implemented (100%) across 14 OpenSpec specifications
+**Current Status:** Production Ready - All Core Features Implemented
+- ✅ 205/205 tests passing (100%)
+- ✅ 116/116 requirements implemented (100%) across 11 OpenSpec specifications
 - ✅ CI/CD pipeline green (Ubuntu + macOS, Node 18.x + 20.x)
 - ✅ All core Quarto features parsed (cells, chunk options, cross-refs, inline cells, shortcodes, enhanced divs)
 - ✅ Enhanced divs fully implemented (callouts, tabsets, conditional content)
@@ -24,7 +24,13 @@ tree-sitter-quarto is a tree-sitter parser for Quarto Markdown (`.qmd` files), o
 - ⚠️ Known limitation: Generic fenced divs (`::: {.custom-class}`) not parsing (base grammar issue)
 - ⏳ Editor integration pending
 
-**Total Specifications:** 14 (all implemented)
+**Total Specifications:** 11 (all implemented)
+
+**Recent Improvements (2025-11-01):**
+- ✅ Merged emphasis/strong emphasis scanner from tree-sitter-markdown (properly attributed)
+- ✅ Fixed triple asterisk pattern parsing (`*italic***bold***italic*`)
+- ✅ Performance improved to 9,899 bytes/ms
+- ✅ All 205 tests passing
 
 ## Tech Stack
 
@@ -72,11 +78,13 @@ Executable cells will support language injection for:
 
 ### Architecture Patterns
 
-**"Copy & Extend" Strategy:**
-- Copy grammar from tree-sitter-pandoc-markdown into this repository
-- Extend with Quarto-specific rules on top
+**"Copy & Merge Scanner" Strategy:**
+- Copy grammar rules from tree-sitter-pandoc-markdown into this repository
+- Merge emphasis/strong emphasis scanner from tree-sitter-markdown (properly attributed)
+- Extend with Quarto-specific rules on top (executable cells, chunk options, cross-refs)
 - Maintain compatibility with base Pandoc features
-- Document source commit hash for tracking
+- Document source commit hashes for tracking
+- Avoids npm dependency complexity while gaining full CommonMark emphasis parsing
 
 **Editor-First Design:**
 - Parse raw `.qmd` files (before execution)

@@ -649,17 +649,24 @@ tree-sitter-quarto/
 
 ### 2. Scanner Complexity
 
-**Decision: Extend existing scanner**
+**Decision: Copy & Merge Scanner** (Implemented)
 
-Extend the external scanner from tree-sitter-pandoc-markdown with Quarto-specific tokens:
-- Add `CHUNK_OPTION_MARKER` token for `#|` lines at cell start
-- Add `CELL_BOUNDARY` token for context-aware cell delimiter detection
-- Keep all existing tokens for Pandoc features
+Merge external scanner logic from multiple sources:
+- **From tree-sitter-pandoc-markdown:** Base scanner structure and Pandoc-specific tokens
+- **From tree-sitter-markdown:** Emphasis/strong emphasis delimiter handling (MIT License, properly attributed)
+- **Quarto-specific additions:** `CHUNK_OPTION_MARKER`, `CELL_BOUNDARY`, inline math, subscript, superscript
 
-**Why external scanner is needed:**
-- Distinguish `#| key: value` from `# comment` (both start with `#`)
-- Requires checking if we're at the start of a cell
-- Context-sensitive parsing beyond LR(1) capability
+**Why this approach:**
+- Avoids npm dependency complexity while gaining full CommonMark-compliant emphasis parsing
+- Enables proper handling of triple asterisk patterns (`*italic***bold***italic*`)
+- Maintains full control over scanner implementation
+- All code properly attributed to original sources
+
+**Attribution:**
+- tree-sitter-markdown emphasis handling: Lines 521-670 in src/scanner.c
+- Repository: https://github.com/tree-sitter-grammars/tree-sitter-markdown
+- License: MIT (Copyright 2021 Matthias Deiml)
+- Commit: 2dfd57f547f06ca5631a80f601e129d73fc8e9f0 (2025-09-16)
 
 ### 3. Language Injection Strategy
 

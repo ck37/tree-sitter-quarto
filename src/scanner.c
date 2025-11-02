@@ -75,6 +75,12 @@ void tree_sitter_quarto_external_scanner_destroy(void *payload) {
 // Serialize scanner state
 unsigned tree_sitter_quarto_external_scanner_serialize(void *payload, char *buffer) {
   Scanner *scanner = (Scanner *)payload;
+  // Defensive validation: ensure counts fit in uint8_t range
+  if (scanner->inside_subscript > 255) scanner->inside_subscript = 255;
+  if (scanner->inside_superscript > 255) scanner->inside_superscript = 255;
+  if (scanner->inside_inline_math > 255) scanner->inside_inline_math = 255;
+  if (scanner->num_emphasis_delimiters_left > 255) scanner->num_emphasis_delimiters_left = 255;
+
   buffer[0] = scanner->in_executable_cell ? 1 : 0;
   buffer[1] = scanner->at_cell_start ? 1 : 0;
   buffer[2] = (char)(scanner->fence_length & 0xFF);
@@ -568,7 +574,7 @@ static bool parse_star(Scanner *scanner, TSLexer *lexer, const bool *valid_symbo
     lexer->mark_end(lexer);
     // Otherwise count the number of stars
     uint8_t star_count = 1;
-    while (lexer->lookahead == '*') {
+    while (lexer->lookahead == '*' && star_count < 255) {
         star_count++;
         lexer->advance(lexer, false);
     }
@@ -631,7 +637,7 @@ static bool parse_underscore(Scanner *scanner, TSLexer *lexer,
     lexer->mark_end(lexer);
     // Otherwise count the number of underscores
     uint8_t underscore_count = 1;
-    while (lexer->lookahead == '_') {
+    while (lexer->lookahead == '_' && underscore_count < 255) {
         underscore_count++;
         lexer->advance(lexer, false);
     }

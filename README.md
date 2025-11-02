@@ -45,7 +45,7 @@ Known limitations:
 
 - Generic fenced divs (`::: {.custom-class}`) don't parse - [technical details](./docs/generic-fenced-div-limitation.md)
 - Inline attributes: `[text]{.class}` at paragraph start creates cosmetic ERROR nodes - [technical details](./docs/inline-attributes-known-issues.md)
-- Real-world corpus validation: 20% success rate (improving toward 90% target)
+- Real-world corpus validation: 25% success rate (improving toward 90% target)
 - See [plan.md](./docs/plan.md) for complete list
 
 ## Relationship to Official Quarto Grammars

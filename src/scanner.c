@@ -37,6 +37,8 @@ enum TokenType {
   EMPHASIS_CLOSE_UNDERSCORE,
   LAST_TOKEN_WHITESPACE,
   LAST_TOKEN_PUNCTUATION,
+  FENCED_DIV_OPEN,
+  FENCED_DIV_CLOSE,
 };
 
 // Scanner state
@@ -50,6 +52,8 @@ typedef struct {
   // Emphasis/strikethrough state (from tree-sitter-markdown)
   uint8_t state;                // Parser state flags for emphasis delimiters
   uint8_t num_emphasis_delimiters_left; // Number of characters remaining in current delimiter run
+  // Fenced div state
+  uint8_t fenced_div_depth;     // Track nesting depth of fenced divs (0 = not in any div)
 } Scanner;
 
 // Initialize scanner
@@ -63,6 +67,7 @@ void *tree_sitter_quarto_external_scanner_create() {
   scanner->inside_inline_math = 0;
   scanner->state = 0;
   scanner->num_emphasis_delimiters_left = 0;
+  scanner->fenced_div_depth = 0;
   return scanner;
 }
 
@@ -90,13 +95,14 @@ unsigned tree_sitter_quarto_external_scanner_serialize(void *payload, char *buff
   buffer[6] = scanner->inside_inline_math;
   buffer[7] = scanner->state;
   buffer[8] = scanner->num_emphasis_delimiters_left;
-  return 9;
+  buffer[9] = scanner->fenced_div_depth;
+  return 10;
 }
 
 // Deserialize scanner state
 void tree_sitter_quarto_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {
   Scanner *scanner = (Scanner *)payload;
-  if (length >= 9) {
+  if (length >= 10) {
     scanner->in_executable_cell = buffer[0] != 0;
     scanner->at_cell_start = buffer[1] != 0;
     scanner->fence_length = ((uint32_t)buffer[2] & 0xFF) | (((uint32_t)buffer[3] & 0xFF) << 8);
@@ -105,6 +111,17 @@ void tree_sitter_quarto_external_scanner_deserialize(void *payload, const char *
     scanner->inside_inline_math = buffer[6];
     scanner->state = buffer[7];
     scanner->num_emphasis_delimiters_left = buffer[8];
+    scanner->fenced_div_depth = buffer[9];
+  } else if (length >= 9) {
+    scanner->in_executable_cell = buffer[0] != 0;
+    scanner->at_cell_start = buffer[1] != 0;
+    scanner->fence_length = ((uint32_t)buffer[2] & 0xFF) | (((uint32_t)buffer[3] & 0xFF) << 8);
+    scanner->inside_subscript = buffer[4];
+    scanner->inside_superscript = buffer[5];
+    scanner->inside_inline_math = buffer[6];
+    scanner->state = buffer[7];
+    scanner->num_emphasis_delimiters_left = buffer[8];
+    scanner->fenced_div_depth = 0;
   } else if (length >= 7) {
     scanner->in_executable_cell = buffer[0] != 0;
     scanner->at_cell_start = buffer[1] != 0;
@@ -114,6 +131,7 @@ void tree_sitter_quarto_external_scanner_deserialize(void *payload, const char *
     scanner->inside_inline_math = buffer[6];
     scanner->state = 0;
     scanner->num_emphasis_delimiters_left = 0;
+    scanner->fenced_div_depth = 0;
   } else if (length >= 6) {
     scanner->in_executable_cell = buffer[0] != 0;
     scanner->at_cell_start = buffer[1] != 0;
@@ -123,6 +141,7 @@ void tree_sitter_quarto_external_scanner_deserialize(void *payload, const char *
     scanner->inside_inline_math = 0;
     scanner->state = 0;
     scanner->num_emphasis_delimiters_left = 0;
+    scanner->fenced_div_depth = 0;
   } else if (length >= 4) {
     scanner->in_executable_cell = buffer[0] != 0;
     scanner->at_cell_start = buffer[1] != 0;
@@ -132,6 +151,7 @@ void tree_sitter_quarto_external_scanner_deserialize(void *payload, const char *
     scanner->inside_inline_math = 0;
     scanner->state = 0;
     scanner->num_emphasis_delimiters_left = 0;
+    scanner->fenced_div_depth = 0;
   } else {
     scanner->in_executable_cell = false;
     scanner->at_cell_start = false;
@@ -141,6 +161,7 @@ void tree_sitter_quarto_external_scanner_deserialize(void *payload, const char *
     scanner->inside_inline_math = 0;
     scanner->state = 0;
     scanner->num_emphasis_delimiters_left = 0;
+    scanner->fenced_div_depth = 0;
   }
 }
 
@@ -722,6 +743,63 @@ static bool scan_cell_boundary(Scanner *scanner, TSLexer *lexer) {
   return false;
 }
 
+/**
+ * Scan for fenced div delimiters (opening or closing)
+ *
+ * This function is adapted from quarto-dev/quarto-markdown's tree-sitter-qmd parser:
+ * https://github.com/quarto-dev/quarto-markdown/blob/main/crates/tree-sitter-qmd/tree-sitter-markdown/src/scanner.c
+ *
+ * The key insight from their implementation is to use a unified function that:
+ * 1. Counts the colon delimiter (:::+)
+ * 2. Checks what follows to determine if it's an opening or closing delimiter
+ * 3. Respects valid_symbols to let the grammar control when tokens are emitted
+ *
+ * This approach avoids the scanner/grammar priority conflicts that occur when using
+ * separate functions for opening and closing delimiters.
+ */
+static bool scan_fenced_div_marker(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
+  // Count colons
+  uint32_t colon_count = 0;
+  while (lexer->lookahead == ':') {
+    colon_count++;
+    lexer->advance(lexer, false);
+  }
+
+  // Must have at least 3 colons
+  if (colon_count < 3) {
+    return false;
+  }
+
+  // Mark the end of the token (just the colons)
+  lexer->mark_end(lexer);
+
+  // Skip whitespace after the colons
+  while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+    lexer->advance(lexer, false);
+  }
+
+  // Determine if this is an opening or closing delimiter based on what follows
+  if (lexer->lookahead == '\n' || lexer->lookahead == '\r' || lexer->lookahead == 0) {
+    // Followed by newline/EOF -> closing delimiter
+    if (valid_symbols[FENCED_DIV_CLOSE] && scanner->fenced_div_depth > 0) {
+      lexer->result_symbol = FENCED_DIV_CLOSE;
+      scanner->fenced_div_depth--;
+      return true;
+    }
+  } else {
+    // Followed by content (attributes/info string) -> opening delimiter
+    if (valid_symbols[FENCED_DIV_OPEN]) {
+      lexer->result_symbol = FENCED_DIV_OPEN;
+      scanner->fenced_div_depth++;
+      return true;
+    }
+  }
+
+  // If neither token is valid in this context, return false
+  // This lets the grammar try other rules
+  return false;
+}
+
 // Main scan function
 bool tree_sitter_quarto_external_scanner_scan(
   void *payload,
@@ -761,6 +839,16 @@ bool tree_sitter_quarto_external_scanner_scan(
   if (lexer->lookahead == '_') {
     if (parse_underscore(scanner, lexer, valid_symbols)) {
       return true;
+    }
+  }
+
+  // Try fenced divs (before whitespace skipping)
+  // Fenced divs must start at the beginning of a line
+  if (lexer->lookahead == ':') {
+    if (valid_symbols[FENCED_DIV_CLOSE] || valid_symbols[FENCED_DIV_OPEN]) {
+      if (scan_fenced_div_marker(scanner, lexer, valid_symbols)) {
+        return true;
+      }
     }
   }
 

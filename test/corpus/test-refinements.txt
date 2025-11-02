@@ -169,8 +169,10 @@ Tip content.
 
 (document
   (blank_line)
-  (callout_block
-    (callout_open)
+  (fenced_div
+    open: (fenced_div_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class))
     content: (paragraph
       content: (inline
         (text)))
@@ -189,8 +191,10 @@ Content 1.
 
 (document
   (blank_line)
-  (tabset_block
-    (tabset_open)
+  (fenced_div
+    open: (fenced_div_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class))
     content: (atx_heading
       marker: (atx_heading_marker)
       content: (inline
@@ -214,8 +218,10 @@ Second paragraph.
 
 (document
   (blank_line)
-  (callout_block
-    (callout_open)
+  (fenced_div
+    open: (fenced_div_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class))
     content: (paragraph
       content: (inline
         (text)))

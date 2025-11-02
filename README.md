@@ -1,7 +1,7 @@
 # tree-sitter-quarto
 
 [![CI](https://github.com/ck37/tree-sitter-quarto/workflows/CI/badge.svg)](https://github.com/ck37/tree-sitter-quarto/actions)
-[![Tests](https://img.shields.io/badge/tests-213%2F213%20passing-brightgreen)](https://github.com/ck37/tree-sitter-quarto/actions)
+[![Tests](https://img.shields.io/badge/tests-217%2F224%20passing-green)](https://github.com/ck37/tree-sitter-quarto/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![tree-sitter](https://img.shields.io/badge/tree--sitter-0.25.10-orange)](https://tree-sitter.github.io/)
 [![Node Version](https://img.shields.io/badge/node-%3E%3D16-brightgreen)](https://nodejs.org/)
@@ -29,10 +29,11 @@ Fully implemented:
   - Superscript: `x^2^`, `E=mc^2^`
   - Inline math: `$x^2 + y^2 = z^2$` - Context-aware parsing that correctly distinguishes LaTeX math from currency amounts (`$50`, `$160`)
 - Shortcodes - `{{< video url >}}` in block and inline contexts
-- Enhanced divs - Callouts, tabsets, conditional content
-  - `::: {.callout-note}` - 5 types: note, warning, important, tip, caution
-  - `::: {.panel-tabset}` - Tab structure with groups
-  - `::: {.content-visible when-format="html"}` - Conditional content
+- Fenced divs - Unified architecture with depth tracking for nested divs
+  - Enhanced divs: `::: {.callout-note}`, `::: {.panel-tabset}`, `::: {.content-visible when-format="html"}`
+  - Generic divs: `::: {.custom-class}`, `::: {#myid .class1 .class2}`, `::: {key="value"}`
+  - 5 callout types: note, warning, important, tip, caution
+  - Nested divs supported at arbitrary depth
 - Footnotes - Full Pandoc footnote support with structured parsing
   - Inline footnotes: `^[note text]`
   - Footnote references: `[^1]`
@@ -48,9 +49,8 @@ Fully implemented:
 
 Known limitations:
 
-- Generic fenced divs (`::: {.custom-class}`) don't parse - [technical details](./docs/generic-fenced-div-limitation.md)
 - Inline attributes: `[text]{.class}` at paragraph start creates cosmetic ERROR nodes - [technical details](./docs/inline-attributes-known-issues.md)
-- Real-world corpus validation: 25% success rate (improving toward 90% target)
+- Real-world corpus validation: 30% success rate (improving toward 90% target)
 - See [plan.md](./docs/plan.md) for complete list
 
 ## Relationship to Official Quarto Grammars
@@ -105,9 +105,10 @@ Output AST (simplified):
       (chunk_option key:"label" value:"fig-plot")
       (chunk_option key:"echo" value:"false"))
     content: ...)
-  (callout_block
-    (callout_open)
-    (inline_code_cell language:"python" ...))
+  (fenced_div
+    (fenced_div_open)
+    (inline_code_cell language:"python" ...)
+    (fenced_div_close))
   (shortcode_block name:"video" ...))
 ```
 

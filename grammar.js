@@ -55,6 +55,8 @@ module.exports = grammar({
     $._emphasis_close_underscore, // Markdown: _ emphasis delimiter
     $._last_token_whitespace, // Markdown: Track whitespace for flanking rules
     $._last_token_punctuation, // Markdown: Track punctuation for flanking rules
+    $._fenced_div_open, // Generic fenced div opening delimiter
+    $._fenced_div_close, // Generic fenced div closing delimiter
   ],
 
   conflicts: ($) => [
@@ -62,9 +64,6 @@ module.exports = grammar({
     [$.executable_code_cell, $.fenced_code_block], // Quarto: {python} vs python
     [$.shortcode_block, $.shortcode_inline], // Shortcode can be block or inline
     [$.inline_code_cell, $.code_span], // `r expr` vs `code`
-    [$.callout_block, $.fenced_div], // Enhanced divs vs generic divs
-    [$.tabset_block, $.fenced_div],
-    [$.conditional_block, $.fenced_div],
     // Emphasis conflicts (from tree-sitter-markdown)
     // For normal inline elements
     [$._emphasis_star, $._inline_element],
@@ -97,12 +96,8 @@ module.exports = grammar({
       choice(
         // Quarto-specific blocks
         $.executable_code_cell,
-        // Pandoc Markdown blocks - fenced_div must come before enhanced divs for fallback
+        // Pandoc Markdown blocks
         $.fenced_div,
-        // Enhanced divs (higher precedence via prec.dynamic)
-        $.callout_block,
-        $.tabset_block,
-        $.conditional_block,
         // Other Pandoc Markdown blocks
         $.atx_heading,
         $.setext_heading,
@@ -334,28 +329,27 @@ module.exports = grammar({
     // Paragraph
     paragraph: ($) => prec.left(-2, seq(field("content", $.inline), /\r?\n/)),
 
-    // Fenced Div
+    // Fenced Div (unified rule for all div types)
+    // Uses external scanner tokens to handle opening/closing delimiters
+    // Type distinction (callout, tabset, etc.) happens via attributes
     fenced_div: ($) =>
-      prec.left(
-        1,
-        seq(
-          field("open", alias(/:::+/, $.fenced_div_delimiter)),
-          optional(
-            seq(
-              /[ \t]*/,
-              "{",
-              /[ \t]*/,
-              field("attributes", $.attribute_list),
-              /[ \t]*/,
-              "}",
-            ),
+      prec(2, seq(
+        field("open", alias($._fenced_div_open, $.fenced_div_delimiter)),
+        optional(
+          seq(
+            /[ \t]*/,
+            "{",
+            /[ \t]*/,
+            field("attributes", $.attribute_list),
+            /[ \t]*/,
+            "}",
           ),
-          /\r?\n/,
-          repeat($._block),
-          field("close", alias(/:::+/, $.fenced_div_delimiter)),
-          /\r?\n/,
         ),
-      ),
+        /\r?\n/,
+        field("content", repeat($._block)),
+        field("close", alias($._fenced_div_close, $.fenced_div_delimiter)),
+        /\r?\n/,
+      )),
 
     // Fenced Code Block (regular, non-executable)
     fenced_code_block: ($) =>
@@ -439,118 +433,6 @@ module.exports = grammar({
             ),
           ),
           alias(token(/[ \t]*>\}\}\r?\n/), $.shortcode_close),
-        ),
-      ),
-
-    /**
-     * Callout Block
-     *
-     * ::: {.callout-note}
-     * Content here
-     * :::
-     *
-     * Spec: openspec/specs/enhanced-divs/spec.md
-     */
-    callout_block: ($) =>
-      prec.dynamic(
-        3,
-        seq(
-          alias(
-            token(
-              seq(
-                /:::+/,
-                /[ \t]*/,
-                "{",
-                /[ \t]*/,
-                /\.callout-(note|warning|important|tip|caution)/,
-                /[^}\r\n]*/,
-                "}",
-              ),
-            ),
-            $.callout_open,
-          ),
-          /\r?\n/,
-          field("content", repeat($._block)),
-          field(
-            "close",
-            alias(token(prec(10, /:::+/)), $.fenced_div_delimiter),
-          ),
-          /\r?\n/,
-        ),
-      ),
-
-    /**
-     * Tabset Block
-     *
-     * ::: {.panel-tabset}
-     * ## Tab 1
-     * Content
-     * :::
-     *
-     * Spec: openspec/specs/enhanced-divs/spec.md
-     */
-    tabset_block: ($) =>
-      prec.dynamic(
-        3,
-        seq(
-          alias(
-            token(
-              seq(
-                /:::+/,
-                /[ \t]*/,
-                "{",
-                /[ \t]*/,
-                /\.panel-tabset/,
-                /[^}\r\n]*/,
-                "}",
-              ),
-            ),
-            $.tabset_open,
-          ),
-          /\r?\n/,
-          field("content", repeat($._block)),
-          field(
-            "close",
-            alias(token(prec(10, /:::+/)), $.fenced_div_delimiter),
-          ),
-          /\r?\n/,
-        ),
-      ),
-
-    /**
-     * Conditional Content Block
-     *
-     * ::: {.content-visible when-format="html"}
-     * HTML-only content
-     * :::
-     *
-     * Spec: openspec/specs/enhanced-divs/spec.md
-     */
-    conditional_block: ($) =>
-      prec.dynamic(
-        3,
-        seq(
-          alias(
-            token(
-              seq(
-                /:::+/,
-                /[ \t]*/,
-                "{",
-                /[ \t]*/,
-                /\.content-(visible|hidden)/,
-                /[^}\r\n]*/,
-                "}",
-              ),
-            ),
-            $.conditional_open,
-          ),
-          /\r?\n/,
-          field("content", repeat($._block)),
-          field(
-            "close",
-            alias(token(prec(10, /:::+/)), $.fenced_div_delimiter),
-          ),
-          /\r?\n/,
         ),
       ),
 
@@ -726,6 +608,7 @@ module.exports = grammar({
         alias("~", $.tilde), // Fallback for isolated tilde when scanner rejects subscript
         alias("^", $.caret), // Fallback for isolated caret when scanner rejects superscript
         alias("$", $.dollar_sign), // Fallback for isolated dollar sign when scanner rejects math
+        alias(":", $.colon), // Single colon (excluded from text to allow fenced div detection)
         $.text, // text last - fallback for anything not matched
       ),
 
@@ -753,6 +636,7 @@ module.exports = grammar({
         alias("~", $.tilde),
         alias("^", $.caret),
         alias("$", $.dollar_sign),
+        alias(":", $.colon),
         $.text,
       ),
 
@@ -780,10 +664,11 @@ module.exports = grammar({
         alias("~", $.tilde),
         alias("^", $.caret),
         alias("$", $.dollar_sign),
+        alias(":", $.colon),
         $.text,
       ),
 
-    text: ($) => /[^\r\n`*_\[@<{^~=$]+/,
+    text: ($) => /[^\r\n`*_\[@<{^~=$:]+/,
 
     // Single equals sign (for equations like E=mc^2^, not part of ==)
     equals_sign: ($) => "=",

@@ -67,18 +67,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "callout_block"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "tabset_block"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "conditional_block"
-        },
-        {
-          "type": "SYMBOL",
           "name": "atx_heading"
         },
         {
@@ -969,8 +957,8 @@
       }
     },
     "fenced_div": {
-      "type": "PREC_LEFT",
-      "value": 1,
+      "type": "PREC",
+      "value": 2,
       "content": {
         "type": "SEQ",
         "members": [
@@ -980,8 +968,8 @@
             "content": {
               "type": "ALIAS",
               "content": {
-                "type": "PATTERN",
-                "value": ":::+"
+                "type": "SYMBOL",
+                "name": "_fenced_div_open"
               },
               "named": true,
               "value": "fenced_div_delimiter"
@@ -1033,10 +1021,14 @@
             "value": "\\r?\\n"
           },
           {
-            "type": "REPEAT",
+            "type": "FIELD",
+            "name": "content",
             "content": {
-              "type": "SYMBOL",
-              "name": "_block"
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_block"
+              }
             }
           },
           {
@@ -1045,8 +1037,8 @@
             "content": {
               "type": "ALIAS",
               "content": {
-                "type": "PATTERN",
-                "value": ":::+"
+                "type": "SYMBOL",
+                "name": "_fenced_div_close"
               },
               "named": true,
               "value": "fenced_div_delimiter"
@@ -1478,273 +1470,6 @@
             },
             "named": true,
             "value": "shortcode_close"
-          }
-        ]
-      }
-    },
-    "callout_block": {
-      "type": "PREC_DYNAMIC",
-      "value": 3,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "TOKEN",
-              "content": {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "PATTERN",
-                    "value": ":::+"
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "[ \\t]*"
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "{"
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "[ \\t]*"
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "\\.callout-(note|warning|important|tip|caution)"
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "[^}\\r\\n]*"
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "}"
-                  }
-                ]
-              }
-            },
-            "named": true,
-            "value": "callout_open"
-          },
-          {
-            "type": "PATTERN",
-            "value": "\\r?\\n"
-          },
-          {
-            "type": "FIELD",
-            "name": "content",
-            "content": {
-              "type": "REPEAT",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_block"
-              }
-            }
-          },
-          {
-            "type": "FIELD",
-            "name": "close",
-            "content": {
-              "type": "ALIAS",
-              "content": {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PREC",
-                  "value": 10,
-                  "content": {
-                    "type": "PATTERN",
-                    "value": ":::+"
-                  }
-                }
-              },
-              "named": true,
-              "value": "fenced_div_delimiter"
-            }
-          },
-          {
-            "type": "PATTERN",
-            "value": "\\r?\\n"
-          }
-        ]
-      }
-    },
-    "tabset_block": {
-      "type": "PREC_DYNAMIC",
-      "value": 3,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "TOKEN",
-              "content": {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "PATTERN",
-                    "value": ":::+"
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "[ \\t]*"
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "{"
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "[ \\t]*"
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "\\.panel-tabset"
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "[^}\\r\\n]*"
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "}"
-                  }
-                ]
-              }
-            },
-            "named": true,
-            "value": "tabset_open"
-          },
-          {
-            "type": "PATTERN",
-            "value": "\\r?\\n"
-          },
-          {
-            "type": "FIELD",
-            "name": "content",
-            "content": {
-              "type": "REPEAT",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_block"
-              }
-            }
-          },
-          {
-            "type": "FIELD",
-            "name": "close",
-            "content": {
-              "type": "ALIAS",
-              "content": {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PREC",
-                  "value": 10,
-                  "content": {
-                    "type": "PATTERN",
-                    "value": ":::+"
-                  }
-                }
-              },
-              "named": true,
-              "value": "fenced_div_delimiter"
-            }
-          },
-          {
-            "type": "PATTERN",
-            "value": "\\r?\\n"
-          }
-        ]
-      }
-    },
-    "conditional_block": {
-      "type": "PREC_DYNAMIC",
-      "value": 3,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "TOKEN",
-              "content": {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "PATTERN",
-                    "value": ":::+"
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "[ \\t]*"
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "{"
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "[ \\t]*"
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "\\.content-(visible|hidden)"
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "[^}\\r\\n]*"
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "}"
-                  }
-                ]
-              }
-            },
-            "named": true,
-            "value": "conditional_open"
-          },
-          {
-            "type": "PATTERN",
-            "value": "\\r?\\n"
-          },
-          {
-            "type": "FIELD",
-            "name": "content",
-            "content": {
-              "type": "REPEAT",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_block"
-              }
-            }
-          },
-          {
-            "type": "FIELD",
-            "name": "close",
-            "content": {
-              "type": "ALIAS",
-              "content": {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PREC",
-                  "value": 10,
-                  "content": {
-                    "type": "PATTERN",
-                    "value": ":::+"
-                  }
-                }
-              },
-              "named": true,
-              "value": "fenced_div_delimiter"
-            }
-          },
-          {
-            "type": "PATTERN",
-            "value": "\\r?\\n"
           }
         ]
       }
@@ -2566,6 +2291,15 @@
           "value": "dollar_sign"
         },
         {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": ":"
+          },
+          "named": true,
+          "value": "colon"
+        },
+        {
           "type": "SYMBOL",
           "name": "text"
         }
@@ -2686,6 +2420,15 @@
           },
           "named": true,
           "value": "dollar_sign"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": ":"
+          },
+          "named": true,
+          "value": "colon"
         },
         {
           "type": "SYMBOL",
@@ -2810,6 +2553,15 @@
           "value": "dollar_sign"
         },
         {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": ":"
+          },
+          "named": true,
+          "value": "colon"
+        },
+        {
           "type": "SYMBOL",
           "name": "text"
         }
@@ -2817,7 +2569,7 @@
     },
     "text": {
       "type": "PATTERN",
-      "value": "[^\\r\\n`*_\\[@<{^~=$]+"
+      "value": "[^\\r\\n`*_\\[@<{^~=$:]+"
     },
     "equals_sign": {
       "type": "STRING",
@@ -3863,18 +3615,6 @@
       "code_span"
     ],
     [
-      "callout_block",
-      "fenced_div"
-    ],
-    [
-      "tabset_block",
-      "fenced_div"
-    ],
-    [
-      "conditional_block",
-      "fenced_div"
-    ],
-    [
       "_emphasis_star",
       "_inline_element"
     ],
@@ -4002,6 +3742,14 @@
     {
       "type": "SYMBOL",
       "name": "_last_token_punctuation"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_fenced_div_open"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_fenced_div_close"
     }
   ],
   "inline": [],

@@ -1,15 +1,17 @@
 # Enhanced Divs Specification
 
-**Capability:** Semantic parsing of Quarto-specific fenced div types (callouts, tabsets, conditional content)
+**Capability:** Semantic parsing of Quarto-specific fenced div types (callouts, tabsets, conditional content) and generic fenced divs with custom classes
 
-**Status:** Implemented
+**Status:** Implemented (Unified Architecture)
 
 **Created:** 2025-10-14
-**Implemented:** 2025-10-17
+**Implemented:** 2025-10-17 (enhanced divs), 2025-11-02 (unified with generic divs)
 
 ## Purpose
 
-Semantic parsing of Quarto-specific fenced div types (callouts, tabsets, conditional content). Quarto extends Pandoc's fenced div syntax (`::: {.class}`) with semantic meaning for specific class names. The parser distinguishes and semantically parses three categories of enhanced divs using token-based matching with prec.dynamic() for disambiguation.
+Semantic parsing of ALL fenced div types including both Quarto-specific enhanced divs (callouts, tabsets, conditional content) and generic divs with custom classes. Quarto extends Pandoc's fenced div syntax (`::: {.class}`) with semantic meaning for specific class names.
+
+**Architecture (2025-11-02):** Unified external scanner approach using `FENCED_DIV_OPEN` and `FENCED_DIV_CLOSE` tokens. All divs (enhanced and generic) parse through a single `fenced_div` rule with depth tracking for proper nesting support. This replaces the original specialized rules (callout_block, tabset_block, conditional_block) with a more flexible unified structure inspired by quarto-dev/quarto-markdown.
 
 ## Requirements
 
@@ -277,11 +279,11 @@ This is [HTML-only content]{.content-visible when-format="html"}.
 - **THEN** create `(conditional_span)` node with visibility and format fields
 - **AND** parse span content as inline elements
 
-## Generic Div Fallback
+## Generic Div Support
 
-### Requirement: Backward Compatibility
+### Requirement: Generic Fenced Divs (✅ IMPLEMENTED 2025-11-02)
 
-The parser SHALL continue to parse unrecognized div classes as generic fenced divs.
+The parser SHALL parse ALL fenced divs including those with custom/arbitrary class names using unified external scanner architecture.
 
 #### Scenario: Custom div class
 
@@ -291,72 +293,100 @@ Custom content
 :::
 ```
 
-- **WHEN** a fenced div does not match callout, tabset, or conditional patterns
-- **THEN** parse as generic `(fenced_div)` with class attributes
-- **AND** maintain all existing functionality
+- **WHEN** a fenced div has any class attribute (specific or custom)
+- **THEN** parse as `(fenced_div)` with opening delimiter, attributes, content, and closing delimiter
+- **AND** support arbitrary nesting depth via scanner state tracking
+
+#### Scenario: Multiple classes and attributes
+
+```markdown
+::: {#myid .class1 .class2 key="value"}
+Content with multiple attributes
+:::
+```
+
+- **WHEN** a fenced div has multiple classes, IDs, or attributes
+- **THEN** parse complete attribute list in unified structure
+- **AND** maintain all attribute information
 
 ## AST Structure
 
-**Enhanced div nodes:**
+**Unified fenced div structure (2025-11-02):**
 ```
-(callout_block
-  type: (callout_type)           # "note" | "warning" | "important" | "tip" | "caution"
-  title: (heading)?               # Optional title (from ## heading or title="...")
-  collapse: (boolean)?            # Optional collapse attribute
-  appearance: (string)?           # Optional appearance: "default" | "simple" | "minimal"
-  icon: (boolean)?                # Optional icon display
-  content: (_block)+)             # Block content
+(fenced_div
+  open: (fenced_div_delimiter)    # Opening ::: (captured by external scanner)
+  attributes: (attribute_list)?   # Optional {.class #id key="value"}
+  content: (_block)*              # Block-level content
+  close: (fenced_div_delimiter))  # Closing ::: (captured by external scanner)
+```
 
-(tabset_block
-  group: (string)?                # Optional group name for synchronized tabs
-  style: (string)?                # Optional: "pills" | "tabs"
-  tabs: (tab)+)                   # One or more tabs
+**Notes:**
+- All div types (callouts, tabsets, conditional, generic) use the same unified `fenced_div` structure
+- Scanner tracks nesting depth to properly match opening/closing delimiters
+- Semantic distinction between div types happens at query/language-server level based on attribute classes
+- Enhanced divs (callouts, tabsets, conditional) can be identified by class patterns: `.callout-*`, `.panel-tabset`, `.content-visible`, `.content-hidden`
 
-(tab
-  title: (inline)                 # Tab title from heading
-  content: (_block)+)             # Tab content
-
-(conditional_block
-  visibility: (string)            # "visible" | "hidden"
-  format: (string)?               # when-format value
-  unless_format: (string)?        # unless-format value
-  when_meta: (string)?            # when-meta value
-  unless_meta: (string)?          # unless-meta value
-  content: (_block)+)             # Conditional content
-
-(conditional_span
-  visibility: (string)            # "visible" | "hidden"
-  format: (string)?               # when-format value
-  content: (inline)+)             # Conditional inline content
+**Legacy AST nodes (pre-2025-11-02, no longer generated):**
+```
+(callout_block ...)      # Replaced by fenced_div
+(tabset_block ...)       # Replaced by fenced_div
+(conditional_block ...)  # Replaced by fenced_div
 ```
 
 ## Implementation Notes
 
-### Grammar Strategy
+### Grammar Strategy (IMPLEMENTED 2025-11-02)
 
-**Option A: Extend fenced_div rule** (Recommended)
-- Check div attributes after parsing
-- Create semantic nodes based on class name
-- Maintain compatibility with generic divs
+**Unified External Scanner Approach:**
+- Single `fenced_div` rule handles ALL div types (enhanced + generic)
+- External scanner provides `FENCED_DIV_OPEN` and `FENCED_DIV_CLOSE` tokens
+- Scanner maintains `fenced_div_depth` state for proper nesting support
+- Early colon check optimization for performance (`peek() == ':'`)
+- Inspired by quarto-dev/quarto-markdown implementation
 
-**Option B: Separate rules with precedence**
-- Create specific rules: `callout_block`, `tabset_block`, `conditional_block`
-- Use lookahead or external scanner to distinguish
-- Higher precedence than generic `fenced_div`
+**Scanner Implementation:**
+```c
+// src/scanner.c
+typedef struct {
+  // ... other state fields
+  uint8_t fenced_div_depth;  // Track nesting depth
+} Scanner;
+
+bool scan_fenced_div_marker(TSLexer *lexer, bool is_close) {
+  // Unified logic for both opening and closing delimiters
+  // Handles arbitrary fence lengths (:::, ::::, etc.)
+  // Skips whitespace and attribute blocks for opening
+}
+```
+
+**Grammar Rule:**
+```javascript
+// grammar.js
+fenced_div: $ => prec(2, seq(
+  alias($._fenced_div_open, $.fenced_div_delimiter),
+  optional($.attribute_list),
+  optional(/\r?\n/),
+  field('content', repeat($._block)),
+  alias($._fenced_div_close, $.fenced_div_delimiter),
+  optional(/\r?\n/)
+))
+```
 
 ### Attribute Parsing
 
-Current grammar already parses attributes via `attribute_list`. Enhancement only needs to:
-1. Check for specific class names (`.callout-*`, `.panel-tabset`, `.content-visible`)
-2. Extract relevant attributes (`title=`, `collapse=`, `when-format=`, etc.)
-3. Create semantic nodes with appropriate fields
+Attributes parsed via existing `attribute_list` rule. Semantic distinction happens downstream:
+1. Parser creates uniform `fenced_div` nodes with `attribute_list`
+2. Syntax highlighting queries match class patterns (`.callout-*`, `.panel-tabset`, etc.)
+3. Language servers can provide enhanced semantics based on class names
+4. Editor extensions apply appropriate styling and behavior
 
 ### Backward Compatibility
 
-All enhanced divs are valid generic fenced divs, so:
-- Existing documents will continue to parse
-- Generic div rules remain functional
-- Semantic enhancement is additive, not breaking
+✅ **Fully backward compatible:**
+- Enhanced divs continue to parse (now as `fenced_div` with semantic classes)
+- Generic divs now work (previously broken, now fixed)
+- All existing tests continue to pass with updated node expectations
+- Query files updated to match new unified structure
 
 ## References
 

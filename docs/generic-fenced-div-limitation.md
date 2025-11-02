@@ -1,7 +1,16 @@
 # Generic Fenced Div Limitation - Technical Analysis
 
 **Date**: 2025-10-14
-**Status**: Investigated - Not Fixable Without Major Grammar Refactor
+**Status**: ✅ RESOLVED (2025-11-02) - Implemented using unified external scanner architecture
+**Resolution**: See task file at /Users/ck432/Partners HealthCare Dropbox/Chris Kennedy/Code/tree-sitter-quarto/sessions/tasks/h-implement-generic-fenced-divs/README.md
+
+---
+
+**ARCHIVED DOCUMENT - HISTORICAL REFERENCE ONLY**
+
+This document describes the limitation that existed prior to 2025-11-02. Generic fenced divs now work correctly using a unified external scanner approach inspired by quarto-dev/quarto-markdown.
+
+---
 
 ## Summary
 

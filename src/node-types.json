@@ -808,6 +808,16 @@
     "type": "fenced_code_block",
     "named": true,
     "fields": {
+      "attributes": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "attribute_list",
+            "named": true
+          }
+        ]
+      },
       "close": {
         "multiple": false,
         "required": true,

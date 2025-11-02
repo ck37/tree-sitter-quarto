@@ -292,7 +292,14 @@ conflicts: $ => [
    - R shorthand syntax, multiple cells, complex expressions
    - Validates inline code cell parsing
 
-**Total:** 205 tests, all passing (100%)
+5. **basic-markdown.txt** (fenced code block attributes) - 8 tests
+   - Single class attributes (`` ```{.bash} ``)
+   - Multiple attributes with key-value pairs
+   - Info string + attributes combinations
+   - Edge cases (escaped quotes, Unicode, multiple classes)
+   - Validates Pandoc fenced code block attribute syntax
+
+**Total:** 213 tests, all passing (100%)
 
 ### Example Document
 **File:** examples/sample.qmd

@@ -269,6 +269,144 @@
  (#set! injection.combined))
 
 ; ============================================================================
+; FENCED CODE BLOCKS WITH ATTRIBUTE-BASED LANGUAGE
+; ============================================================================
+
+; These handle Pandoc-style attribute syntax like ```{.python} or ```python {.bash}
+
+; Python (attribute-based)
+((fenced_code_block
+  attributes: (attribute_list
+    class: (attribute_class) @_lang)
+  (#eq? @_lang ".python")
+  (code_line) @injection.content)
+ (#set! injection.language "python")
+ (#set! injection.combined))
+
+; R (attribute-based)
+((fenced_code_block
+  attributes: (attribute_list
+    class: (attribute_class) @_lang)
+  (#eq? @_lang ".r")
+  (code_line) @injection.content)
+ (#set! injection.language "r")
+ (#set! injection.combined))
+
+; Julia (attribute-based)
+((fenced_code_block
+  attributes: (attribute_list
+    class: (attribute_class) @_lang)
+  (#eq? @_lang ".julia")
+  (code_line) @injection.content)
+ (#set! injection.language "julia")
+ (#set! injection.combined))
+
+; JavaScript (attribute-based)
+((fenced_code_block
+  attributes: (attribute_list
+    class: (attribute_class) @_lang)
+  (#eq? @_lang ".javascript")
+  (code_line) @injection.content)
+ (#set! injection.language "javascript")
+ (#set! injection.combined))
+
+((fenced_code_block
+  attributes: (attribute_list
+    class: (attribute_class) @_lang)
+  (#eq? @_lang ".js")
+  (code_line) @injection.content)
+ (#set! injection.language "javascript")
+ (#set! injection.combined))
+
+; TypeScript (attribute-based)
+((fenced_code_block
+  attributes: (attribute_list
+    class: (attribute_class) @_lang)
+  (#eq? @_lang ".typescript")
+  (code_line) @injection.content)
+ (#set! injection.language "typescript")
+ (#set! injection.combined))
+
+((fenced_code_block
+  attributes: (attribute_list
+    class: (attribute_class) @_lang)
+  (#eq? @_lang ".ts")
+  (code_line) @injection.content)
+ (#set! injection.language "typescript")
+ (#set! injection.combined))
+
+; Bash (attribute-based)
+((fenced_code_block
+  attributes: (attribute_list
+    class: (attribute_class) @_lang)
+  (#eq? @_lang ".bash")
+  (code_line) @injection.content)
+ (#set! injection.language "bash")
+ (#set! injection.combined))
+
+((fenced_code_block
+  attributes: (attribute_list
+    class: (attribute_class) @_lang)
+  (#eq? @_lang ".sh")
+  (code_line) @injection.content)
+ (#set! injection.language "bash")
+ (#set! injection.combined))
+
+; SQL (attribute-based)
+((fenced_code_block
+  attributes: (attribute_list
+    class: (attribute_class) @_lang)
+  (#eq? @_lang ".sql")
+  (code_line) @injection.content)
+ (#set! injection.language "sql")
+ (#set! injection.combined))
+
+; JSON (attribute-based)
+((fenced_code_block
+  attributes: (attribute_list
+    class: (attribute_class) @_lang)
+  (#eq? @_lang ".json")
+  (code_line) @injection.content)
+ (#set! injection.language "json")
+ (#set! injection.combined))
+
+; YAML (attribute-based)
+((fenced_code_block
+  attributes: (attribute_list
+    class: (attribute_class) @_lang)
+  (#eq? @_lang ".yaml")
+  (code_line) @injection.content)
+ (#set! injection.language "yaml")
+ (#set! injection.combined))
+
+; HTML (attribute-based)
+((fenced_code_block
+  attributes: (attribute_list
+    class: (attribute_class) @_lang)
+  (#eq? @_lang ".html")
+  (code_line) @injection.content)
+ (#set! injection.language "html")
+ (#set! injection.combined))
+
+; CSS (attribute-based)
+((fenced_code_block
+  attributes: (attribute_list
+    class: (attribute_class) @_lang)
+  (#eq? @_lang ".css")
+  (code_line) @injection.content)
+ (#set! injection.language "css")
+ (#set! injection.combined))
+
+; Markdown (attribute-based)
+((fenced_code_block
+  attributes: (attribute_list
+    class: (attribute_class) @_lang)
+  (#eq? @_lang ".markdown")
+  (code_line) @injection.content)
+ (#set! injection.language "markdown")
+ (#set! injection.combined))
+
+; ============================================================================
 ; OTHER EMBEDDED CONTENT
 ; ============================================================================
 

@@ -1,7 +1,7 @@
 # tree-sitter-quarto
 
 [![CI](https://github.com/ck37/tree-sitter-quarto/workflows/CI/badge.svg)](https://github.com/ck37/tree-sitter-quarto/actions)
-[![Tests](https://img.shields.io/badge/tests-205%2F205%20passing-brightgreen)](https://github.com/ck37/tree-sitter-quarto/actions)
+[![Tests](https://img.shields.io/badge/tests-213%2F213%20passing-brightgreen)](https://github.com/ck37/tree-sitter-quarto/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![tree-sitter](https://img.shields.io/badge/tree--sitter-0.25.10-orange)](https://tree-sitter.github.io/)
 [![Node Version](https://img.shields.io/badge/node-%3E%3D16-brightgreen)](https://nodejs.org/)
@@ -38,6 +38,11 @@ Fully implemented:
   - Footnote references: `[^1]`
   - Footnote definitions: `[^1]: definition`
   - Nested footnotes and formatting support
+- Fenced code block attributes - Pandoc attribute syntax on code blocks
+  - Class only: `` ```{.bash} ``
+  - Info + attributes: `` ```python {.numberLines} ``
+  - Multiple attributes: `` ```{.python .numberLines startFrom="10"} ``
+  - Language injection supports attribute-based language specification
 - Language injection - Python, R, Julia, SQL, Bash, JavaScript/TypeScript, OJS
 - Full Pandoc Markdown - Headings, emphasis, links, images, tables, etc.
 

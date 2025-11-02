@@ -63,6 +63,169 @@ print("hello")
     close: (code_fence_delimiter)))
 
 ==================
+Fenced code block with single class attribute
+==================
+
+```{.bash}
+echo "hello"
+```
+
+---
+
+(document
+  (fenced_code_block
+    open: (code_fence_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class))
+    (code_line)
+    close: (code_fence_delimiter)))
+
+==================
+Fenced code block with multiple attributes
+==================
+
+```{.python .numberLines startFrom="10"}
+print("hello")
+```
+
+---
+
+(document
+  (fenced_code_block
+    open: (code_fence_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class)
+      class: (attribute_class)
+      attribute: (key_value_attribute
+        key: (attribute_key)
+        value: (attribute_value)))
+    (code_line)
+    close: (code_fence_delimiter)))
+
+==================
+Fenced code block with info string and attributes
+==================
+
+```python {.numberLines}
+print("hello")
+```
+
+---
+
+(document
+  (fenced_code_block
+    open: (code_fence_delimiter)
+    info: (info_string)
+    attributes: (attribute_list
+      class: (attribute_class))
+    (code_line)
+    close: (code_fence_delimiter)))
+
+==================
+Fenced code block with ID and class attributes
+==================
+
+```{#mycode .python}
+print("hello")
+```
+
+---
+
+(document
+  (fenced_code_block
+    open: (code_fence_delimiter)
+    attributes: (attribute_list
+      id: (attribute_id)
+      class: (attribute_class))
+    (code_line)
+    close: (code_fence_delimiter)))
+
+==================
+Fenced code block with multiple classes (language second)
+==================
+
+```{.numberLines .python}
+print("hello")
+```
+
+---
+
+(document
+  (fenced_code_block
+    open: (code_fence_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class)
+      class: (attribute_class))
+    (code_line)
+    close: (code_fence_delimiter)))
+
+==================
+Fenced code block with escaped quotes in attribute value
+==================
+
+```{.python filename="test\"file.py"}
+print("hello")
+```
+
+---
+
+(document
+  (fenced_code_block
+    open: (code_fence_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class)
+      attribute: (key_value_attribute
+        key: (attribute_key)
+        value: (attribute_value)))
+    (code_line)
+    close: (code_fence_delimiter)))
+
+==================
+Fenced code block with Unicode in attribute value
+==================
+
+```{.python filename="código.py"}
+print("hello")
+```
+
+---
+
+(document
+  (fenced_code_block
+    open: (code_fence_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class)
+      attribute: (key_value_attribute
+        key: (attribute_key)
+        value: (attribute_value)))
+    (code_line)
+    close: (code_fence_delimiter)))
+
+==================
+Fenced code block with complex attributes
+==================
+
+```{.bash filename="Terminal" eval=false}
+echo "test"
+```
+
+---
+
+(document
+  (fenced_code_block
+    open: (code_fence_delimiter)
+    attributes: (attribute_list
+      class: (attribute_class)
+      attribute: (key_value_attribute
+        key: (attribute_key)
+        value: (attribute_value))
+      attribute: (key_value_attribute
+        key: (attribute_key)
+        value: (attribute_value)))
+    (code_line)
+    close: (code_fence_delimiter)))
+
+==================
 YAML front matter
 ==================
 ---

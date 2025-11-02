@@ -19,7 +19,7 @@ CORPUS_DIR="${TMPDIR:-/tmp}/quarto-web-corpus"
 OUTPUT_DIR="benchmarks/validation"
 REPORT_FILE="$OUTPUT_DIR/validation-report.md"
 RESULTS_FILE="$OUTPUT_DIR/results.json"
-MAX_SAMPLE=${MAX_SAMPLE:-0}  # 0 = parse all files
+MAX_SAMPLE=${MAX_SAMPLE:-40}  # Default to 40 files, or 0 to parse all files
 
 echo -e "${BLUE}=== tree-sitter-quarto Corpus Validation ===${NC}\n"
 

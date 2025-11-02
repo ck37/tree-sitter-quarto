@@ -363,7 +363,28 @@ module.exports = grammar({
         -1,
         seq(
           field("open", alias(token(/```+/), $.code_fence_delimiter)),
-          optional(field("info", $.info_string)),
+          choice(
+            // Pattern 1: info string + optional attributes
+            seq(
+              field("info", $.info_string),
+              optional(
+                seq(
+                  optional(/[ \t]+/),
+                  "{",
+                  field("attributes", $.attribute_list),
+                  "}",
+                ),
+              ),
+            ),
+            // Pattern 2: attributes only (no info string)
+            seq(
+              "{",
+              field("attributes", $.attribute_list),
+              "}",
+            ),
+            // Pattern 3: neither (backward compatibility)
+            seq(),
+          ),
           /\r?\n/,
           repeat(seq(alias(/[^\r\n]+/, $.code_line), /\r?\n/)),
           field("close", alias(token(/```+/), $.code_fence_delimiter)),

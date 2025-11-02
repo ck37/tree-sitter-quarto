@@ -477,9 +477,11 @@ The **important** equation $x^2 + y^2 = r^2$ is circular.
     content: (inline
       (text)
       (strong_emphasis
-        (strong_emphasis_delimiter)
+        (emphasis_delimiter)
+        (emphasis_delimiter)
         (text)
-        (strong_emphasis_delimiter))
+        (emphasis_delimiter)
+        (emphasis_delimiter))
       (text)
       (inline_math
         (math_delimiter)

@@ -115,7 +115,6 @@ Shortcut [Example][].
     label: (reference_label)
     destination: (link_destination)))
 
-
 ==================
 Multiple references in paragraph
 ==================
@@ -165,9 +164,11 @@ This is [**bold**][ref] and [plain][ref2].
       (text)
       (link
         text: (strong_emphasis
-          (strong_emphasis_delimiter)
+          (emphasis_delimiter)
+          (emphasis_delimiter)
           (text)
-          (strong_emphasis_delimiter))
+          (emphasis_delimiter)
+          (emphasis_delimiter))
         reference: (reference_label))
       (text)
       (link

@@ -122,6 +122,10 @@ See the [docs/](./docs/) directory for detailed documentation.
 
 Contributions welcome! See [CONTRIBUTING.md](./CONTRIBUTING.md) for development workflow.
 
+## Acknowledgments
+
+This parser incorporates emphasis and strong emphasis handling from [tree-sitter-markdown](https://github.com/tree-sitter-grammars/tree-sitter-markdown) (MIT License, Copyright 2021 Matthias Deiml). The delimiter run logic and flanking rules from tree-sitter-markdown's scanner enable proper CommonMark-compliant parsing of emphasis patterns like `*italic***bold***italic*`.
+
 ## License
 
 MIT License - see [LICENSE](./LICENSE) file for details

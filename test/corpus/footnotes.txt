@@ -99,9 +99,11 @@ Footnote definition with inline formatting
     content: (inline
       (text)
       (strong_emphasis
-        (strong_emphasis_delimiter)
+        (emphasis_delimiter)
+        (emphasis_delimiter)
         (text)
-        (strong_emphasis_delimiter))
+        (emphasis_delimiter)
+        (emphasis_delimiter))
       (text)
       (emphasis
         (emphasis_delimiter)
@@ -147,9 +149,11 @@ Inline footnote with formatting
       (inline_footnote
         (footnote_text)
         (strong_emphasis
-          (strong_emphasis_delimiter)
+          (emphasis_delimiter)
+          (emphasis_delimiter)
           (text)
-          (strong_emphasis_delimiter))))))
+          (emphasis_delimiter)
+          (emphasis_delimiter))))))
 
 ==================
 Inline footnote with code span

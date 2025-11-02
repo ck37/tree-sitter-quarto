@@ -114,9 +114,11 @@ Heading with inline formatting and attributes
     marker: (atx_heading_marker)
     content: (inline
       (strong_emphasis
-        (strong_emphasis_delimiter)
+        (emphasis_delimiter)
+        (emphasis_delimiter)
         (text)
-        (strong_emphasis_delimiter))
+        (emphasis_delimiter)
+        (emphasis_delimiter))
       (text))
     attributes: (attribute_list
       id: (attribute_id))))

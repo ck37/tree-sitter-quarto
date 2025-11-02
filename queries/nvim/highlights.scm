@@ -73,8 +73,6 @@
 
 (emphasis) @markup.italic
 
-(strong_emphasis_delimiter) @punctuation.delimiter
-
 (strong_emphasis) @markup.bold
 
 ; Inline Formatting (Pandoc extensions)

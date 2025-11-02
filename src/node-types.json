@@ -1976,6 +1976,10 @@
           "named": true
         },
         {
+          "type": "emphasis_delimiter",
+          "named": true
+        },
+        {
           "type": "equals_sign",
           "named": true
         },
@@ -2017,10 +2021,6 @@
         },
         {
           "type": "strong_emphasis",
-          "named": true
-        },
-        {
-          "type": "strong_emphasis_delimiter",
           "named": true
         },
         {
@@ -2703,10 +2703,6 @@
   },
   {
     "type": "strikethrough_delimiter",
-    "named": true
-  },
-  {
-    "type": "strong_emphasis_delimiter",
     "named": true
   },
   {

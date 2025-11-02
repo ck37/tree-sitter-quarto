@@ -76,9 +76,11 @@ This is ~~**bold deleted**~~ text.
       (strikethrough
         (strikethrough_delimiter)
         (strong_emphasis
-          (strong_emphasis_delimiter)
+          (emphasis_delimiter)
+          (emphasis_delimiter)
           (text)
-          (strong_emphasis_delimiter))
+          (emphasis_delimiter)
+          (emphasis_delimiter))
         (strikethrough_delimiter))
       (text))))
 
@@ -297,9 +299,11 @@ Text with **bold**, *italic*, ~~strikethrough~~, ==highlight==, H~2~O, and x^2^.
     content: (inline
       (text)
       (strong_emphasis
-        (strong_emphasis_delimiter)
+        (emphasis_delimiter)
+        (emphasis_delimiter)
         (text)
-        (strong_emphasis_delimiter))
+        (emphasis_delimiter)
+        (emphasis_delimiter))
       (text)
       (emphasis
         (emphasis_delimiter)

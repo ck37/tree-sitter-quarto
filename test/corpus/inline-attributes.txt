@@ -219,9 +219,11 @@ Text with [**bold**]{.strong} content.
       (text)
       (link
         text: (strong_emphasis
-          (strong_emphasis_delimiter)
+          (emphasis_delimiter)
+          (emphasis_delimiter)
           (text)
-          (strong_emphasis_delimiter))
+          (emphasis_delimiter)
+          (emphasis_delimiter))
         attributes: (attribute_list
           class: (attribute_class)))
       (text))))

@@ -31,6 +31,12 @@ enum TokenType {
   SUPERSCRIPT_CLOSE,
   INLINE_MATH_OPEN,
   INLINE_MATH_CLOSE,
+  EMPHASIS_OPEN_STAR,
+  EMPHASIS_CLOSE_STAR,
+  EMPHASIS_OPEN_UNDERSCORE,
+  EMPHASIS_CLOSE_UNDERSCORE,
+  LAST_TOKEN_WHITESPACE,
+  LAST_TOKEN_PUNCTUATION,
 };
 
 // Scanner state
@@ -41,6 +47,9 @@ typedef struct {
   uint8_t inside_subscript;     // Track if we're inside subscript (0=false, 1=true)
   uint8_t inside_superscript;   // Track if we're inside superscript (0=false, 1=true)
   uint8_t inside_inline_math;   // Track if we're inside inline math (0=false, 1=true)
+  // Emphasis/strikethrough state (from tree-sitter-markdown)
+  uint8_t state;                // Parser state flags for emphasis delimiters
+  uint8_t num_emphasis_delimiters_left; // Number of characters remaining in current delimiter run
 } Scanner;
 
 // Initialize scanner
@@ -52,6 +61,8 @@ void *tree_sitter_quarto_external_scanner_create() {
   scanner->inside_subscript = 0;
   scanner->inside_superscript = 0;
   scanner->inside_inline_math = 0;
+  scanner->state = 0;
+  scanner->num_emphasis_delimiters_left = 0;
   return scanner;
 }
 
@@ -71,19 +82,32 @@ unsigned tree_sitter_quarto_external_scanner_serialize(void *payload, char *buff
   buffer[4] = scanner->inside_subscript;
   buffer[5] = scanner->inside_superscript;
   buffer[6] = scanner->inside_inline_math;
-  return 7;
+  buffer[7] = scanner->state;
+  buffer[8] = scanner->num_emphasis_delimiters_left;
+  return 9;
 }
 
 // Deserialize scanner state
 void tree_sitter_quarto_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {
   Scanner *scanner = (Scanner *)payload;
-  if (length >= 7) {
+  if (length >= 9) {
     scanner->in_executable_cell = buffer[0] != 0;
     scanner->at_cell_start = buffer[1] != 0;
     scanner->fence_length = ((uint32_t)buffer[2] & 0xFF) | (((uint32_t)buffer[3] & 0xFF) << 8);
     scanner->inside_subscript = buffer[4];
     scanner->inside_superscript = buffer[5];
     scanner->inside_inline_math = buffer[6];
+    scanner->state = buffer[7];
+    scanner->num_emphasis_delimiters_left = buffer[8];
+  } else if (length >= 7) {
+    scanner->in_executable_cell = buffer[0] != 0;
+    scanner->at_cell_start = buffer[1] != 0;
+    scanner->fence_length = ((uint32_t)buffer[2] & 0xFF) | (((uint32_t)buffer[3] & 0xFF) << 8);
+    scanner->inside_subscript = buffer[4];
+    scanner->inside_superscript = buffer[5];
+    scanner->inside_inline_math = buffer[6];
+    scanner->state = 0;
+    scanner->num_emphasis_delimiters_left = 0;
   } else if (length >= 6) {
     scanner->in_executable_cell = buffer[0] != 0;
     scanner->at_cell_start = buffer[1] != 0;
@@ -91,6 +115,8 @@ void tree_sitter_quarto_external_scanner_deserialize(void *payload, const char *
     scanner->inside_subscript = buffer[4];
     scanner->inside_superscript = buffer[5];
     scanner->inside_inline_math = 0;
+    scanner->state = 0;
+    scanner->num_emphasis_delimiters_left = 0;
   } else if (length >= 4) {
     scanner->in_executable_cell = buffer[0] != 0;
     scanner->at_cell_start = buffer[1] != 0;
@@ -98,6 +124,8 @@ void tree_sitter_quarto_external_scanner_deserialize(void *payload, const char *
     scanner->inside_subscript = 0;
     scanner->inside_superscript = 0;
     scanner->inside_inline_math = 0;
+    scanner->state = 0;
+    scanner->num_emphasis_delimiters_left = 0;
   } else {
     scanner->in_executable_cell = false;
     scanner->at_cell_start = false;
@@ -105,6 +133,8 @@ void tree_sitter_quarto_external_scanner_deserialize(void *payload, const char *
     scanner->inside_subscript = 0;
     scanner->inside_superscript = 0;
     scanner->inside_inline_math = 0;
+    scanner->state = 0;
+    scanner->num_emphasis_delimiters_left = 0;
   }
 }
 
@@ -494,6 +524,157 @@ static bool scan_dollar_sign(Scanner *scanner, TSLexer *lexer, const bool *valid
   return false;
 }
 
+/**
+ * ============================================================================
+ * EMPHASIS/STRONG EMPHASIS HANDLING
+ * Copied from tree-sitter-markdown (tree-sitter-markdown-inline/src/scanner.c)
+ * Repository: https://github.com/tree-sitter-grammars/tree-sitter-markdown
+ * Commit: 2dfd57f547f06ca5631a80f601e129d73fc8e9f0
+ * Date: 2025-09-16
+ * License: MIT (Copyright 2021 Matthias Deiml)
+ * ============================================================================
+ */
+
+// State bitflags used with `Scanner.state`
+static const uint8_t STATE_EMPHASIS_DELIMITER_IS_OPEN = 0x1 << 2;
+
+// Determines if a character is punctuation as defined by the markdown spec.
+static bool is_punctuation(int32_t chr) {
+    return (chr >= '!' && chr <= '/') || (chr >= ':' && chr <= '@') ||
+           (chr >= '[' && chr <= '`') || (chr >= '{' && chr <= '~');
+}
+
+static bool parse_star(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
+    lexer->advance(lexer, false);
+    // If `num_emphasis_delimiters_left` is not zero then we already decided
+    // that this should be part of an emphasis delimiter run, so interpret it as
+    // such.
+    if (scanner->num_emphasis_delimiters_left > 0) {
+        // The `STATE_EMPHASIS_DELIMITER_IS_OPEN` state flag tells us whether it
+        // should be open or close.
+        if ((scanner->state & STATE_EMPHASIS_DELIMITER_IS_OPEN) &&
+            valid_symbols[EMPHASIS_OPEN_STAR]) {
+            scanner->state &= (~STATE_EMPHASIS_DELIMITER_IS_OPEN);
+            lexer->result_symbol = EMPHASIS_OPEN_STAR;
+            scanner->num_emphasis_delimiters_left--;
+            return true;
+        }
+        if (valid_symbols[EMPHASIS_CLOSE_STAR]) {
+            lexer->result_symbol = EMPHASIS_CLOSE_STAR;
+            scanner->num_emphasis_delimiters_left--;
+            return true;
+        }
+    }
+    lexer->mark_end(lexer);
+    // Otherwise count the number of stars
+    uint8_t star_count = 1;
+    while (lexer->lookahead == '*') {
+        star_count++;
+        lexer->advance(lexer, false);
+    }
+    bool line_end = lexer->lookahead == '\n' || lexer->lookahead == '\r' ||
+                    lexer->eof(lexer);
+    if (valid_symbols[EMPHASIS_OPEN_STAR] ||
+        valid_symbols[EMPHASIS_CLOSE_STAR]) {
+        // The decision made for the first star also counts for all the
+        // following stars in the delimiter run. Remember how many there are.
+        scanner->num_emphasis_delimiters_left = star_count - 1;
+        // Look ahead to the next symbol (after the last star) to find out if it
+        // is whitespace punctuation or other.
+        bool next_symbol_whitespace =
+            line_end || lexer->lookahead == ' ' || lexer->lookahead == '\t';
+        bool next_symbol_punctuation = is_punctuation(lexer->lookahead);
+        // Information about the last token is in valid_symbols. See grammar.js
+        // for these tokens for how this is done.
+        if (valid_symbols[EMPHASIS_CLOSE_STAR] &&
+            !valid_symbols[LAST_TOKEN_WHITESPACE] &&
+            (!valid_symbols[LAST_TOKEN_PUNCTUATION] ||
+             next_symbol_punctuation || next_symbol_whitespace)) {
+            // Closing delimiters take precedence
+            scanner->state &= ~STATE_EMPHASIS_DELIMITER_IS_OPEN;
+            lexer->result_symbol = EMPHASIS_CLOSE_STAR;
+            return true;
+        }
+        if (!next_symbol_whitespace && (!next_symbol_punctuation ||
+                                        valid_symbols[LAST_TOKEN_PUNCTUATION] ||
+                                        valid_symbols[LAST_TOKEN_WHITESPACE])) {
+            scanner->state |= STATE_EMPHASIS_DELIMITER_IS_OPEN;
+            lexer->result_symbol = EMPHASIS_OPEN_STAR;
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool parse_underscore(Scanner *scanner, TSLexer *lexer,
+                             const bool *valid_symbols) {
+    lexer->advance(lexer, false);
+    // If `num_emphasis_delimiters_left` is not zero then we already decided
+    // that this should be part of an emphasis delimiter run, so interpret it as
+    // such.
+    if (scanner->num_emphasis_delimiters_left > 0) {
+        // The `STATE_EMPHASIS_DELIMITER_IS_OPEN` state flag tells us whether it
+        // should be open or close.
+        if ((scanner->state & STATE_EMPHASIS_DELIMITER_IS_OPEN) &&
+            valid_symbols[EMPHASIS_OPEN_UNDERSCORE]) {
+            scanner->state &= (~STATE_EMPHASIS_DELIMITER_IS_OPEN);
+            lexer->result_symbol = EMPHASIS_OPEN_UNDERSCORE;
+            scanner->num_emphasis_delimiters_left--;
+            return true;
+        }
+        if (valid_symbols[EMPHASIS_CLOSE_UNDERSCORE]) {
+            lexer->result_symbol = EMPHASIS_CLOSE_UNDERSCORE;
+            scanner->num_emphasis_delimiters_left--;
+            return true;
+        }
+    }
+    lexer->mark_end(lexer);
+    // Otherwise count the number of underscores
+    uint8_t underscore_count = 1;
+    while (lexer->lookahead == '_') {
+        underscore_count++;
+        lexer->advance(lexer, false);
+    }
+    bool line_end = lexer->lookahead == '\n' || lexer->lookahead == '\r' ||
+                    lexer->eof(lexer);
+    if (valid_symbols[EMPHASIS_OPEN_UNDERSCORE] ||
+        valid_symbols[EMPHASIS_CLOSE_UNDERSCORE]) {
+        // The decision made for the first underscore also counts for all the
+        // following underscores in the delimiter run. Remember how many there are.
+        scanner->num_emphasis_delimiters_left = underscore_count - 1;
+        // Look ahead to the next symbol (after the last underscore) to find out if it
+        // is whitespace punctuation or other.
+        bool next_symbol_whitespace =
+            line_end || lexer->lookahead == ' ' || lexer->lookahead == '\t';
+        bool next_symbol_punctuation = is_punctuation(lexer->lookahead);
+        // Information about the last token is in valid_symbols. See grammar.js
+        // for these tokens for how this is done.
+        if (valid_symbols[EMPHASIS_CLOSE_UNDERSCORE] &&
+            !valid_symbols[LAST_TOKEN_WHITESPACE] &&
+            (!valid_symbols[LAST_TOKEN_PUNCTUATION] ||
+             next_symbol_punctuation || next_symbol_whitespace)) {
+            // Closing delimiters take precedence
+            scanner->state &= ~STATE_EMPHASIS_DELIMITER_IS_OPEN;
+            lexer->result_symbol = EMPHASIS_CLOSE_UNDERSCORE;
+            return true;
+        }
+        if (!next_symbol_whitespace && (!next_symbol_punctuation ||
+                                        valid_symbols[LAST_TOKEN_PUNCTUATION] ||
+                                        valid_symbols[LAST_TOKEN_WHITESPACE])) {
+            scanner->state |= STATE_EMPHASIS_DELIMITER_IS_OPEN;
+            lexer->result_symbol = EMPHASIS_OPEN_UNDERSCORE;
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * ============================================================================
+ * END OF TREE-SITTER-MARKDOWN CODE
+ * ============================================================================
+ */
+
 // Check if current position is a cell boundary (fence delimiter)
 static bool scan_cell_boundary(Scanner *scanner, TSLexer *lexer) {
   // Count backticks
@@ -559,6 +740,20 @@ bool tree_sitter_quarto_external_scanner_scan(
 
   if (lexer->lookahead == '$') {
     if (scan_dollar_sign(scanner, lexer, valid_symbols)) {
+      return true;
+    }
+  }
+
+  // Try emphasis/strong emphasis (before whitespace skipping)
+  // These need to check character position and context precisely
+  if (lexer->lookahead == '*') {
+    if (parse_star(scanner, lexer, valid_symbols)) {
+      return true;
+    }
+  }
+
+  if (lexer->lookahead == '_') {
+    if (parse_underscore(scanner, lexer, valid_symbols)) {
       return true;
     }
   }

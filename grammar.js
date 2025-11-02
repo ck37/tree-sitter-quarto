@@ -49,6 +49,12 @@ module.exports = grammar({
     $._superscript_close, // Pandoc: Context-aware ^ closing delimiter
     $._inline_math_open, // Pandoc: Context-aware $ opening delimiter
     $._inline_math_close, // Pandoc: Context-aware $ closing delimiter
+    $._emphasis_open_star, // Markdown: * emphasis delimiter (from tree-sitter-markdown)
+    $._emphasis_close_star, // Markdown: * emphasis delimiter
+    $._emphasis_open_underscore, // Markdown: _ emphasis delimiter
+    $._emphasis_close_underscore, // Markdown: _ emphasis delimiter
+    $._last_token_whitespace, // Markdown: Track whitespace for flanking rules
+    $._last_token_punctuation, // Markdown: Track punctuation for flanking rules
   ],
 
   conflicts: ($) => [
@@ -59,6 +65,24 @@ module.exports = grammar({
     [$.callout_block, $.fenced_div], // Enhanced divs vs generic divs
     [$.tabset_block, $.fenced_div],
     [$.conditional_block, $.fenced_div],
+    // Emphasis conflicts (from tree-sitter-markdown)
+    // For normal inline elements
+    [$._emphasis_star, $._inline_element],
+    [$._emphasis_star, $._strong_emphasis_star, $._inline_element],
+    [$._emphasis_underscore, $._inline_element],
+    [$._emphasis_underscore, $._strong_emphasis_underscore, $._inline_element],
+    // For no_star context (inside star emphasis)
+    [$._emphasis_star, $._inline_element_no_star],
+    [$._emphasis_star, $._strong_emphasis_star, $._inline_element_no_star],
+    [$._emphasis_underscore, $._inline_element_no_star],
+    [$._emphasis_underscore, $._strong_emphasis_underscore, $._inline_element_no_star],
+    [$._strong_emphasis_underscore, $._inline_element_no_star],
+    // For no_underscore context (inside underscore emphasis)
+    [$._emphasis_star, $._inline_element_no_underscore],
+    [$._emphasis_star, $._strong_emphasis_star, $._inline_element_no_underscore],
+    [$._emphasis_underscore, $._inline_element_no_underscore],
+    [$._emphasis_underscore, $._strong_emphasis_underscore, $._inline_element_no_underscore],
+    [$._strong_emphasis_star, $._inline_element_no_underscore],
   ],
 
   rules: {
@@ -653,6 +677,10 @@ module.exports = grammar({
 
     inline: ($) => repeat1($._inline_element),
 
+    _inline: ($) => repeat1($._inline_element),
+    _inline_no_star: ($) => repeat1($._inline_element_no_star),
+    _inline_no_underscore: ($) => repeat1($._inline_element_no_underscore),
+
     _inline_element: ($) =>
       choice(
         $.inline_footnote, // Pandoc: ^[note] - must come before text
@@ -660,8 +688,10 @@ module.exports = grammar({
         $.inline_code_cell, // Quarto: `{python} expr` - check before code_span
         $.code_span,
         $.inline_math,
-        $.emphasis,
-        $.strong_emphasis,
+        alias($._emphasis_star, $.emphasis), // Star-based emphasis
+        alias($._strong_emphasis_star, $.strong_emphasis), // Star-based strong
+        alias($._emphasis_underscore, $.emphasis), // Underscore-based emphasis
+        alias($._strong_emphasis_underscore, $.strong_emphasis), // Underscore-based strong
         $.strikethrough, // Pandoc: ~~text~~
         $.highlight, // Pandoc: ==text== - must come before equals_sign
         $.subscript, // Pandoc: H~2~O
@@ -676,6 +706,60 @@ module.exports = grammar({
         alias("^", $.caret), // Fallback for isolated caret when scanner rejects superscript
         alias("$", $.dollar_sign), // Fallback for isolated dollar sign when scanner rejects math
         $.text, // text last - fallback for anything not matched
+      ),
+
+    _inline_element_no_star: ($) =>
+      choice(
+        $.inline_footnote,
+        $.footnote_reference,
+        $.inline_code_cell,
+        $.code_span,
+        $.inline_math,
+        alias($._emphasis_underscore, $.emphasis), // Only underscore variant allowed
+        alias($._strong_emphasis_underscore, $.strong_emphasis),
+        $._emphasis_open_star, // Orphaned star treated as text
+        $._emphasis_open_underscore, // Orphaned underscore treated as text
+        $.strikethrough,
+        $.highlight,
+        $.subscript,
+        $.superscript,
+        $.link,
+        $.image,
+        $.citation,
+        $.cross_reference,
+        $.shortcode_inline,
+        $.equals_sign,
+        alias("~", $.tilde),
+        alias("^", $.caret),
+        alias("$", $.dollar_sign),
+        $.text,
+      ),
+
+    _inline_element_no_underscore: ($) =>
+      choice(
+        $.inline_footnote,
+        $.footnote_reference,
+        $.inline_code_cell,
+        $.code_span,
+        $.inline_math,
+        alias($._emphasis_star, $.emphasis), // Only star variant allowed
+        alias($._strong_emphasis_star, $.strong_emphasis),
+        $._emphasis_open_star, // Orphaned star treated as text
+        $._emphasis_open_underscore, // Orphaned underscore treated as text
+        $.strikethrough,
+        $.highlight,
+        $.subscript,
+        $.superscript,
+        $.link,
+        $.image,
+        $.citation,
+        $.cross_reference,
+        $.shortcode_inline,
+        $.equals_sign,
+        alias("~", $.tilde),
+        alias("^", $.caret),
+        alias("$", $.dollar_sign),
+        $.text,
       ),
 
     text: ($) => /[^\r\n`*_\[@<{^~=$]+/,
@@ -703,35 +787,47 @@ module.exports = grammar({
         alias($._inline_math_close, $.math_delimiter),
       ),
 
-    emphasis: ($) =>
-      prec.left(
-        choice(
-          seq(
-            alias(token("*"), $.emphasis_delimiter),
-            repeat1($._inline_element),
-            alias(token("*"), $.emphasis_delimiter),
-          ),
-          seq(
-            alias(token("_"), $.emphasis_delimiter),
-            repeat1($._inline_element),
-            alias(token("_"), $.emphasis_delimiter),
-          ),
+    // Internal emphasis rules using external scanner (from tree-sitter-markdown)
+    // These get aliased to $.emphasis and $.strong_emphasis in _inline_element
+    _emphasis_star: ($) =>
+      prec.dynamic(
+        1,
+        seq(
+          alias($._emphasis_open_star, $.emphasis_delimiter),
+          optional($._last_token_punctuation),
+          $._inline_no_star,
+          alias($._emphasis_close_star, $.emphasis_delimiter),
         ),
       ),
 
-    strong_emphasis: ($) =>
-      prec.left(
-        choice(
-          seq(
-            alias(token("**"), $.strong_emphasis_delimiter),
-            repeat1($._inline_element),
-            alias(token("**"), $.strong_emphasis_delimiter),
-          ),
-          seq(
-            alias(token("__"), $.strong_emphasis_delimiter),
-            repeat1($._inline_element),
-            alias(token("__"), $.strong_emphasis_delimiter),
-          ),
+    _emphasis_underscore: ($) =>
+      prec.dynamic(
+        1,
+        seq(
+          alias($._emphasis_open_underscore, $.emphasis_delimiter),
+          optional($._last_token_punctuation),
+          $._inline_no_underscore,
+          alias($._emphasis_close_underscore, $.emphasis_delimiter),
+        ),
+      ),
+
+    _strong_emphasis_star: ($) =>
+      prec.dynamic(
+        2,
+        seq(
+          alias($._emphasis_open_star, $.emphasis_delimiter),
+          $._emphasis_star, // Nested emphasis inside strong emphasis
+          alias($._emphasis_close_star, $.emphasis_delimiter),
+        ),
+      ),
+
+    _strong_emphasis_underscore: ($) =>
+      prec.dynamic(
+        2,
+        seq(
+          alias($._emphasis_open_underscore, $.emphasis_delimiter),
+          $._emphasis_underscore, // Nested emphasis inside strong emphasis
+          alias($._emphasis_close_underscore, $.emphasis_delimiter),
         ),
       ),
 
@@ -829,14 +925,23 @@ module.exports = grammar({
       ),
 
     _link_text_element: ($) =>
-      choice($.link_text, $.code_span, $.emphasis, $.strong_emphasis),
+      choice(
+        $.link_text,
+        $.code_span,
+        alias($._emphasis_star, $.emphasis),
+        alias($._strong_emphasis_star, $.strong_emphasis),
+        alias($._emphasis_underscore, $.emphasis),
+        alias($._strong_emphasis_underscore, $.strong_emphasis),
+      ),
 
     _inline_footnote_element: ($) =>
       choice(
         $.footnote_text,
         $.code_span,
-        $.emphasis,
-        $.strong_emphasis,
+        alias($._emphasis_star, $.emphasis),
+        alias($._strong_emphasis_star, $.strong_emphasis),
+        alias($._emphasis_underscore, $.emphasis),
+        alias($._strong_emphasis_underscore, $.strong_emphasis),
         $.inline_footnote, // Allow nested inline footnotes
       ),
 

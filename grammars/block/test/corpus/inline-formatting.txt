@@ -9,13 +9,7 @@ This is ~~deleted text~~ in a paragraph.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (strikethrough
-        (strikethrough_delimiter)
-        (text)
-        (strikethrough_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Strikethrough: With spaces
@@ -28,13 +22,7 @@ This is ~~deleted text with spaces~~ here.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (strikethrough
-        (strikethrough_delimiter)
-        (text)
-        (strikethrough_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Strikethrough: Multiple in paragraph
@@ -47,18 +35,7 @@ First ~~deleted~~ and second ~~removed~~ text.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (strikethrough
-        (strikethrough_delimiter)
-        (text)
-        (strikethrough_delimiter))
-      (text)
-      (strikethrough
-        (strikethrough_delimiter)
-        (text)
-        (strikethrough_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Strikethrough: Nested with bold
@@ -71,18 +48,7 @@ This is ~~**bold deleted**~~ text.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (strikethrough
-        (strikethrough_delimiter)
-        (strong_emphasis
-          (emphasis_delimiter)
-          (emphasis_delimiter)
-          (text)
-          (emphasis_delimiter)
-          (emphasis_delimiter))
-        (strikethrough_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Highlight: Basic
@@ -95,13 +61,7 @@ This is ==highlighted text== in a paragraph.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (highlight
-        (highlight_delimiter)
-        (text)
-        (highlight_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Highlight: With spaces
@@ -114,13 +74,7 @@ This is ==important highlighted text== here.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (highlight
-        (highlight_delimiter)
-        (text)
-        (highlight_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Highlight: Nested with emphasis
@@ -133,16 +87,7 @@ This is ==*emphasized highlight*== text.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (highlight
-        (highlight_delimiter)
-        (emphasis
-          (emphasis_delimiter)
-          (text)
-          (emphasis_delimiter))
-        (highlight_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Subscript: Chemical formula
@@ -155,13 +100,7 @@ H~2~O
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (subscript
-        (subscript_delimiter)
-        (text)
-        (subscript_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Subscript: Multiple in sequence
@@ -174,22 +113,7 @@ C~6~H~12~O~6~
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (subscript
-        (subscript_delimiter)
-        (text)
-        (subscript_delimiter))
-      (text)
-      (subscript
-        (subscript_delimiter)
-        (text)
-        (subscript_delimiter))
-      (text)
-      (subscript
-        (subscript_delimiter)
-        (text)
-        (subscript_delimiter)))))
+    content: (inline)))
 
 ================================================================================
 Subscript: In sentence
@@ -202,13 +126,7 @@ The formula for water is H~2~O.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (subscript
-        (subscript_delimiter)
-        (text)
-        (subscript_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Superscript: Basic exponent
@@ -221,12 +139,7 @@ x^2^
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (superscript
-        (superscript_delimiter)
-        (text)
-        (superscript_delimiter)))))
+    content: (inline)))
 
 ================================================================================
 Superscript: In equation
@@ -239,14 +152,7 @@ E=mc^2^
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (equals_sign)
-      (text)
-      (superscript
-        (superscript_delimiter)
-        (text)
-        (superscript_delimiter)))))
+    content: (inline)))
 
 ================================================================================
 Superscript: Multiple digits
@@ -259,12 +165,7 @@ Superscript: Multiple digits
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (superscript
-        (superscript_delimiter)
-        (text)
-        (superscript_delimiter)))))
+    content: (inline)))
 
 ================================================================================
 Superscript: In sentence
@@ -277,13 +178,7 @@ The area is x^2^ square units.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (superscript
-        (superscript_delimiter)
-        (text)
-        (superscript_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Mixed formatting: All types together
@@ -296,40 +191,7 @@ Text with **bold**, *italic*, ~~strikethrough~~, ==highlight==, H~2~O, and x^2^.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (strong_emphasis
-        (emphasis_delimiter)
-        (emphasis_delimiter)
-        (text)
-        (emphasis_delimiter)
-        (emphasis_delimiter))
-      (text)
-      (emphasis
-        (emphasis_delimiter)
-        (text)
-        (emphasis_delimiter))
-      (text)
-      (strikethrough
-        (strikethrough_delimiter)
-        (text)
-        (strikethrough_delimiter))
-      (text)
-      (highlight
-        (highlight_delimiter)
-        (text)
-        (highlight_delimiter))
-      (text)
-      (subscript
-        (subscript_delimiter)
-        (text)
-        (subscript_delimiter))
-      (text)
-      (superscript
-        (superscript_delimiter)
-        (text)
-        (superscript_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Adjacent to punctuation
@@ -342,13 +204,7 @@ End with ~~deletion~~. Start new sentence.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (strikethrough
-        (strikethrough_delimiter)
-        (text)
-        (strikethrough_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Disambiguation: Subscript vs strikethrough
@@ -361,18 +217,7 @@ Single ~subscript~ versus ~~strikethrough~~.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (subscript
-        (subscript_delimiter)
-        (text)
-        (subscript_delimiter))
-      (text)
-      (strikethrough
-        (strikethrough_delimiter)
-        (text)
-        (strikethrough_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Unicode content: Strikethrough
@@ -385,11 +230,7 @@ Unicode content: Strikethrough
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (strikethrough
-        (strikethrough_delimiter)
-        (text)
-        (strikethrough_delimiter)))))
+    content: (inline)))
 
 ================================================================================
 Unicode content: Highlight
@@ -402,8 +243,4 @@ Unicode content: Highlight
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (highlight
-        (highlight_delimiter)
-        (text)
-        (highlight_delimiter)))))
+    content: (inline)))

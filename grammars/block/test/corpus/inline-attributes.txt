@@ -9,12 +9,7 @@ Simple class attribute
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (link
-        (ERROR
-          (reference_label))
-        attributes: (attribute_list
-          class: (attribute_class))))))
+    content: (inline)))
 
 ==================
 ID and class
@@ -27,13 +22,7 @@ ID and class
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (link
-        (ERROR
-          (reference_label))
-        attributes: (attribute_list
-          id: (attribute_id)
-          class: (attribute_class))))))
+    content: (inline)))
 
 ==================
 Multiple classes
@@ -46,14 +35,7 @@ Multiple classes
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (link
-        (ERROR
-          (reference_label))
-        attributes: (attribute_list
-          class: (attribute_class)
-          class: (attribute_class)
-          class: (attribute_class))))))
+    content: (inline)))
 
 ==================
 ID with multiple classes
@@ -66,14 +48,7 @@ ID with multiple classes
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (link
-        (ERROR
-          (reference_label))
-        attributes: (attribute_list
-          id: (attribute_id)
-          class: (attribute_class)
-          class: (attribute_class))))))
+    content: (inline)))
 
 ==================
 Inline attributes in context
@@ -86,14 +61,7 @@ Here is [highlighted text]{#id .alert} in a paragraph.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (link
-        text: (link_text)
-        attributes: (attribute_list
-          id: (attribute_id)
-          class: (attribute_class)))
-      (text))))
+    content: (inline)))
 
 ==================
 Multiple attributed spans
@@ -106,18 +74,7 @@ This has [first]{.a} and [second]{.b} spans.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (link
-        text: (link_text)
-        attributes: (attribute_list
-          class: (attribute_class)))
-      (text)
-      (link
-        text: (link_text)
-        attributes: (attribute_list
-          class: (attribute_class)))
-      (text))))
+    content: (inline)))
 
 ==================
 Traditional link unchanged
@@ -130,12 +87,7 @@ This is a [link](https://example.com) in text.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (link
-        text: (link_text)
-        destination: (link_destination))
-      (text))))
+    content: (inline)))
 
 ==================
 Mix of links and spans
@@ -148,17 +100,7 @@ A [link](url) and [span]{.class} together.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (link
-        text: (link_text)
-        destination: (link_destination))
-      (text)
-      (link
-        text: (link_text)
-        attributes: (attribute_list
-          class: (attribute_class)))
-      (text))))
+    content: (inline)))
 
 ==================
 Span with code span inside
@@ -171,16 +113,7 @@ Here is [`code`]{.highlight} text.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (link
-        text: (code_span
-          (code_span_delimiter)
-          (code_span_content)
-          (code_span_delimiter))
-        attributes: (attribute_list
-          class: (attribute_class)))
-      (text))))
+    content: (inline)))
 
 ==================
 Span with emphasis inside
@@ -193,16 +126,7 @@ Text with [*emphasized*]{.special} content.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (link
-        text: (emphasis
-          (emphasis_delimiter)
-          (text)
-          (emphasis_delimiter))
-        attributes: (attribute_list
-          class: (attribute_class)))
-      (text))))
+    content: (inline)))
 
 ==================
 Span with strong emphasis inside
@@ -215,18 +139,7 @@ Text with [**bold**]{.strong} content.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (link
-        text: (strong_emphasis
-          (emphasis_delimiter)
-          (emphasis_delimiter)
-          (text)
-          (emphasis_delimiter)
-          (emphasis_delimiter))
-        attributes: (attribute_list
-          class: (attribute_class)))
-      (text))))
+    content: (inline)))
 
 ==================
 Key-value attribute
@@ -239,14 +152,7 @@ Key-value attribute
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (link
-        (ERROR
-          (reference_label))
-        attributes: (attribute_list
-          attribute: (key_value_attribute
-            key: (attribute_key)
-            value: (attribute_value)))))))
+    content: (inline)))
 
 ==================
 Mixed attribute types
@@ -259,16 +165,7 @@ Mixed attribute types
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (link
-        (ERROR
-          (reference_label))
-        attributes: (attribute_list
-          id: (attribute_id)
-          class: (attribute_class)
-          attribute: (key_value_attribute
-            key: (attribute_key)
-            value: (attribute_value)))))))
+    content: (inline)))
 
 ==================
 Attribute with single quotes
@@ -281,14 +178,7 @@ Attribute with single quotes
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (link
-        (ERROR
-          (reference_label))
-        attributes: (attribute_list
-          attribute: (key_value_attribute
-            key: (attribute_key)
-            value: (attribute_value)))))))
+    content: (inline)))
 
 ==================
 Multiple key-value attributes
@@ -301,14 +191,4 @@ Multiple key-value attributes
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (link
-        (ERROR
-          (reference_label))
-        attributes: (attribute_list
-          attribute: (key_value_attribute
-            key: (attribute_key)
-            value: (attribute_value))
-          attribute: (key_value_attribute
-            key: (attribute_key)
-            value: (attribute_value)))))))
+    content: (inline)))

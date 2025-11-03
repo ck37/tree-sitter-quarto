@@ -9,8 +9,7 @@ ATX heading with class attribute
 (document
   (atx_heading
     marker: (atx_heading_marker)
-    content: (inline
-      (text))
+    content: (inline)))
     attributes: (attribute_list
       class: (attribute_class))))
 
@@ -25,8 +24,7 @@ ATX heading with ID attribute
 (document
   (atx_heading
     marker: (atx_heading_marker)
-    content: (inline
-      (text))
+    content: (inline)))
     attributes: (attribute_list
       id: (attribute_id))))
 
@@ -41,8 +39,7 @@ ATX heading with multiple attributes
 (document
   (atx_heading
     marker: (atx_heading_marker)
-    content: (inline
-      (text))
+    content: (inline)))
     attributes: (attribute_list
       id: (attribute_id)
       class: (attribute_class)
@@ -62,8 +59,7 @@ Title {.unnumbered}
 (document
   (blank_line)
   (setext_heading
-    content: (inline
-      (text))
+    content: (inline)))
     attributes: (attribute_list
       class: (attribute_class))
     underline: (setext_heading_marker)))
@@ -80,8 +76,7 @@ Chapter {#ch1 .special}
 (document
   (blank_line)
   (setext_heading
-    content: (inline
-      (text))
+    content: (inline)))
     attributes: (attribute_list
       id: (attribute_id)
       class: (attribute_class))
@@ -98,8 +93,7 @@ Plain heading without attributes
 (document
   (atx_heading
     marker: (atx_heading_marker)
-    content: (inline
-      (text))))
+    content: (inline)))
 
 ==================
 Heading with inline formatting and attributes
@@ -112,13 +106,6 @@ Heading with inline formatting and attributes
 (document
   (atx_heading
     marker: (atx_heading_marker)
-    content: (inline
-      (strong_emphasis
-        (emphasis_delimiter)
-        (emphasis_delimiter)
-        (text)
-        (emphasis_delimiter)
-        (emphasis_delimiter))
-      (text))
+    content: (inline)))
     attributes: (attribute_list
       id: (attribute_id))))

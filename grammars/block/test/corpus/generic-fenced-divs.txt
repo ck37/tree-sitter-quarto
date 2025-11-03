@@ -15,8 +15,7 @@ Content inside div
     attributes: (attribute_list
       class: (attribute_class))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -38,8 +37,7 @@ Content
       class: (attribute_class)
       class: (attribute_class))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -61,8 +59,7 @@ Content with ID
       class: (attribute_class)
       class: (attribute_class))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -85,8 +82,7 @@ Content with attributes
         key: (attribute_key)
         value: (attribute_value)))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -106,8 +102,7 @@ Margin content
     attributes: (attribute_list
       class: (attribute_class))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -127,8 +122,7 @@ Aside content
     attributes: (attribute_list
       class: (attribute_class))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -154,19 +148,16 @@ More outer content
     attributes: (attribute_list
       class: (attribute_class))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     content: (fenced_div
       open: (fenced_div_delimiter)
       attributes: (attribute_list
         class: (attribute_class))
       content: (paragraph
-        content: (inline
-          (text)))
+        content: (inline)))
       close: (fenced_div_delimiter))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -186,8 +177,7 @@ Wide content
     attributes: (attribute_list
       class: (attribute_class))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -207,8 +197,7 @@ Container content
     attributes: (attribute_list
       class: (attribute_class))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -232,16 +221,14 @@ Callout div
     attributes: (attribute_list
       class: (attribute_class))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter))
   (fenced_div
     open: (fenced_div_delimiter)
     attributes: (attribute_list
       class: (attribute_class))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -272,6 +259,5 @@ Complex attributes
         key: (attribute_key)
         value: (attribute_value)))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))

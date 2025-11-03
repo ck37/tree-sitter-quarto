@@ -38,12 +38,7 @@ This is a [link](https://example.com) in text.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (link
-        text: (link_text)
-        destination: (link_destination))
-      (text))))
+    content: (inline)))
 
 ==================
 Explicit reference - numeric
@@ -58,12 +53,7 @@ Here is [a link][1].
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (link
-        text: (link_text)
-        reference: (reference_label))
-      (text)))
+    content: (inline)))
   (link_reference_definition
     label: (reference_label)
     destination: (link_destination)))
@@ -81,12 +71,7 @@ Another [link text][ref-name].
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (link
-        text: (link_text)
-        reference: (reference_label))
-      (text)))
+    content: (inline)))
   (link_reference_definition
     label: (reference_label)
     destination: (link_destination)
@@ -105,12 +90,7 @@ Shortcut [Example][].
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (link
-        text: (link_text)
-        reference: (reference_label))
-      (text)))
+    content: (inline)))
   (link_reference_definition
     label: (reference_label)
     destination: (link_destination)))
@@ -129,16 +109,7 @@ First [link][1] and second [link][2].
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (link
-        text: (link_text)
-        reference: (reference_label))
-      (text)
-      (link
-        text: (link_text)
-        reference: (reference_label))
-      (text)))
+    content: (inline)))
   (link_reference_definition
     label: (reference_label)
     destination: (link_destination))
@@ -160,21 +131,7 @@ This is [**bold**][ref] and [plain][ref2].
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (link
-        text: (strong_emphasis
-          (emphasis_delimiter)
-          (emphasis_delimiter)
-          (text)
-          (emphasis_delimiter)
-          (emphasis_delimiter))
-        reference: (reference_label))
-      (text)
-      (link
-        text: (link_text)
-        reference: (reference_label))
-      (text)))
+    content: (inline)))
   (link_reference_definition
     label: (reference_label)
     destination: (link_destination))
@@ -195,16 +152,7 @@ An [inline](url) and [reference][ref] link.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (link
-        text: (link_text)
-        destination: (link_destination))
-      (text)
-      (link
-        text: (link_text)
-        reference: (reference_label))
-      (text)))
+    content: (inline)))
   (link_reference_definition
     label: (reference_label)
     destination: (link_destination)))
@@ -220,13 +168,7 @@ This is [text]{.class} not a link.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (link
-        text: (link_text)
-        attributes: (attribute_list
-          class: (attribute_class)))
-      (text))))
+    content: (inline)))
 
 ==================
 Link with code span in text
@@ -241,15 +183,7 @@ Click [`code`][ref].
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (link
-        text: (code_span
-          (code_span_delimiter)
-          (code_span_content)
-          (code_span_delimiter))
-        reference: (reference_label))
-      (text)))
+    content: (inline)))
   (link_reference_definition
     label: (reference_label)
     destination: (link_destination)))
@@ -267,12 +201,7 @@ See [Text][REF] for details.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (link
-        text: (link_text)
-        reference: (reference_label))
-      (text)))
+    content: (inline)))
   (link_reference_definition
     label: (reference_label)
     destination: (link_destination)))
@@ -291,15 +220,7 @@ See [first][1][second][2].
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (link
-        text: (link_text)
-        reference: (reference_label))
-      (link
-        text: (link_text)
-        reference: (reference_label))
-      (text)))
+    content: (inline)))
   (link_reference_definition
     label: (reference_label)
     destination: (link_destination))

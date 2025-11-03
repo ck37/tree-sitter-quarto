@@ -9,8 +9,7 @@ This is a paragraph.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text))))
+    content: (inline)))
 
 ==================
 ATX heading
@@ -23,8 +22,7 @@ ATX heading
 (document
   (atx_heading
     marker: (atx_heading_marker)
-    content: (inline
-      (text))))
+    content: (inline)))
 
 ==================
 Paragraph with code span
@@ -37,13 +35,7 @@ This has `inline code` in it.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (code_span
-        (code_span_delimiter)
-        (code_span_content)
-        (code_span_delimiter))
-      (text))))
+    content: (inline)))
 
 ==================
 Regular fenced code block
@@ -309,5 +301,4 @@ title: "My Document"
     close: (yaml_front_matter_delimiter))
   (atx_heading
     marker: (atx_heading_marker)
-    content: (inline
-      (text))))
+    content: (inline)))

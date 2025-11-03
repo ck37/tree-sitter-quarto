@@ -9,13 +9,7 @@ The equation $x^2$ is simple.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Inline Math: Complex expression
@@ -28,13 +22,7 @@ The formula $x^2 + y^2 = z^2$ is Pythagorean theorem.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Inline Math: With Greek letters
@@ -47,13 +35,7 @@ The value $\alpha + \beta$ represents the sum.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Inline Math: With fractions
@@ -66,13 +48,7 @@ The fraction $\frac{a}{b}$ is displayed inline.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Inline Math: E=mc^2
@@ -85,13 +61,7 @@ Einstein's equation $E=mc^2$ changed physics.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Inline Math: Multiple in one paragraph
@@ -104,18 +74,7 @@ First $x$ and second $y$ in the same line.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter))
-      (text)
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Inline Math: No space around content
@@ -128,13 +87,7 @@ Tight spacing $x$ works fine.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Currency: Dollar followed by digit (not math)
@@ -147,10 +100,7 @@ Simple amount: $50
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (dollar_sign)
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Currency: Larger amount (not math)
@@ -163,10 +113,7 @@ Cost is $160 for the item.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (dollar_sign)
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Currency: Range with dash (not math)
@@ -179,10 +126,7 @@ Price range: $25-30
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (dollar_sign)
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Currency: Thousands separator (not math)
@@ -195,12 +139,7 @@ Budget: $20,000 and $30,000
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (dollar_sign)
-      (text)
-      (dollar_sign)
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Currency: Multiple amounts in sentence (not math)
@@ -213,14 +152,7 @@ Prices are $10, $20, and $30 respectively.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (dollar_sign)
-      (text)
-      (dollar_sign)
-      (text)
-      (dollar_sign)
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Currency: With decimal (not math)
@@ -233,10 +165,7 @@ The price is $19.99 today.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (dollar_sign)
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Math and Currency: Mixed in same paragraph
@@ -249,15 +178,7 @@ The equation $x + y = 10$ costs $50 to compute.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter))
-      (text)
-      (dollar_sign)
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Invalid: Dollar followed by space (not math)
@@ -270,10 +191,7 @@ Just a dollar $ sign here.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (dollar_sign)
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Invalid: Isolated dollar sign (not math)
@@ -286,10 +204,7 @@ This has $ but no closing delimiter.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (dollar_sign)
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Inline Math: With subscripts
@@ -302,13 +217,7 @@ The expression $H_2O$ uses subscripts.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Inline Math: With superscripts
@@ -321,13 +230,7 @@ The power $x^{2n}$ is complex.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Inline Math: Summation notation
@@ -340,18 +243,7 @@ The sum $\sum_{i=1}^{n} i$ equals $\frac{n(n+1)}{2}$.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter))
-      (text)
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Inline Math: Integral notation
@@ -364,13 +256,7 @@ The integral $\int_0^1 x dx$ equals one half.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Inline Math: Matrix notation
@@ -383,13 +269,7 @@ The matrix $\begin{pmatrix} a & b \\ c & d \end{pmatrix}$ is two by two.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Inline Math: At start of paragraph
@@ -402,12 +282,7 @@ $x = 5$ is the solution.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Inline Math: At end of paragraph
@@ -420,12 +295,7 @@ The solution is $x = 5$
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter)))))
+    content: (inline)))
 
 ================================================================================
 Inline Math: Only math in paragraph
@@ -438,11 +308,7 @@ $f(x) = x^2 + 2x + 1$
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter)))))
+    content: (inline)))
 
 ================================================================================
 Inline Math: With punctuation
@@ -455,13 +321,7 @@ The equation $E=mc^2$, discovered by Einstein, is famous.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Inline Math: With bold
@@ -474,20 +334,7 @@ The **important** equation $x^2 + y^2 = r^2$ is circular.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (strong_emphasis
-        (emphasis_delimiter)
-        (emphasis_delimiter)
-        (text)
-        (emphasis_delimiter)
-        (emphasis_delimiter))
-      (text)
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Inline Math: With italic
@@ -500,18 +347,7 @@ The *key* formula $a = \pi r^2$ calculates area.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (emphasis
-        (emphasis_delimiter)
-        (text)
-        (emphasis_delimiter))
-      (text)
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter))
-      (text))))
+    content: (inline)))
 
 ================================================================================
 Inline Math: Adjacent to code span
@@ -524,15 +360,4 @@ The function `f(x)` equals $x^2$ for all values.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (code_span
-        (code_span_delimiter)
-        (code_span_content)
-        (code_span_delimiter))
-      (text)
-      (inline_math
-        (math_delimiter)
-        (math_content)
-        (math_delimiter))
-      (text))))
+    content: (inline)))

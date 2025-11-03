@@ -241,15 +241,7 @@ The result is `{python} np.mean([1, 2, 3])` which is the average.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (inline_code_cell
-        (inline_cell_delimiter)
-        language: (language_name)
-        (inline_cell_brace)
-        content: (cell_content)
-        (inline_cell_delimiter))
-      (text))))
+    content: (inline)))
 
 ==================
 R inline cell injection
@@ -262,15 +254,7 @@ The mean is `{r} mean(x)` in R.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (inline_code_cell
-        (inline_cell_delimiter)
-        language: (language_name)
-        (inline_cell_brace)
-        content: (cell_content)
-        (inline_cell_delimiter))
-      (text))))
+    content: (inline)))
 
 ==================
 Julia inline cell injection
@@ -283,15 +267,7 @@ Calculate `{julia} sum([1, 2, 3])` inline.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (inline_code_cell
-        (inline_cell_delimiter)
-        language: (language_name)
-        (inline_cell_brace)
-        content: (cell_content)
-        (inline_cell_delimiter))
-      (text))))
+    content: (inline)))
 
 ==================
 Multi-language document with Python and R

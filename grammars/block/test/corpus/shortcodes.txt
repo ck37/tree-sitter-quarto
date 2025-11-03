@@ -135,14 +135,7 @@ See {{< video https://example.com/video.mp4 >}} for details.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (shortcode_inline
-        (shortcode_open)
-        name: (shortcode_name)
-        arguments: (shortcode_arguments)
-        (shortcode_close))
-      (text))))
+    content: (inline)))
 
 ==================
 Multiple inline shortcodes
@@ -155,20 +148,7 @@ Use {{< var x >}} and {{< var y >}} here.
 (document
   (blank_line)
   (paragraph
-    content: (inline
-      (text)
-      (shortcode_inline
-        (shortcode_open)
-        name: (shortcode_name)
-        arguments: (shortcode_arguments)
-        (shortcode_close))
-      (text)
-      (shortcode_inline
-        (shortcode_open)
-        name: (shortcode_name)
-        arguments: (shortcode_arguments)
-        (shortcode_close))
-      (text))))
+    content: (inline)))
 
 ==================
 Shortcode with multiple arguments
@@ -239,8 +219,7 @@ Shortcode after heading
 (document
   (atx_heading
     marker: (atx_heading_marker)
-    content: (inline
-      (text)))
+    content: (inline)))
   (shortcode_block
     (shortcode_open)
     name: (shortcode_name)

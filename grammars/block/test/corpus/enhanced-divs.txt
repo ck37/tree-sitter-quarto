@@ -15,8 +15,7 @@ This is a note callout.
     attributes: (attribute_list
       class: (attribute_class))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -38,11 +37,9 @@ This is a warning message.
       class: (attribute_class))
     content: (atx_heading
       marker: (atx_heading_marker)
-      content: (inline
-        (text)))
+      content: (inline)))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -62,8 +59,7 @@ Critical information here.
     attributes: (attribute_list
       class: (attribute_class))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -83,8 +79,7 @@ Helpful tip goes here.
     attributes: (attribute_list
       class: (attribute_class))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -104,8 +99,7 @@ Be careful with this!
     attributes: (attribute_list
       class: (attribute_class))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -128,8 +122,7 @@ Simple appearance callout.
         key: (attribute_key)
         value: (attribute_value)))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -152,8 +145,7 @@ No icon warning.
         key: (attribute_key)
         value: (attribute_value)))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -176,8 +168,7 @@ Collapsible important callout.
         key: (attribute_key)
         value: (attribute_value)))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -202,18 +193,14 @@ Content 2.
       class: (attribute_class))
     content: (atx_heading
       marker: (atx_heading_marker)
-      content: (inline
-        (text)))
+      content: (inline)))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     content: (atx_heading
       marker: (atx_heading_marker)
-      content: (inline
-        (text)))
+      content: (inline)))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -241,18 +228,14 @@ R code here.
         value: (attribute_value)))
     content: (atx_heading
       marker: (atx_heading_marker)
-      content: (inline
-        (text)))
+      content: (inline)))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     content: (atx_heading
       marker: (atx_heading_marker)
-      content: (inline
-        (text)))
+      content: (inline)))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -281,8 +264,7 @@ print("Hello")
       class: (attribute_class))
     content: (atx_heading
       marker: (atx_heading_marker)
-      content: (inline
-        (text)))
+      content: (inline)))
     content: (fenced_code_block
       open: (code_fence_delimiter)
       info: (info_string)
@@ -290,8 +272,7 @@ print("Hello")
       close: (code_fence_delimiter))
     content: (atx_heading
       marker: (atx_heading_marker)
-      content: (inline
-        (text)))
+      content: (inline)))
     content: (fenced_code_block
       open: (code_fence_delimiter)
       info: (info_string)
@@ -319,8 +300,7 @@ HTML only content.
         key: (attribute_key)
         value: (attribute_value)))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -343,8 +323,7 @@ Hidden in PDF.
         key: (attribute_key)
         value: (attribute_value)))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -367,8 +346,7 @@ Visible unless PDF.
         key: (attribute_key)
         value: (attribute_value)))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -391,8 +369,7 @@ Production only content.
         key: (attribute_key)
         value: (attribute_value)))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))
 
 ==================
@@ -421,8 +398,7 @@ Conditional content.
     attributes: (attribute_list
       class: (attribute_class))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter))
   (fenced_div
     open: (fenced_div_delimiter)
@@ -430,11 +406,9 @@ Conditional content.
       class: (attribute_class))
     content: (atx_heading
       marker: (atx_heading_marker)
-      content: (inline
-        (text)))
+      content: (inline)))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter))
   (fenced_div
     open: (fenced_div_delimiter)
@@ -444,6 +418,5 @@ Conditional content.
         key: (attribute_key)
         value: (attribute_value)))
     content: (paragraph
-      content: (inline
-        (text)))
+      content: (inline)))
     close: (fenced_div_delimiter)))

@@ -2,7 +2,7 @@
 
 **Created:** 2025-10-13
 **Updated:** 2025-11-02
-**Status:** 🔧 Development - Dual-Grammar Architecture Complete (Integrated dual-grammar at 57.5% validation)
+**Status:** 🔧 Development - Dual-Grammar Architecture Complete (57.5% validation, 65% test pass rate)
 **Goal:** Create a Quarto Markdown parser optimized for editor integration and tooling
 
 ## Project Vision
@@ -468,10 +468,11 @@ Test in actual editors:
 - [x] Callouts and tabsets parse correctly
 - [x] Conditional content recognized
 - [x] Figure/table cross-reference metadata (deferred to language server)
-- [x] 213 test cases passing (100%)
+- [x] 203/314 test cases passing (65%) - Scanner bugs documented in issue #18
 - [x] Advanced highlighting queries
 - [x] Comprehensive test coverage added (footnotes, inline attributes, pipe tables, test refinements)
 - [x] Fenced code block attributes (Pandoc syntax support)
+- [x] Dual-grammar architecture implemented with CI migration complete
 
 ### Phase 3 Success ⏳ IN PROGRESS
 - [ ] Cross-reference validation (requires language server)
@@ -550,12 +551,13 @@ Based on comprehensive spec verification (see `openspec/specs/*/verification.md`
 - **1 requirement** with acceptable limitation (multi-line chunk options)
 - **1 requirement** deferred (inline conditional spans)
 - **All core features** working correctly
-- **224 tests passing** (100%) in CI on Ubuntu and macOS
+- **203/314 tests passing (65%)** - Block grammar 49%, inline grammar 100%, scanner bugs documented in issue #18
+- **CI infrastructure migrated** - All workflows updated for dual-grammar architecture (2025-11-02)
 - **WASM compilation verified** - Parser successfully compiles to WebAssembly
 - **parser.c committed** to repository for easier editor extension integration
 - **Fenced code block attributes** - Full Pandoc attribute syntax support with language injection
 - **Generic fenced divs** - Unified architecture supporting all div types (2025-11-02)
-- **Test suite complete** - All 7 colon parsing failures resolved (2025-11-02)
+- **Dual-grammar architecture** - Scanner-controlled fence detection resolves YAML parsing issue #17 (2025-11-02)
 
 **Specifications Implemented (11/11):**
 1. **Grammar Foundation** - 11 requirements ✅

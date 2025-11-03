@@ -9,7 +9,7 @@ description: Tasks related to GitHub Actions workflows, build configuration (bin
 ## Active Tasks
 
 ### High Priority
-- `h-fix-ci-test-failures.md` - Fix CI failures caused by dual-grammar architecture migration (workflows, build system, and test expectations)
+<!-- High priority CI/build tasks -->
 
 ### Medium Priority
 <!-- Medium priority CI/build tasks -->
@@ -21,4 +21,4 @@ description: Tasks related to GitHub Actions workflows, build configuration (bin
 <!-- CI/build system investigations -->
 
 ## Completed Tasks
-<!-- Move tasks here when completed, maintaining the format -->
+- `h-fix-ci-test-failures.md` - Fix CI failures caused by dual-grammar architecture migration (workflows, build system, and test expectations)

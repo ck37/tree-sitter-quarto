@@ -139,6 +139,10 @@ jobs:
           test -f grammars/block/queries/indents.scm || (echo "Missing block indents.scm" && exit 1)
           test -f grammars/block/queries/locals.scm || (echo "Missing block locals.scm" && exit 1)
           test -f grammars/inline/queries/highlights.scm || (echo "Missing inline highlights.scm" && exit 1)
+          test -f grammars/inline/queries/injections.scm || (echo "Missing inline injections.scm" && exit 1)
+          test -f grammars/inline/queries/folds.scm || (echo "Missing inline folds.scm" && exit 1)
+          test -f grammars/inline/queries/indents.scm || (echo "Missing inline indents.scm" && exit 1)
+          test -f grammars/inline/queries/locals.scm || (echo "Missing inline locals.scm" && exit 1)
 
   zed-compatibility:
     name: Zed Editor Compatibility
@@ -199,6 +203,9 @@ jobs:
             exit 1
           fi
 
+      # Only build block grammar WASM - inline grammar is loaded via language injection
+      # Editors inject the inline grammar into (inline) nodes using injection queries,
+      # so only the block grammar needs to be available as standalone WASM
       - name: Build WASM
         run: |
           echo "Building WebAssembly module..."

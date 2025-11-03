@@ -40,25 +40,22 @@ jobs:
         uses: actions/cache@v4
         with:
           path: build/Release
-          key: build-${{ runner.os }}-${{ matrix.node-version }}-${{ hashFiles('src/parser.c', 'src/scanner.c', 'binding.gyp') }}
+          key: build-${{ runner.os }}-${{ matrix.node-version }}-${{ hashFiles('grammars/*/src/parser.c', 'grammars/*/src/scanner.c', 'binding.gyp') }}
           restore-keys: |
             build-${{ runner.os }}-${{ matrix.node-version }}-
-
-      - name: Install tree-sitter CLI only
-        run: npm install tree-sitter-cli
-
-      - name: Generate parser
-        run: npx tree-sitter generate
 
       - name: Install dependencies
         run: npm install
 
+      - name: Generate parsers
+        run: npm run build:all
+
       - name: Run tests
-        run: npx tree-sitter test
+        run: npm run test:grammars
 
       - name: Parse example files
         run: |
-          npx tree-sitter parse examples/*.qmd --quiet --stat
+          cd grammars/block && npx tree-sitter parse ../../examples/*.qmd --quiet --stat
 
   validate:
     name: Validate Grammar
@@ -74,18 +71,15 @@ jobs:
           node-version: '20.x'
           cache: 'npm'
 
-      - name: Install tree-sitter CLI only
-        run: npm install tree-sitter-cli
-
-      - name: Validate grammar structure
-        run: npx tree-sitter generate
-
       - name: Install dependencies
         run: npm install
 
+      - name: Validate grammar structure
+        run: npm run build:all
+
       - name: Check for warnings
         run: |
-          npx tree-sitter generate 2>&1 | tee generate-output.txt
+          npm run build:all 2>&1 | tee generate-output.txt
           if grep -q "Error" generate-output.txt; then
             echo "Grammar has errors"
             exit 1
@@ -105,12 +99,14 @@ jobs:
           node-version: '20.x'
 
       - name: Check JavaScript syntax
-        run: node --check grammar.js
+        run: |
+          node --check grammars/block/grammar.js
+          node --check grammars/inline/grammar.js
 
       - name: Check for common issues
         run: |
           # Check for TODO comments that should be addressed
-          if grep -r "FIXME\|XXX" grammar.js src/*.c; then
+          if grep -r "FIXME\|XXX" grammars/block/grammar.js grammars/inline/grammar.js grammars/*/src/*.c; then
             echo "Found unaddressed FIXME/XXX comments"
             # Don't fail on this for now
           fi
@@ -129,22 +125,20 @@ jobs:
           node-version: '20.x'
           cache: 'npm'
 
-      - name: Install tree-sitter CLI only
-        run: npm install tree-sitter-cli
-
-      - name: Generate parser
-        run: npx tree-sitter generate
-
       - name: Install dependencies
         run: npm install
 
+      - name: Generate parsers
+        run: npm run build:all
+
       - name: Check query files exist
         run: |
-          test -f queries/highlights.scm || (echo "Missing highlights.scm" && exit 1)
-          test -f queries/injections.scm || (echo "Missing injections.scm" && exit 1)
-          test -f queries/folds.scm || (echo "Missing folds.scm" && exit 1)
-          test -f queries/indents.scm || (echo "Missing indents.scm" && exit 1)
-          test -f queries/locals.scm || (echo "Missing locals.scm" && exit 1)
+          test -f grammars/block/queries/highlights.scm || (echo "Missing block highlights.scm" && exit 1)
+          test -f grammars/block/queries/injections.scm || (echo "Missing block injections.scm" && exit 1)
+          test -f grammars/block/queries/folds.scm || (echo "Missing block folds.scm" && exit 1)
+          test -f grammars/block/queries/indents.scm || (echo "Missing block indents.scm" && exit 1)
+          test -f grammars/block/queries/locals.scm || (echo "Missing block locals.scm" && exit 1)
+          test -f grammars/inline/queries/highlights.scm || (echo "Missing inline highlights.scm" && exit 1)
 
   zed-compatibility:
     name: Zed Editor Compatibility
@@ -165,30 +159,30 @@ jobs:
         with:
           version: 'latest'
 
-      - name: Install tree-sitter CLI
-        run: npm install tree-sitter-cli
-
       - name: Install dependencies
         run: npm install
+
+      - name: Generate parsers
+        run: npm run build:all
 
       - name: Cache WASM build
         uses: actions/cache@v4
         with:
-          path: tree-sitter-quarto.wasm
-          key: wasm-${{ hashFiles('grammar.js', 'src/scanner.c') }}
+          path: grammars/block/tree-sitter-quarto_block.wasm
+          key: wasm-${{ hashFiles('grammars/block/grammar.js', 'grammars/block/src/scanner.c') }}
 
       - name: Validate tree-sitter headers present
         run: |
           echo "Checking for required tree-sitter headers..."
-          test -f src/tree_sitter/parser.h || (echo "ERROR: Missing parser.h" && exit 1)
-          test -f src/tree_sitter/alloc.h || (echo "ERROR: Missing alloc.h" && exit 1)
-          test -f src/tree_sitter/array.h || (echo "ERROR: Missing array.h" && exit 1)
+          test -f grammars/block/src/tree_sitter/parser.h || (echo "ERROR: Missing parser.h" && exit 1)
+          test -f grammars/block/src/tree_sitter/alloc.h || (echo "ERROR: Missing alloc.h" && exit 1)
+          test -f grammars/block/src/tree_sitter/array.h || (echo "ERROR: Missing array.h" && exit 1)
           echo "OK: All headers present"
 
       - name: Check for TSMapSlice in parser.h
         run: |
           echo "Validating TSMapSlice struct..."
-          if grep -q "TSMapSlice" src/tree_sitter/parser.h; then
+          if grep -q "TSMapSlice" grammars/block/src/tree_sitter/parser.h; then
             echo "OK: TSMapSlice found in parser.h"
           else
             echo "ERROR: Missing TSMapSlice in parser.h (required for Zed)"
@@ -198,7 +192,7 @@ jobs:
       - name: Check for abi_version in parser.h
         run: |
           echo "Checking for abi_version field in TSLanguage struct..."
-          if grep -q "abi_version" src/tree_sitter/parser.h; then
+          if grep -q "abi_version" grammars/block/src/tree_sitter/parser.h; then
             echo "OK: abi_version field found (tree-sitter 0.25.10)"
           else
             echo "ERROR: Missing abi_version field in parser.h"
@@ -208,14 +202,14 @@ jobs:
       - name: Build WASM
         run: |
           echo "Building WebAssembly module..."
-          npx tree-sitter build --wasm
+          cd grammars/block && npx tree-sitter build --wasm
 
       - name: Validate WASM output
         run: |
           echo "Validating WASM output..."
-          test -f tree-sitter-quarto.wasm || (echo "ERROR: WASM file not generated" && exit 1)
+          test -f grammars/block/tree-sitter-quarto_block.wasm || (echo "ERROR: WASM file not generated" && exit 1)
 
-          size=$(stat -c%s tree-sitter-quarto.wasm)
+          size=$(stat -c%s grammars/block/tree-sitter-quarto_block.wasm)
           size_kb=$((size / 1024))
           echo "OK: WASM file generated: ${size_kb}KB (${size} bytes)"
 
@@ -251,5 +245,5 @@ jobs:
       - name: Test WASM with simple parse
         run: |
           echo "Testing WASM parser with sample input..."
-          echo '# Hello World' | npx tree-sitter parse --wasm tree-sitter-quarto.wasm --quiet || echo "WARNING: WASM parse test skipped (expected in CI)"
+          cd grammars/block && echo '# Hello World' | npx tree-sitter parse --wasm tree-sitter-quarto_block.wasm --quiet || echo "WARNING: WASM parse test skipped (expected in CI)"
           echo "OK: WASM compatibility tests complete"

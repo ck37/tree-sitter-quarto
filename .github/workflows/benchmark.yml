@@ -23,14 +23,11 @@ jobs:
           node-version: '20.x'
           cache: 'npm'
 
-      - name: Install tree-sitter CLI
-        run: npm install tree-sitter-cli
-
-      - name: Generate parser
-        run: npx tree-sitter generate
-
       - name: Install dependencies
         run: npm install
+
+      - name: Generate parsers
+        run: npm run build:all
 
       - name: Run benchmarks
         run: npm run benchmark:compare
@@ -58,14 +55,11 @@ jobs:
           node-version: '20.x'
           cache: 'npm'
 
-      - name: Install tree-sitter CLI
-        run: npm install tree-sitter-cli
-
-      - name: Generate parser
-        run: npx tree-sitter generate
-
       - name: Install dependencies
         run: npm install
+
+      - name: Generate parsers
+        run: npm run build:all
 
       - name: Run validation on sample corpus
         run: npm run validate:sample

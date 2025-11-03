@@ -2,7 +2,8 @@
 
 typedef struct TSLanguage TSLanguage;
 
-extern "C" TSLanguage *tree_sitter_quarto();
+extern "C" TSLanguage *tree_sitter_quarto_block();
+extern "C" TSLanguage *tree_sitter_quarto_inline();
 
 // Type tag for the language object (required for tree-sitter 0.25+)
 // Standard tag used by all tree-sitter language bindings
@@ -14,9 +15,17 @@ namespace {
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports["name"] = Napi::String::New(env, "quarto");
-  auto language = Napi::External<TSLanguage>::New(env, tree_sitter_quarto());
-  language.TypeTag(&LANGUAGE_TYPE_TAG);
-  exports["language"] = language;
+  auto block_language = Napi::External<TSLanguage>::New(env, tree_sitter_quarto_block());
+  block_language.TypeTag(&LANGUAGE_TYPE_TAG);
+  exports["language"] = block_language;
+
+  auto inline_obj = Napi::Object::New(env);
+  inline_obj["name"] = Napi::String::New(env, "quarto_inline");
+  auto inline_language = Napi::External<TSLanguage>::New(env, tree_sitter_quarto_inline());
+  inline_language.TypeTag(&LANGUAGE_TYPE_TAG);
+  inline_obj["language"] = inline_language;
+  exports["inline"] = inline_obj;
+
   return exports;
 }
 
